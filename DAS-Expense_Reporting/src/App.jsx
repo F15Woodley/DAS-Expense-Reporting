@@ -1,3 +1,5 @@
+import { useMemo, useRef, useState } from "react";
+
 export default function TravelExpenseMVPScreens() {
   const shell = "min-h-screen bg-slate-50 text-slate-900 p-4 md:p-6";
   const card = "bg-white rounded-2xl shadow-sm border border-slate-200";
@@ -7,7 +9,6 @@ export default function TravelExpenseMVPScreens() {
   const buttonPrimary = "rounded-xl px-4 py-2.5 text-sm font-medium bg-slate-900 text-white";
   const buttonSecondary = "rounded-xl px-4 py-2.5 text-sm font-medium border border-slate-300 bg-white";
   const badge = "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700";
-  const iconBtn = "rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm";
 
   const trips = [
     { name: "USGS Site Visit – Denver", code: "GPSCv5-241", status: "Active", traveler: "Ross Woodley" },
@@ -34,6 +35,70 @@ export default function TravelExpenseMVPScreens() {
     { title: "Returned", count: 1, note: "Needs receipt or coding fix" },
     { title: "Approved", count: 12, note: "Ready or exported" },
   ];
+
+  const fileRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [submitState, setSubmitState] = useState("idle");
+  const [form, setForm] = useState({
+    traveler: "Ross Woodley",
+    trip: "USGS Site Visit – Denver",
+    expenseType: "Hotel",
+    paymentMethod: "Personal Card",
+    vendor: "Hilton Denver City Center",
+    date: "2026-03-11",
+    amount: "$318.42",
+    billable: "Yes",
+    businessPurpose: "Lodging for USGS coordination meetings and site visit.",
+    qbClass: "Travel",
+    projectCode: "GPSCv5-241",
+  });
+
+  const previewUrl = useMemo(() => {
+    if (!selectedFile) return null;
+    return URL.createObjectURL(selectedFile);
+  }, [selectedFile]);
+
+  const inferExpenseType = (name) => {
+    const n = name.toLowerCase();
+    if (n.includes("hotel") || n.includes("hilton") || n.includes("marriott")) return "Hotel";
+    if (n.includes("delta") || n.includes("air") || n.includes("flight")) return "Airfare";
+    if (n.includes("uber") || n.includes("lyft") || n.includes("taxi")) return "Ground Transport";
+    if (n.includes("shell") || n.includes("fuel") || n.includes("chevron")) return "Fuel";
+    if (n.includes("meal") || n.includes("restaurant")) return "Meals";
+    return "Hotel";
+  };
+
+  const inferVendor = (name) =>
+    name
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[-_]/g, " ")
+      .replace(/(receipt|img|scan|invoice)/gi, "")
+      .trim() || "Receipt Upload";
+
+  const handleFile = (file) => {
+    if (!file) return;
+    const vendor = inferVendor(file.name);
+    const expenseType = inferExpenseType(file.name);
+    setSelectedFile(file);
+    setSubmitState("receipt-loaded");
+    setForm((prev) => ({
+      ...prev,
+      vendor,
+      expenseType,
+    }));
+  };
+
+  const handleInputChange = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSubmit = () => {
+    setSubmitState("submitted");
+  };
+
+  const handleSaveDraft = () => {
+    setSubmitState("draft");
+  };
 
   return (
     <div className={shell}>
@@ -84,8 +149,15 @@ export default function TravelExpenseMVPScreens() {
                 </div>
 
                 <div className="grid gap-3 mb-4">
-                  <button className={`${buttonPrimary} h-14 text-base`}>📸 Snap Receipt</button>
-                  <button className={`${buttonSecondary} h-14 text-base`}>📄 Upload Receipt / PDF</button>
+                  <button className={`${buttonPrimary} h-14 text-base`} onClick={() => fileRef.current?.click()}>📸 Snap Receipt</button>
+                  <button className={`${buttonSecondary} h-14 text-base`} onClick={() => fileRef.current?.click()}>📄 Upload Receipt / PDF</button>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={(e) => handleFile(e.target.files?.[0])}
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mb-4">
@@ -101,18 +173,31 @@ export default function TravelExpenseMVPScreens() {
                 <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 mb-4">
                   <div className="text-sm font-semibold">Receipt captured</div>
                   <div className="text-xs text-slate-500 mt-1">Preview + OCR happens first, typing second.</div>
-                  <div className="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
-                    <div><span className="font-medium">Vendor:</span> Hilton Denver City Center</div>
-                    <div><span className="font-medium">Amount:</span> $318.42</div>
-                    <div><span className="font-medium">Date:</span> Mar 11, 2026</div>
-                    <div><span className="font-medium">Suggested type:</span> Hotel</div>
-                  </div>
+                  {selectedFile ? (
+                    <div className="mt-4 space-y-3">
+                      {selectedFile.type.startsWith("image/") && previewUrl ? (
+                        <img src={previewUrl} alt="Receipt preview" className="w-full h-40 object-cover rounded-xl border border-slate-200" />
+                      ) : (
+                        <div className="rounded-xl border border-slate-200 p-3 text-sm bg-slate-50">PDF selected: {selectedFile.name}</div>
+                      )}
+                      <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
+                        <div><span className="font-medium">Vendor:</span> {form.vendor}</div>
+                        <div><span className="font-medium">Amount:</span> {form.amount}</div>
+                        <div><span className="font-medium">Date:</span> Mar 11, 2026</div>
+                        <div><span className="font-medium">Suggested type:</span> {form.expenseType}</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-500">
+                      No receipt selected yet.
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-3 mb-20">
                   <div>
                     <div className={label}>Trip / Project</div>
-                    <select className={input} defaultValue="USGS Site Visit – Denver">
+                    <select className={input} value={form.trip} onChange={(e) => handleInputChange("trip", e.target.value)}>
                       <option>USGS Site Visit – Denver</option>
                       <option>Client Meeting – Tampa</option>
                       <option>MAPPS Montana</option>
@@ -120,7 +205,7 @@ export default function TravelExpenseMVPScreens() {
                   </div>
                   <div>
                     <div className={label}>Payment Method</div>
-                    <select className={input} defaultValue="Personal Card">
+                    <select className={input} value={form.paymentMethod} onChange={(e) => handleInputChange("paymentMethod", e.target.value)}>
                       <option>Company Card</option>
                       <option>Personal Card</option>
                       <option>Cash</option>
@@ -128,7 +213,7 @@ export default function TravelExpenseMVPScreens() {
                   </div>
                   <div>
                     <div className={label}>Expense Type</div>
-                    <select className={input} defaultValue="Hotel">
+                    <select className={input} value={form.expenseType} onChange={(e) => handleInputChange("expenseType", e.target.value)}>
                       <option>Airfare</option>
                       <option>Hotel</option>
                       <option>Rental Car</option>
@@ -136,22 +221,23 @@ export default function TravelExpenseMVPScreens() {
                       <option>Meals</option>
                       <option>Parking / Tolls</option>
                       <option>Mileage</option>
+                      <option>Ground Transport</option>
                     </select>
                   </div>
                   <div>
                     <div className={label}>Amount</div>
-                    <input className={input} defaultValue="$318.42" />
+                    <input className={input} value={form.amount} onChange={(e) => handleInputChange("amount", e.target.value)} />
                   </div>
                   <details className="rounded-2xl border border-slate-200 bg-white p-3">
                     <summary className="cursor-pointer text-sm font-medium">More details</summary>
                     <div className="grid gap-3 mt-3">
                       <div>
                         <div className={label}>Business Purpose</div>
-                        <textarea className={`${input} min-h-20`} defaultValue="Lodging for USGS coordination meetings and site visit." />
+                        <textarea className={`${input} min-h-20`} value={form.businessPurpose} onChange={(e) => handleInputChange("businessPurpose", e.target.value)} />
                       </div>
                       <div>
                         <div className={label}>Billable to Client?</div>
-                        <select className={input} defaultValue="Yes">
+                        <select className={input} value={form.billable} onChange={(e) => handleInputChange("billable", e.target.value)}>
                           <option>Yes</option>
                           <option>No</option>
                         </select>
@@ -162,50 +248,52 @@ export default function TravelExpenseMVPScreens() {
 
                 <div className="sticky bottom-0 left-0 right-0 -mx-4 px-4 pb-4 pt-3 bg-gradient-to-t from-slate-50 to-transparent">
                   <div className="grid grid-cols-2 gap-3">
-                    <button className={buttonSecondary}>Save Draft</button>
-                    <button className={buttonPrimary}>Submit in 10 sec</button>
+                    <button className={buttonSecondary} onClick={handleSaveDraft}>Save Draft</button>
+                    <button className={buttonPrimary} onClick={handleSubmit}>Submit in 10 sec</button>
                   </div>
+                  {submitState === "draft" && <div className="mt-3 text-xs text-slate-600">Draft saved locally in this demo view.</div>}
+                  {submitState === "submitted" && <div className="mt-3 text-xs text-emerald-700">Expense submitted in demo mode. Next step: save to database + workflow queue.</div>}
                 </div>
               </div>
             </div>
 
             <div className="grid gap-4">
               <div className={`${card} p-6`}>
-                <h3 className="text-xl font-semibold mb-3">Why this mobile flow is better</h3>
+                <h3 className="text-xl font-semibold mb-3">What now works in the prototype</h3>
                 <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-700">
                   <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <div className="font-semibold mb-1">Receipt first</div>
-                    <div>Travelers snap the receipt immediately instead of waiting to fill out a long form later.</div>
+                    <div className="font-semibold mb-1">Receipt upload</div>
+                    <div>The mobile buttons now open a real file picker for image or PDF receipts.</div>
                   </div>
                   <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <div className="font-semibold mb-1">Minimal required fields</div>
-                    <div>Only project, payment method, type, and amount need confirmation on the go.</div>
+                    <div className="font-semibold mb-1">Preview behavior</div>
+                    <div>Image receipts show a preview; PDFs show the selected file name in a clean status card.</div>
                   </div>
                   <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <div className="font-semibold mb-1">Status visibility</div>
-                    <div>Employees can instantly see what is pending, returned, or already approved.</div>
+                    <div className="font-semibold mb-1">Auto-suggested fields</div>
+                    <div>The form now updates vendor and expense type based on the uploaded filename as a demo OCR stand-in.</div>
                   </div>
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className={`${card} p-5`}>
-                  <h3 className="text-lg font-semibold mb-3">Recommended mobile defaults</h3>
+                  <h3 className="text-lg font-semibold mb-3">Next production features</h3>
                   <ul className="text-sm text-slate-700 space-y-2 list-disc pl-5">
-                    <li>Default to the most recent trip or project.</li>
-                    <li>Remember last-used payment method.</li>
-                    <li>Auto-suggest category from receipt OCR.</li>
-                    <li>Hide nonessential accounting fields under “More details.”</li>
+                    <li>Store uploaded receipt files in cloud storage.</li>
+                    <li>Save draft and submitted expense records in a database.</li>
+                    <li>Add real OCR extraction for vendor, date, and amount.</li>
+                    <li>Send submitted items into approval workflow.</li>
                   </ul>
                 </div>
                 <div className={`${card} p-5`}>
-                  <h3 className="text-lg font-semibold mb-3">Best next real features</h3>
-                  <ul className="text-sm text-slate-700 space-y-2 list-disc pl-5">
-                    <li>Camera upload with receipt preview.</li>
-                    <li>Database save for drafts and submitted items.</li>
-                    <li>Employee inbox for pending / returned items.</li>
-                    <li>QuickBooks project and class sync.</li>
-                  </ul>
+                  <h3 className="text-lg font-semibold mb-3">Best build sequence from here</h3>
+                  <ol className="text-sm text-slate-700 space-y-2 list-decimal pl-5">
+                    <li>Supabase project for database + file storage.</li>
+                    <li>Save Draft and Submit API actions.</li>
+                    <li>Employee inbox backed by real records.</li>
+                    <li>QuickBooks sync after approval.</li>
+                  </ol>
                 </div>
               </div>
             </div>
@@ -221,11 +309,11 @@ export default function TravelExpenseMVPScreens() {
             <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
               <div>
                 <div className={label}>Traveler</div>
-                <input className={input} defaultValue="Ross Woodley" />
+                <input className={input} value={form.traveler} onChange={(e) => handleInputChange("traveler", e.target.value)} />
               </div>
               <div>
                 <div className={label}>Trip / Project</div>
-                <select className={input} defaultValue="USGS Site Visit – Denver">
+                <select className={input} value={form.trip} onChange={(e) => handleInputChange("trip", e.target.value)}>
                   <option>USGS Site Visit – Denver</option>
                   <option>Client Meeting – Tampa</option>
                   <option>MAPPS Montana</option>
@@ -233,7 +321,7 @@ export default function TravelExpenseMVPScreens() {
               </div>
               <div>
                 <div className={label}>Expense Type</div>
-                <select className={input} defaultValue="Hotel">
+                <select className={input} value={form.expenseType} onChange={(e) => handleInputChange("expenseType", e.target.value)}>
                   <option>Airfare</option>
                   <option>Hotel</option>
                   <option>Rental Car</option>
@@ -241,11 +329,12 @@ export default function TravelExpenseMVPScreens() {
                   <option>Meals</option>
                   <option>Parking / Tolls</option>
                   <option>Mileage</option>
+                  <option>Ground Transport</option>
                 </select>
               </div>
               <div>
                 <div className={label}>Payment Method</div>
-                <select className={input} defaultValue="Personal Card">
+                <select className={input} value={form.paymentMethod} onChange={(e) => handleInputChange("paymentMethod", e.target.value)}>
                   <option>Company Card</option>
                   <option>Personal Card</option>
                   <option>Cash</option>
@@ -253,34 +342,34 @@ export default function TravelExpenseMVPScreens() {
               </div>
               <div>
                 <div className={label}>Vendor</div>
-                <input className={input} defaultValue="Hilton Denver City Center" />
+                <input className={input} value={form.vendor} onChange={(e) => handleInputChange("vendor", e.target.value)} />
               </div>
               <div>
                 <div className={label}>Date</div>
-                <input className={input} defaultValue="2026-03-11" />
+                <input className={input} value={form.date} onChange={(e) => handleInputChange("date", e.target.value)} />
               </div>
               <div>
                 <div className={label}>Amount</div>
-                <input className={input} defaultValue="$318.42" />
+                <input className={input} value={form.amount} onChange={(e) => handleInputChange("amount", e.target.value)} />
               </div>
               <div>
                 <div className={label}>Billable to Client?</div>
-                <select className={input} defaultValue="Yes">
+                <select className={input} value={form.billable} onChange={(e) => handleInputChange("billable", e.target.value)}>
                   <option>Yes</option>
                   <option>No</option>
                 </select>
               </div>
               <div className="sm:col-span-2">
                 <div className={label}>Business Purpose</div>
-                <textarea className={`${input} min-h-24`} defaultValue="Lodging for USGS coordination meetings and site visit." />
+                <textarea className={`${input} min-h-24`} value={form.businessPurpose} onChange={(e) => handleInputChange("businessPurpose", e.target.value)} />
               </div>
               <div>
                 <div className={label}>QuickBooks Class</div>
-                <input className={input} defaultValue="Travel" />
+                <input className={input} value={form.qbClass} onChange={(e) => handleInputChange("qbClass", e.target.value)} />
               </div>
               <div>
                 <div className={label}>Customer / Project Code</div>
-                <input className={input} defaultValue="GPSCv5-241" />
+                <input className={input} value={form.projectCode} onChange={(e) => handleInputChange("projectCode", e.target.value)} />
               </div>
             </div>
 
@@ -288,20 +377,20 @@ export default function TravelExpenseMVPScreens() {
               <div className="rounded-2xl border-2 border-dashed border-slate-300 p-6 bg-slate-50">
                 <div className="text-sm font-medium">Upload Receipt</div>
                 <p className="text-sm text-slate-500 mt-2">Drag receipt image or PDF here</p>
-                <button className={`${buttonSecondary} mt-4 w-full`}>Choose File</button>
+                <button className={`${buttonSecondary} mt-4 w-full`} onClick={() => fileRef.current?.click()}>Choose File</button>
               </div>
               <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4">
                 <div className="text-sm font-semibold text-emerald-800">OCR Suggestion</div>
                 <div className="text-sm text-emerald-900 mt-2 space-y-1">
-                  <div>Vendor: Hilton Denver City Center</div>
-                  <div>Amount: $318.42</div>
-                  <div>Date: Mar 11, 2026</div>
-                  <div>Suggested category: Hotel</div>
+                  <div>Vendor: {form.vendor}</div>
+                  <div>Amount: {form.amount}</div>
+                  <div>Date: {form.date}</div>
+                  <div>Suggested category: {form.expenseType}</div>
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className={`${buttonSecondary} flex-1`}>Save Draft</button>
-                <button className={`${buttonPrimary} flex-1`}>Submit</button>
+                <button className={`${buttonSecondary} flex-1`} onClick={handleSaveDraft}>Save Draft</button>
+                <button className={`${buttonPrimary} flex-1`} onClick={handleSubmit}>Submit</button>
               </div>
             </div>
           </div>
