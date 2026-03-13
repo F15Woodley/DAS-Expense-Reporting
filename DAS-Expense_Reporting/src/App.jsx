@@ -197,11 +197,6 @@ const persistExpense = async (status) => {
 };
 
 const handleSubmit = async () => {
-    persistExpense("Submitted");
-    setSubmitState("submitted");
-  };
-
-const handleSubmit = async () => {
   await persistExpense("Submitted")
   setSubmitState("submitted")
 }
@@ -210,7 +205,10 @@ const handleSaveDraft = async () => {
   await persistExpense("Draft")
   setSubmitState("draft")
 }
-
+const handleClearSaved = () => {
+  setSavedExpenses([])
+  setSubmitState('idle')
+}
   return (
     <div className={shell}>
       <div className="max-w-7xl mx-auto">
