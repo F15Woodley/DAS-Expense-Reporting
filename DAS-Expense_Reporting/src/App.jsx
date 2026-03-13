@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function TravelExpenseMVPScreens() {
   const shell = "min-h-screen bg-slate-50 text-slate-900 p-4 md:p-6";
@@ -29,7 +29,7 @@ export default function TravelExpenseMVPScreens() {
     { employee: "Michael Wasielewski", trip: "Aircraft Ferry – PR", total: "$1,442.07", items: 5, issue: "All receipts attached", status: "Approved" },
   ];
 
-  const mobileInbox = [
+  const defaultMobileInbox = [
     { title: "To submit", count: 3, note: "Receipts waiting for details" },
     { title: "Pending approval", count: 2, note: "Sent to PM or finance" },
     { title: "Returned", count: 1, note: "Needs receipt or coding fix" },
@@ -39,6 +39,7 @@ export default function TravelExpenseMVPScreens() {
   const fileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [submitState, setSubmitState] = useState("idle");
+  const [savedExpenses, setSavedExpenses] = useState([]);
   const [form, setForm] = useState({
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
@@ -52,6 +53,33 @@ export default function TravelExpenseMVPScreens() {
     qbClass: "Travel",
     projectCode: "GPSCv5-241",
   });
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("das-expenses-demo");
+    if (stored) {
+      try {
+        setSavedExpenses(JSON.parse(stored));
+      } catch {
+        setSavedExpenses([]);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("das-expenses-demo", JSON.stringify(savedExpenses));
+  }, [savedExpenses]);
+
+  const mobileInbox = useMemo(() => {
+    const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
+    const pending = savedExpenses.filter((item) => item.status === "Submitted").length;
+    const approved = savedExpenses.filter((item) => item.status === "Approved").length;
+    return [
+      { title: "To submit", count: drafts || defaultMobileInbox[0].count, note: "Receipts waiting for details" },
+      { title: "Pending approval", count: pending || defaultMobileInbox[1].count, note: "Sent to PM or finance" },
+      { title: "Returned", count: defaultMobileInbox[2].count, note: "Needs receipt or coding fix" },
+      { title: "Approved", count: approved || defaultMobileInbox[3].count, note: "Ready or exported" },
+    ];
+  }, [savedExpenses]);
 
   const previewUrl = useMemo(() => {
     if (!selectedFile) return null;
@@ -92,12 +120,36 @@ export default function TravelExpenseMVPScreens() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const persistExpense = (status) => {
+    const record = {
+      id: Date.now(),
+      vendor: form.vendor,
+      trip: form.trip,
+      amount: form.amount,
+      paymentMethod: form.paymentMethod,
+      expenseType: form.expenseType,
+      date: form.date,
+      status,
+      fileName: selectedFile?.name || "No receipt attached",
+    };
+
+    setSavedExpenses((prev) => [record, ...prev].slice(0, 8));
+  };
+
   const handleSubmit = () => {
+    persistExpense("Submitted");
     setSubmitState("submitted");
   };
 
   const handleSaveDraft = () => {
+    persistExpense("Draft");
     setSubmitState("draft");
+  };
+
+  const handleClearSaved = () => {
+    setSavedExpenses([]);
+    window.localStorage.removeItem("das-expenses-demo");
+    setSubmitState("idle");
   };
 
   return (
@@ -274,6 +326,39 @@ export default function TravelExpenseMVPScreens() {
                     <div>The form now updates vendor and expense type based on the uploaded filename as a demo OCR stand-in.</div>
                   </div>
                 </div>
+              </div>
+
+              <div className={`${card} p-5`}>
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h3 className="text-lg font-semibold">Recent saved items</h3>
+                  <button className={buttonSecondary} onClick={handleClearSaved}>Clear Demo Data</button>
+                </div>
+                {savedExpenses.length === 0 ? (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+                    No demo records yet. Save a draft or submit an expense to populate this panel.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {savedExpenses.map((item) => (
+                      <div key={item.id} className="rounded-2xl border border-slate-200 p-4 bg-white">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <div className="font-semibold text-sm">{item.vendor}</div>
+                            <div className="text-xs text-slate-500 mt-1">{item.trip}</div>
+                          </div>
+                          <span className={badge}>{item.status}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
+                          <div>Amount: {item.amount}</div>
+                          <div>Date: {item.date}</div>
+                          <div>Type: {item.expenseType}</div>
+                          <div>Payment: {item.paymentMethod}</div>
+                        </div>
+                        <div className="text-xs text-slate-500 mt-2">Receipt: {item.fileName}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
