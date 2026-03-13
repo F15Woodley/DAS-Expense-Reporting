@@ -147,31 +147,48 @@ export default function TravelExpenseBackendReadyApp() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const persistExpense = (status) => {
+const persistExpense = async (status) => {
+  try {
+    const numericAmount =
+      Number(String(form.amount).replace(/[^\d.]/g, "")) || 0;
+
+    const receiptPath = selectedFile
+      ? await expenseService.uploadReceipt(selectedFile)
+      : null;
+
     const record = {
-      id: Date.now(),
-      vendor: form.vendor,
+      traveler: form.traveler,
       trip: form.trip,
-      amount: form.amount,
-      paymentMethod: form.paymentMethod,
-      expenseType: form.expenseType,
-      date: form.date,
+      expense_type: form.expenseType,
+      payment_method: form.paymentMethod,
+      vendor: form.vendor,
+      expense_date: form.date || null,
+      amount: numericAmount,
+      billable: form.billable === "Yes",
+      business_purpose: form.businessPurpose,
+      qb_class: form.qbClass,
+      project_code: form.projectCode,
       status,
-      fileName: selectedFile?.name || "No receipt attached",
-      approvalRoute: getApprovalRoute(form.expenseType, form.paymentMethod),
-      receiptRequired: isReceiptRequired(form.amount),
-      storageMode: expenseService.mode(),
+      file_name: selectedFile?.name || null,
+      receipt_path: receiptPath,
     };
 
-    setSavedExpenses((prev) => [record, ...prev].slice(0, 8));
-  };
+    const saved = await expenseService.saveExpense(record);
 
-  const handleSubmit = () => {
+    setSavedExpenses((prev) => [saved, ...prev].slice(0, 8));
+
+  } catch (error) {
+    console.error("Failed to save expense:", error);
+    alert("Could not save expense.");
+  }
+};
+
+const handleSubmit = async () => {
     persistExpense("Submitted");
     setSubmitState("submitted");
   };
 
-  const handleSaveDraft = () => {
+const handleSaveDraft = async () => {
     persistExpense("Draft");
     setSubmitState("draft");
   };
