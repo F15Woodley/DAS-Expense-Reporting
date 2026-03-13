@@ -278,7 +278,7 @@ export default function TravelExpenseApp() {
       setSavedExpenses((prev) => [saved, ...prev].slice(0, 8));
     } catch (error) {
       console.error("Failed to save expense:", error);
-      alert(`Could not save expense: ${error.message}`);
+      alert(`Could not save expense. See browser console for details. ${error?.message || ''}`)
     }
   };
 
