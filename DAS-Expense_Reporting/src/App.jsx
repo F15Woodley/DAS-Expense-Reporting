@@ -149,12 +149,16 @@ export default function TravelExpenseBackendReadyApp() {
 
 const persistExpense = async (status) => {
   try {
+    console.log("persistExpense started", { status, form, selectedFile })
+
     const numericAmount =
-      Number(String(form.amount).replace(/[^\d.]/g, "")) || 0;
+      Number(String(form.amount).replace(/[^\d.]/g, "")) || 0
 
     const receiptPath = selectedFile
       ? await expenseService.uploadReceipt(selectedFile)
-      : null;
+      : null
+
+    console.log("receipt uploaded", { receiptPath })
 
     const record = {
       traveler: form.traveler,
@@ -171,11 +175,20 @@ const persistExpense = async (status) => {
       status,
       file_name: selectedFile?.name || null,
       receipt_path: receiptPath,
-    };
+    }
 
-    const saved = await expenseService.saveExpense(record);
+    console.log("saving record to supabase", record)
 
-    setSavedExpenses((prev) => [saved, ...prev].slice(0, 8));
+    const saved = await expenseService.saveExpense(record)
+
+    console.log("saved to supabase OK", saved)
+
+    setSavedExpenses((prev) => [saved, ...prev].slice(0, 8))
+  } catch (error) {
+    console.error("Failed to save expense:", error)
+    alert(`Could not save expense: ${error.message}`)
+  }
+}
 
   } catch (error) {
     console.error("Failed to save expense:", error);
@@ -188,16 +201,15 @@ const handleSubmit = async () => {
     setSubmitState("submitted");
   };
 
-const handleSaveDraft = async () => {
-    persistExpense("Draft");
-    setSubmitState("draft");
-  };
+const handleSubmit = async () => {
+  await persistExpense("Submitted")
+  setSubmitState("submitted")
+}
 
-  const handleClearSaved = () => {
-    setSavedExpenses([]);
-    expenseService.clear();
-    setSubmitState("idle");
-  };
+const handleSaveDraft = async () => {
+  await persistExpense("Draft")
+  setSubmitState("draft")
+}
 
   return (
     <div className={shell}>
