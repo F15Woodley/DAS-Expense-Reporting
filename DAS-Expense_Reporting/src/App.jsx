@@ -1,12 +1,13 @@
 export default function TravelExpenseMVPScreens() {
-  const shell = "min-h-screen bg-slate-50 text-slate-900 p-6";
+  const shell = "min-h-screen bg-slate-50 text-slate-900 p-4 md:p-6";
   const card = "bg-white rounded-2xl shadow-sm border border-slate-200";
   const section = "grid gap-6 mb-8";
   const label = "text-xs font-semibold uppercase tracking-wide text-slate-500";
-  const input = "w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white";
-  const buttonPrimary = "rounded-xl px-4 py-2 text-sm font-medium bg-slate-900 text-white";
-  const buttonSecondary = "rounded-xl px-4 py-2 text-sm font-medium border border-slate-300 bg-white";
+  const input = "w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm bg-white";
+  const buttonPrimary = "rounded-xl px-4 py-2.5 text-sm font-medium bg-slate-900 text-white";
+  const buttonSecondary = "rounded-xl px-4 py-2.5 text-sm font-medium border border-slate-300 bg-white";
   const badge = "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700";
+  const iconBtn = "rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm";
 
   const trips = [
     { name: "USGS Site Visit – Denver", code: "GPSCv5-241", status: "Active", traveler: "Ross Woodley" },
@@ -25,6 +26,13 @@ export default function TravelExpenseMVPScreens() {
     { employee: "Ross Woodley", trip: "USGS Site Visit – Denver", total: "$854.58", items: 3, issue: "1 personal-card reimbursement", status: "Awaiting PM" },
     { employee: "Danielle Molisee", trip: "Client Meeting – Tampa", total: "$218.11", items: 2, issue: "Meal over policy limit", status: "Needs Review" },
     { employee: "Michael Wasielewski", trip: "Aircraft Ferry – PR", total: "$1,442.07", items: 5, issue: "All receipts attached", status: "Approved" },
+  ];
+
+  const mobileInbox = [
+    { title: "To submit", count: 3, note: "Receipts waiting for details" },
+    { title: "Pending approval", count: 2, note: "Sent to PM or finance" },
+    { title: "Returned", count: 1, note: "Needs receipt or coding fix" },
+    { title: "Approved", count: 12, note: "Ready or exported" },
   ];
 
   return (
@@ -56,6 +64,152 @@ export default function TravelExpenseMVPScreens() {
               <div className="text-3xl font-bold mt-2">{value}</div>
             </div>
           ))}
+        </div>
+
+        <div className={section}>
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">0. Mobile Quick Submit</h2>
+            <span className={badge}>Phone-First Employee View</span>
+          </div>
+
+          <div className="grid lg:grid-cols-[420px,1fr] gap-6 items-start">
+            <div className={`${card} p-4 md:p-5 max-w-md w-full mx-auto lg:mx-0`}>
+              <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-4 min-h-[760px]">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <div className="text-sm font-semibold">Quick Submit</div>
+                    <div className="text-xs text-slate-500">Designed for travel days</div>
+                  </div>
+                  <span className={badge}>Ross</span>
+                </div>
+
+                <div className="grid gap-3 mb-4">
+                  <button className={`${buttonPrimary} h-14 text-base`}>📸 Snap Receipt</button>
+                  <button className={`${buttonSecondary} h-14 text-base`}>📄 Upload Receipt / PDF</button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {mobileInbox.map((item) => (
+                    <div key={item.title} className="rounded-2xl border border-slate-200 bg-white p-3">
+                      <div className="text-xs uppercase tracking-wide text-slate-500">{item.title}</div>
+                      <div className="text-2xl font-bold mt-1">{item.count}</div>
+                      <div className="text-xs text-slate-500 mt-1">{item.note}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 mb-4">
+                  <div className="text-sm font-semibold">Receipt captured</div>
+                  <div className="text-xs text-slate-500 mt-1">Preview + OCR happens first, typing second.</div>
+                  <div className="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
+                    <div><span className="font-medium">Vendor:</span> Hilton Denver City Center</div>
+                    <div><span className="font-medium">Amount:</span> $318.42</div>
+                    <div><span className="font-medium">Date:</span> Mar 11, 2026</div>
+                    <div><span className="font-medium">Suggested type:</span> Hotel</div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-20">
+                  <div>
+                    <div className={label}>Trip / Project</div>
+                    <select className={input} defaultValue="USGS Site Visit – Denver">
+                      <option>USGS Site Visit – Denver</option>
+                      <option>Client Meeting – Tampa</option>
+                      <option>MAPPS Montana</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div className={label}>Payment Method</div>
+                    <select className={input} defaultValue="Personal Card">
+                      <option>Company Card</option>
+                      <option>Personal Card</option>
+                      <option>Cash</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div className={label}>Expense Type</div>
+                    <select className={input} defaultValue="Hotel">
+                      <option>Airfare</option>
+                      <option>Hotel</option>
+                      <option>Rental Car</option>
+                      <option>Fuel</option>
+                      <option>Meals</option>
+                      <option>Parking / Tolls</option>
+                      <option>Mileage</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div className={label}>Amount</div>
+                    <input className={input} defaultValue="$318.42" />
+                  </div>
+                  <details className="rounded-2xl border border-slate-200 bg-white p-3">
+                    <summary className="cursor-pointer text-sm font-medium">More details</summary>
+                    <div className="grid gap-3 mt-3">
+                      <div>
+                        <div className={label}>Business Purpose</div>
+                        <textarea className={`${input} min-h-20`} defaultValue="Lodging for USGS coordination meetings and site visit." />
+                      </div>
+                      <div>
+                        <div className={label}>Billable to Client?</div>
+                        <select className={input} defaultValue="Yes">
+                          <option>Yes</option>
+                          <option>No</option>
+                        </select>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+
+                <div className="sticky bottom-0 left-0 right-0 -mx-4 px-4 pb-4 pt-3 bg-gradient-to-t from-slate-50 to-transparent">
+                  <div className="grid grid-cols-2 gap-3">
+                    <button className={buttonSecondary}>Save Draft</button>
+                    <button className={buttonPrimary}>Submit in 10 sec</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className={`${card} p-6`}>
+                <h3 className="text-xl font-semibold mb-3">Why this mobile flow is better</h3>
+                <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-700">
+                  <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200">
+                    <div className="font-semibold mb-1">Receipt first</div>
+                    <div>Travelers snap the receipt immediately instead of waiting to fill out a long form later.</div>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200">
+                    <div className="font-semibold mb-1">Minimal required fields</div>
+                    <div>Only project, payment method, type, and amount need confirmation on the go.</div>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200">
+                    <div className="font-semibold mb-1">Status visibility</div>
+                    <div>Employees can instantly see what is pending, returned, or already approved.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className={`${card} p-5`}>
+                  <h3 className="text-lg font-semibold mb-3">Recommended mobile defaults</h3>
+                  <ul className="text-sm text-slate-700 space-y-2 list-disc pl-5">
+                    <li>Default to the most recent trip or project.</li>
+                    <li>Remember last-used payment method.</li>
+                    <li>Auto-suggest category from receipt OCR.</li>
+                    <li>Hide nonessential accounting fields under “More details.”</li>
+                  </ul>
+                </div>
+                <div className={`${card} p-5`}>
+                  <h3 className="text-lg font-semibold mb-3">Best next real features</h3>
+                  <ul className="text-sm text-slate-700 space-y-2 list-disc pl-5">
+                    <li>Camera upload with receipt preview.</li>
+                    <li>Database save for drafts and submitted items.</li>
+                    <li>Employee inbox for pending / returned items.</li>
+                    <li>QuickBooks project and class sync.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className={section}>
