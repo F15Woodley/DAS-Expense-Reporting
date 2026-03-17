@@ -489,10 +489,8 @@ const extractReceiptData = async (file) => {
                             className="w-full h-40 object-cover rounded-xl border border-slate-200"
                           />
                         ) : (
-                          <div className="rounded-xl border border-slate-200 p-3 text-sm bg-slate-50">
-                            File selected: {selectedFile?.name}
-                          </div>
-                        )}
+                       <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
+                        <div>
                           <span className="font-medium">Vendor:</span> {form.vendor}
                         </div>
                         <div>
@@ -502,11 +500,9 @@ const extractReceiptData = async (file) => {
                           <span className="font-medium">Date:</span> {form.date}
                         </div>
                         <div>
-                          <span className="font-medium">Suggested type:</span>{" "}
-                          {form.expenseType}
+                          <span className="font-medium">Suggested type:</span> {form.expenseType}
                         </div>
                       </div>
-                    </div>
                   ) : (
                     <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-500">
                       No receipt selected yet.
