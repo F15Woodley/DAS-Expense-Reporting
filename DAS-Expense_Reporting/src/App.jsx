@@ -468,7 +468,19 @@ const extractReceiptData = async (file) => {
                   <div className="text-xs text-slate-500 mt-1">
                     Preview + OCR happens first, typing second.
                   </div>
-                  {selectedFile ? (
+                 {isExtracting && (
+  <div className="mt-4 rounded-xl bg-blue-50 border border-blue-200 p-3 text-sm text-blue-700">
+    Extracting receipt details with AI...
+  </div>
+)}
+
+{extractionError && (
+  <div className="mt-4 rounded-xl bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
+    {extractionError}
+  </div>
+)}
+
+{selectedFile ? (
   <div className="mt-4 space-y-3">
     {selectedFile?.type === "application/pdf" && previewUrl ? (
       <div className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
@@ -514,8 +526,6 @@ const extractReceiptData = async (file) => {
     No receipt selected yet.
   </div>
 )}
-             
-                  {isExtracting && (
                     <div style={{ marginTop: 8, color: "blue", fontSize: 12 }}>
                       Extracting receipt details with AI...
                     </div>
