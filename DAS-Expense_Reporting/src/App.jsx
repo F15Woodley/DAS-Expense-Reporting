@@ -510,71 +510,80 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
                   ))}
                 </div>
 
-               <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 mb-4">
-  <div className="text-sm font-semibold">Receipt captured</div>
-  <div className="text-xs text-slate-500 mt-1">
-    Preview + OCR happens first, typing second.
+                <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 mb-4">
+                  <div className="text-sm font-semibold">Receipt captured</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    Preview + OCR happens first, typing second.
+                  </div>
+                 {isExtracting && (
+  <div className="mt-4 rounded-xl bg-blue-50 border border-blue-200 p-3 text-sm text-blue-700">
+    Extracting receipt details with AI...
   </div>
 
-  {isExtracting && (
-    <div className="mt-4 rounded-xl bg-blue-50 border border-blue-200 p-3 text-sm text-blue-700">
-      Extracting receipt details with AI...
-    </div>
-  )}
+{extractionError && (
+  <div className="mt-4 rounded-xl bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
+    {extractionError}
+  </div>
+)}
 
-  {extractionError && (
-    <div className="mt-4 rounded-xl bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
-      {extractionError}
-    </div>
-  )}
+{selectedFile ? (
+  <div className="mt-4 space-y-3">
+    {selectedFile?.type === "application/pdf" && previewUrl ? (
+      <div className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+        <object
+          data={previewUrl}
+          type="application/pdf"
+          className="w-full h-64"
+        >
+          <div className="p-3 text-sm text-slate-600">
+            PDF preview not available in this browser.
+          </div>
+        </object>
+      </div>
+    ) : previewUrl ? (
+      <img
+        src={previewUrl}
+        alt="Receipt preview"
+        className="w-full h-40 object-cover rounded-xl border border-slate-200"
+      />
+    ) : (
+      <div className="rounded-xl border border-slate-200 p-3 text-sm bg-slate-50">
+        File selected: {selectedFile?.name}
+      </div>
+    )}
 
-  {selectedFile ? (
-    <div className="mt-4 space-y-3">
-      {selectedFile?.type === "application/pdf" && previewUrl ? (
-        <div className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
-          <object
-            data={previewUrl}
-            type="application/pdf"
-            className="w-full h-64"
-          >
-            <div className="p-3 text-sm text-slate-600">
-              PDF preview not available in this browser.
-            </div>
-          </object>
-        </div>
-      ) : previewUrl ? (
-        <img
-          src={previewUrl}
-          alt="Receipt preview"
-          className="w-full h-40 object-cover rounded-xl border border-slate-200"
-        />
-      ) : (
-        <div className="rounded-xl border border-slate-200 p-3 text-sm bg-slate-50">
-          File selected: {selectedFile?.name}
-        </div>
-      )}
-
-      <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
-        <div>
-          <span className="font-medium">Vendor:</span> {form.vendor}
-        </div>
-        <div>
-          <span className="font-medium">Amount:</span> {form.amount}
-        </div>
-        <div>
-          <span className="font-medium">Date:</span> {form.date}
-        </div>
-        <div>
-          <span className="font-medium">Suggested type:</span> {form.expenseType}
-        </div>
+    <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
+      <div>
+        <span className="font-medium">Vendor:</span> {form.vendor}
+      </div>
+      <div>
+        <span className="font-medium">Amount:</span> {form.amount}
+      </div>
+      <div>
+        <span className="font-medium">Date:</span> {form.date}
+      </div>
+      <div>
+        <span className="font-medium">Suggested type:</span> {form.expenseType}
       </div>
     </div>
-  ) : (
-    <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-500">
-      No receipt selected yet.
-    </div>
-  )}
-                             
+  </div>
+) : (
+  <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-500">
+    No receipt selected yet.
+  </div>
+)}
+                  </div>
+                    <div style={{ marginTop: 8, color: "blue", fontSize: 12 }}>
+                      Extracting receipt details with AI...
+                    </div>
+                  )}
+                  
+                  {extractionError && (
+                    <div style={{ marginTop: 8, color: "red", fontSize: 12 }}>
+                      {extractionError}
+                    </div>
+                  )}
+                
                 <div className="space-y-3 mb-20">
                   <div>
                     <div className={label}>Trip / Project</div>
