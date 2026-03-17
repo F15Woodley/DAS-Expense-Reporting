@@ -369,6 +369,53 @@ const extractReceiptData = async (file) => {
     setSubmitState("idle");
   };
 
+ const getFieldConfidence = () => {
+  const amountNum = Number(String(form.amount).replace(/[^\d.]/g, ""));
+  const hasVendor = !!form.vendor?.trim();
+  const hasDate = !!form.date?.trim();
+  const hasType = !!form.expenseType?.trim();
+  const hasAmount = Number.isFinite(amountNum) && amountNum > 0;
+
+  const score =
+    (hasVendor ? 1 : 0) +
+    (hasDate ? 1 : 0) +
+    (hasType ? 1 : 0) +
+    (hasAmount ? 1 : 0);
+
+  if (score === 4) {
+    return {
+      label: "High confidence",
+      style: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    };
+  }
+
+  if (score >= 2) {
+    return {
+      label: "Review recommended",
+      style: "bg-amber-50 text-amber-700 border-amber-200",
+    };
+  }
+
+  return {
+    label: "Low confidence",
+    style: "bg-rose-50 text-rose-700 border-rose-200",
+  };
+}; 
+
+  const confidence = getFieldConfidence();
+
+  const validationWarnings = [];
+
+if (!form.vendor?.trim()) validationWarnings.push("Vendor is missing.");
+if (!form.date?.trim()) validationWarnings.push("Date is missing.");
+if (!form.amount?.trim()) validationWarnings.push("Amount is missing.");
+if (!form.projectCode?.trim()) validationWarnings.push("Project code is missing.");
+
+const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
+if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
+  validationWarnings.push("Receipt should be attached for expenses over $75.");
+}
+
   return (
     <div className={shell}>
       <div className="max-w-7xl mx-auto">
