@@ -519,7 +519,6 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
   <div className="mt-4 rounded-xl bg-blue-50 border border-blue-200 p-3 text-sm text-blue-700">
     Extracting receipt details with AI...
   </div>
-)}
 
 {extractionError && (
   <div className="mt-4 rounded-xl bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
