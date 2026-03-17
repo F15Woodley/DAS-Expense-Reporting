@@ -126,6 +126,8 @@ export default function TravelExpenseApp() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [submitState, setSubmitState] = useState("idle");
   const [savedExpenses, setSavedExpenses] = useState([]);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractionError, setExtractionError] = useState("");
   const [form, setForm] = useState({
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
@@ -139,7 +141,65 @@ export default function TravelExpenseApp() {
     qbClass: "Travel",
     projectCode: "GPSCv5-241",
   });
+ 
+  const fileToBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
+    reader.onload = () => {
+      const result = reader.result;
+      const base64 = String(result).split(",")[1];
+      resolve(base64);
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const extractReceiptData = async (file) => {
+  setIsExtracting(true);
+  setExtractionError("");
+
+  try {
+    console.log("extractReceiptData started");
+
+    const imageBase64 = await fileToBase64(file);
+
+    console.log("sending to API...");
+
+    const response = await fetch("/api/extract-receipt", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        imageBase64,
+        mimeType: file.type || "image/jpeg",
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log("API response:", data);
+
+    if (!response.ok) {
+      throw new Error(data.error || "Extraction failed");
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      vendor: data.vendor || prev.vendor,
+      date: data.date || prev.date,
+      amount: data.amount || prev.amount,
+      expenseType: data.expenseType || prev.expenseType,
+    }));
+  } catch (error) {
+    console.error("AI extraction failed:", error);
+    setExtractionError(error.message || "Could not extract receipt data");
+  } finally {
+    setIsExtracting(false);
+  }
+};
+  
   useEffect(() => {
     const loadExpenses = async () => {
       try {
@@ -445,6 +505,18 @@ const handleFile = async (file) => {
                   )}
                 </div>
 
+                  {isExtracting && (
+                    <div style={{ marginTop: 8, color: "blue", fontSize: 12 }}>
+                      Extracting receipt details with AI...
+                    </div>
+                  )}
+                  
+                  {extractionError && (
+                    <div style={{ marginTop: 8, color: "red", fontSize: 12 }}>
+                      {extractionError}
+                    </div>
+                  )}
+                
                 <div className="space-y-3 mb-20">
                   <div>
                     <div className={label}>Trip / Project</div>
