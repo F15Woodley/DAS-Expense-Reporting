@@ -469,26 +469,51 @@ const extractReceiptData = async (file) => {
                     Preview + OCR happens first, typing second.
                   </div>
                   {selectedFile ? (
-                    <div className="mt-4 space-y-3">
-                  {selectedFile?.type === "application/pdf" && previewUrl ? (
-                          <div className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
-                            <object
-                              data={previewUrl}
-                              type="application/pdf"
-                              className="w-full h-64"
-                            >
-                              <div className="p-3 text-sm text-slate-600">
-                                PDF preview not available in this browser.
-                              </div>
-                            </object>
-                          </div>
-                        ) : previewUrl ? (
-                          <img
-                            src={previewUrl}
-                            alt="Receipt preview"
-                            className="w-full h-40 object-cover rounded-xl border border-slate-200"
-                          />
-                        ) : (
+  <div className="mt-4 space-y-3">
+    {selectedFile?.type === "application/pdf" && previewUrl ? (
+      <div className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+        <object
+          data={previewUrl}
+          type="application/pdf"
+          className="w-full h-64"
+        >
+          <div className="p-3 text-sm text-slate-600">
+            PDF preview not available in this browser.
+          </div>
+        </object>
+      </div>
+    ) : previewUrl ? (
+      <img
+        src={previewUrl}
+        alt="Receipt preview"
+        className="w-full h-40 object-cover rounded-xl border border-slate-200"
+      />
+    ) : (
+      <div className="rounded-xl border border-slate-200 p-3 text-sm bg-slate-50">
+        File selected: {selectedFile?.name}
+      </div>
+    )}
+
+    <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
+      <div>
+        <span className="font-medium">Vendor:</span> {form.vendor}
+      </div>
+      <div>
+        <span className="font-medium">Amount:</span> {form.amount}
+      </div>
+      <div>
+        <span className="font-medium">Date:</span> {form.date}
+      </div>
+      <div>
+        <span className="font-medium">Suggested type:</span> {form.expenseType}
+      </div>
+    </div>
+  </div>
+) : (
+  <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-500">
+    No receipt selected yet.
+  </div>
+)}
                        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
                         <div>
                           <span className="font-medium">Vendor:</span> {form.vendor}
