@@ -221,19 +221,32 @@ export default function TravelExpenseApp() {
       .replace(/\b(receipt|img|scan|invoice)\b/gi, "")
       .trim() || "Receipt Upload";
 
-  const handleFile = (file) => {
-    if (!file) return;
-    const vendor = inferVendor(file.name);
-    const expenseType = inferExpenseType(file.name);
+const handleFile = async (file) => {
+  console.log("handleFile triggered", file);
 
-    setSelectedFile(file);
-    setSubmitState("receipt-loaded");
-    setForm((prev) => ({
-      ...prev,
-      vendor,
-      expenseType,
-    }));
-  };
+  if (!file) return;
+
+  const vendor = inferVendor(file.name);
+  const expenseType = inferExpenseType(file.name);
+
+  setSelectedFile(file);
+  setSubmitState("receipt-loaded");
+
+  setForm((prev) => ({
+    ...prev,
+    vendor,
+    expenseType,
+  }));
+
+  console.log("file type:", file.type);
+
+  if (file.type && file.type.startsWith("image/")) {
+    console.log("calling extractReceiptData...");
+    await extractReceiptData(file);
+  } else {
+    console.log("NOT calling extractReceiptData (not image)");
+  }
+};
 
   const handleInputChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
