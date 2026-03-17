@@ -574,20 +574,7 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
       No receipt selected yet.
     </div>
   )}
-</div>
-)}
-                  </div>
-                    <div style={{ marginTop: 8, color: "blue", fontSize: 12 }}>
-                      Extracting receipt details with AI...
-                    </div>
-                  )}
-                  
-                  {extractionError && (
-                    <div style={{ marginTop: 8, color: "red", fontSize: 12 }}>
-                      {extractionError}
-                    </div>
-                  )}
-                
+                             
                 <div className="space-y-3 mb-20">
                   <div>
                     <div className={label}>Trip / Project</div>
