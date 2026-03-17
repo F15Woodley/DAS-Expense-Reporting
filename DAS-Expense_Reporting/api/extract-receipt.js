@@ -15,38 +15,41 @@ export default async function handler(req, res) {
     }
 
     const prompt =
-      'Extract receipt data and return JSON only with these keys: vendor, date, amount, expenseType. ' +
-      'Rules: ' +
-      '1) vendor must be the merchant name only (no address, no extra text). ' +
-      '2) date must be the transaction date on the receipt in format YYYY-MM-DD. ' +
-      '3) amount must be the FINAL total paid (not subtotal, not tax line, not tip unless included in total). ' +
-      '4) expenseType must be one of: Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport. ' +
-      '5) If a value is missing or unclear, return an empty string. ' +
-      '6) Return ONLY valid JSON. No explanation, no extra words.';
+      "Extract receipt data and return JSON only with these keys: vendor, date, amount, expenseType. " +
+      "Rules: " +
+      "1) vendor must be the merchant name only (no address, no extra text). " +
+      "2) date must be the transaction date on the receipt in format YYYY-MM-DD. " +
+      "3) amount must be the FINAL total paid (not subtotal, not tax line, not tip unless included in total). " +
+      "4) expenseType must be one of: Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport. " +
+      "5) If a value is missing or unclear, return an empty string. " +
+      "6) Return ONLY valid JSON. No explanation, no extra words.";
 
-    const fileContent =
-      mimeType === "application/pdf"
-        ? [
-            {
-              type: "input_file",
-              filename: filename || "receipt.pdf",
-              file_data: `data:application/pdf;base64,${fileBase64}`,
-            },
-            {
-              type: "input_text",
-              text: prompt,
-            },
-          ]
-        : [
-            {
-              type: "input_text",
-              text: prompt,
-            },
-            {
-              type: "input_image",
-              image_url: `data:${mimeType};base64,${fileBase64}`,
-            },
-          ];
+    let content;
+
+    if (mimeType === "application/pdf") {
+      content = [
+        {
+          type: "input_file",
+          filename: filename || "receipt.pdf",
+          file_data: `data:application/pdf;base64,${fileBase64}`,
+        },
+        {
+          type: "input_text",
+          text: prompt,
+        },
+      ];
+    } else {
+      content = [
+        {
+          type: "input_text",
+          text: prompt,
+        },
+        {
+          type: "input_image",
+          image_url: `data:${mimeType};base64,${fileBase64}`,
+        },
+      ];
+    }
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -59,7 +62,7 @@ export default async function handler(req, res) {
         input: [
           {
             role: "user",
-            content: fileContent,
+            content,
           },
         ],
       }),
@@ -69,7 +72,9 @@ export default async function handler(req, res) {
 
     const text =
       data.output_text ||
-      data.output?.map((o) => o.content?.map((c) => c.text).join(" ")).join(" ") ||
+      data.output
+        ?.map((o) => o.content?.map((c) => c.text || "").join(" "))
+        .join(" ") ||
       "{}";
 
     let parsed;
