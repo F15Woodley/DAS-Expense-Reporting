@@ -24,9 +24,15 @@ export default async function handler(req, res) {
             content: [
               {
                 type: 'input_text',
-                text:
-                  'Extract receipt data and return JSON only with these keys: vendor, date, amount, expenseType. ' +
-                  'Use ISO date if possible. Expense type must be one of: Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport.',
+                  text:
+                      'Extract receipt data and return JSON only with these keys: vendor, date, amount, expenseType. ' +
+                      'Rules: ' +
+                      '1) vendor must be the merchant name only (no address, no extra text). ' +
+                      '2) date must be the transaction date on the receipt in format YYYY-MM-DD. ' +
+                      '3) amount must be the FINAL total paid (not subtotal, not tax line, not tip unless included in total). ' +
+                      '4) expenseType must be one of: Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport. ' +
+                      '5) If a value is missing or unclear, return an empty string. ' +
+                      '6) Return ONLY valid JSON. No explanation, no extra words.'
               },
               {
                 type: 'input_image',
