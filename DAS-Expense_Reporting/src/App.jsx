@@ -526,6 +526,7 @@ const extractReceiptData = async (file) => {
     No receipt selected yet.
   </div>
 )}
+                  </div>
                     <div style={{ marginTop: 8, color: "blue", fontSize: 12 }}>
                       Extracting receipt details with AI...
                     </div>
