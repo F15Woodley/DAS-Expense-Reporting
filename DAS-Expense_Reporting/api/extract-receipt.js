@@ -14,16 +14,32 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
     }
 
-    const prompt =
-      "Extract receipt data and return JSON only with these keys: vendor, date, amount, expenseType. " +
-      "Rules: " +
-      "1) vendor must be the merchant name only (no address, no extra text). " +
-      "2) date must be the transaction date on the receipt in format YYYY-MM-DD. " +
-      "3) amount must be the FINAL total paid (not subtotal, not tax line, not tip unless included in total). " +
-      "4) expenseType must be one of: Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport. " +
-      "5) If a value is missing or unclear, return an empty string. " +
-      "6) Return ONLY valid JSON. No explanation, no extra words.";
-
+    const prompt = `
+    You are an expert receipt parser.
+    
+    Extract structured data from this receipt and return ONLY valid JSON.
+    
+    Rules:
+    - vendor: business name only, no address, no phone number, no extra text
+    - date: transaction date in YYYY-MM-DD format
+    - amount: final total paid, number only, no dollar sign
+    - expenseType: must be exactly one of:
+      Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport
+    
+    Important:
+    - If multiple totals exist, use the final total actually paid
+    - Do not return subtotal unless it is the only total shown
+    - If a value is unclear, return an empty string
+    - Return no explanation, no commentary, no markdown
+    
+    Return exactly this JSON shape:
+    {
+      "vendor": "",
+      "date": "",
+      "amount": "",
+      "expenseType": ""
+    }
+    `;
     let content;
 
     if (mimeType === "application/pdf") {
