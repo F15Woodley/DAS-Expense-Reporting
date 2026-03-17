@@ -155,16 +155,13 @@ export default function TravelExpenseApp() {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
-  const extractReceiptData = async (file) => {
+  
+const extractReceiptData = async (file) => {
   setIsExtracting(true);
   setExtractionError("");
 
   try {
-    console.log("extractReceiptData started");
-
-    const imageBase64 = await fileToBase64(file);
-
-    console.log("sending to API...");
+    const fileBase64 = await fileToBase64(file);
 
     const response = await fetch("/api/extract-receipt", {
       method: "POST",
@@ -172,17 +169,16 @@ export default function TravelExpenseApp() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        imageBase64,
-        mimeType: file.type || "image/jpeg",
+        fileBase64,
+        mimeType: file.type || "application/octet-stream",
+        filename: file.name,
       }),
     });
 
     const data = await response.json();
 
-    console.log("API response:", data);
-
     if (!response.ok) {
-      throw new Error(data.error || "Extraction failed");
+      throw new Error(data.error || "Receipt extraction failed");
     }
 
     setForm((prev) => ({
@@ -193,7 +189,7 @@ export default function TravelExpenseApp() {
       expenseType: data.expenseType || prev.expenseType,
     }));
   } catch (error) {
-    console.error("AI extraction failed:", error);
+    console.error("extractReceiptData failed", error);
     setExtractionError(error.message || "Could not extract receipt data");
   } finally {
     setIsExtracting(false);
@@ -281,10 +277,8 @@ export default function TravelExpenseApp() {
       .replace(/\b(receipt|img|scan|invoice)\b/gi, "")
       .trim() || "Receipt Upload";
 
-const handleFile = async (file) => {
-  console.log("handleFile triggered", file);
-
-  if (!file) return;
+  const handleFile = async (file) => {
+    if (!file) return;
 
   const vendor = inferVendor(file.name);
   const expenseType = inferExpenseType(file.name);
@@ -297,6 +291,15 @@ const handleFile = async (file) => {
     vendor,
     expenseType,
   }));
+
+  const supportedTypes = ["application/pdf"];
+  const isImage = file.type && file.type.startsWith("image/");
+  const isPdf = supportedTypes.includes(file.type);
+
+  if (isImage || isPdf) {
+    await extractReceiptData(file);
+  }
+};
 
   console.log("file type:", file.type);
 
