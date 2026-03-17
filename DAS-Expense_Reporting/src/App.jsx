@@ -514,27 +514,7 @@ const extractReceiptData = async (file) => {
     No receipt selected yet.
   </div>
 )}
-                       <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm space-y-1">
-                        <div>
-                          <span className="font-medium">Vendor:</span> {form.vendor}
-                        </div>
-                        <div>
-                          <span className="font-medium">Amount:</span> {form.amount}
-                        </div>
-                        <div>
-                          <span className="font-medium">Date:</span> {form.date}
-                        </div>
-                        <div>
-                          <span className="font-medium">Suggested type:</span> {form.expenseType}
-                        </div>
-                      </div>
-                  ) : (
-                    <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-500">
-                      No receipt selected yet.
-                    </div>
-                  )}
-                </div>
-
+             
                   {isExtracting && (
                     <div style={{ marginTop: 8, color: "blue", fontSize: 12 }}>
                       Extracting receipt details with AI...
