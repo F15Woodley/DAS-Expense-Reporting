@@ -278,7 +278,9 @@ const extractReceiptData = async (file) => {
       .trim() || "Receipt Upload";
 
   const handleFile = async (file) => {
-    if (!file) return;
+  console.log("handleFile triggered", file);
+
+  if (!file) return;
 
   const vendor = inferVendor(file.name);
   const expenseType = inferExpenseType(file.name);
@@ -292,25 +294,19 @@ const extractReceiptData = async (file) => {
     expenseType,
   }));
 
+  console.log("file type:", file.type);
+
   const supportedTypes = ["application/pdf"];
   const isImage = file.type && file.type.startsWith("image/");
   const isPdf = supportedTypes.includes(file.type);
 
   if (isImage || isPdf) {
-    await extractReceiptData(file);
-  }
-};
-
-  console.log("file type:", file.type);
-
-  if (file.type && file.type.startsWith("image/")) {
     console.log("calling extractReceiptData...");
     await extractReceiptData(file);
   } else {
-    console.log("NOT calling extractReceiptData (not image)");
+    console.log("NOT calling extractReceiptData (unsupported type)");
   }
 };
-
   const handleInputChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
