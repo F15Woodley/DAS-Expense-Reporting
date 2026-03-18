@@ -126,6 +126,7 @@ export default function TravelExpenseApp() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [submitState, setSubmitState] = useState("idle");
   const [savedExpenses, setSavedExpenses] = useState([]);
+  const [lastSavedAt, setLastSavedAt] = useState(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState("");
   const [form, setForm] = useState({
@@ -349,6 +350,7 @@ const extractReceiptData = async (file) => {
       console.log("saved to supabase OK", saved);
 
       setSavedExpenses((prev) => [saved, ...prev].slice(0, 8));
+      setLastSavedAt(new Date());
     } catch (error) {
       console.error("Failed to save expense:", error);
       alert(`Could not save expense. See browser console for details. ${error?.message || ''}`)
