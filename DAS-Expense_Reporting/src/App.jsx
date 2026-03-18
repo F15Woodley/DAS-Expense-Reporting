@@ -303,6 +303,7 @@ const extractReceiptData = async (file) => {
   if (isImage || isPdf) {
     console.log("calling extractReceiptData...");
     await extractReceiptData(file);
+    persistExpense("Draft");
   } else {
     console.log("NOT calling extractReceiptData (unsupported type)");
   }
