@@ -31,6 +31,20 @@ export const expenseService = {
     }
   },
 
+    async updateExpenseStatus(id, status) {
+    if (!supabase) throw new Error('Supabase client not initialized')
+
+    const { data, error } = await supabase
+      .from('expenses')
+      .update({ status })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  }
+}
   async uploadReceipt(file) {
     if (!supabase) throw new Error('Supabase client not initialized')
     if (!file) return null
