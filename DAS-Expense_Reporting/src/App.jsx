@@ -781,7 +781,14 @@ const handleReject = async (id) => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {savedExpenses.map((item) => (
+                    {savedExpenses
+                      .filter((item) => {
+                        if (view === "manager") {
+                          return String(item.status).toLowerCase() === "submitted";
+                        }
+                        return true;
+                      })
+                      .map((item) => (
                       <div
                         key={item.id}
                         className="rounded-2xl border border-slate-200 p-4 bg-white"
