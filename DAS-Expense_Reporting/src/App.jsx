@@ -684,6 +684,11 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
                       Expense submitted via Supabase.
                     </div>
                   )}
+                  {lastSavedAt && (
+                    <div className="mt-1 text-xs text-emerald-700">
+                      Draft auto-saved ✓ {lastSavedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
