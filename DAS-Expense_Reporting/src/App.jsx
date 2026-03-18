@@ -794,6 +794,27 @@ const handleReject = async (id) => {
                         <div className="text-xs text-slate-500 mt-1">
                           Path: {item.receipt_path || "No upload"}
                         </div>
+                        <div className="text-xs mt-2">
+                            Status: <span className="font-semibold">{item.status}</span>
+                          </div>
+                          
+                          {String(item.status).toLowerCase() === "submitted" ? (
+                            <div className="flex gap-2 mt-3">
+                              <button
+                                className="px-3 py-1 text-xs bg-emerald-600 text-white rounded-lg"
+                                onClick={() => handleApprove(item.id)}
+                              >
+                                Approve
+                              </button>
+                          
+                              <button
+                                className="px-3 py-1 text-xs bg-rose-600 text-white rounded-lg"
+                                onClick={() => handleReject(item.id)}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          ) : null}
                       </div>
                     ))}
                   </div>
