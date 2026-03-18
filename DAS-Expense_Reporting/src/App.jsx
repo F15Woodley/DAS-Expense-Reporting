@@ -685,7 +685,7 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
                     </div>
                   )}
                   {lastSavedAt && (
-                    <div className="mt-1 text-xs text-emerald-700">
+                    <div className="mt-2 text-xs text-emerald-700">
                       Draft auto-saved ✓ {lastSavedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
                     </div>
                   )}
