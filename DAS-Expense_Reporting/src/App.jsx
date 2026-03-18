@@ -129,6 +129,7 @@ export default function TravelExpenseApp() {
   const [lastSavedAt, setLastSavedAt] = useState(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState("");
+  const [view, setView] = useState("user");
   const [form, setForm] = useState({
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
@@ -446,6 +447,27 @@ const handleReject = async (id) => {
   return (
     <div className={shell}>
       <div className="max-w-7xl mx-auto">
+        
+      <div className="flex gap-2 mb-4">
+  <button
+    className={`px-3 py-1 rounded-lg text-sm ${
+      view === "user" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
+    }`}
+    onClick={() => setView("user")}
+  >
+    My Expenses
+  </button>
+
+  <button
+    className={`px-3 py-1 rounded-lg text-sm ${
+      view === "manager" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
+    }`}
+    onClick={() => setView("manager")}
+  >
+    Approval Queue
+  </button>
+</div>
+        
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
             <div className="text-sm font-medium text-slate-500 mb-2">
