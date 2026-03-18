@@ -31,7 +31,21 @@ export const expenseService = {
     }
   },
 
-    async updateExpenseStatus(id, status) {
+  async uploadReceipt(file) {
+    if (!supabase) throw new Error('Supabase client not initialized')
+    if (!file) return null
+
+    const filePath = `demo/${Date.now()}-${file.name}`
+
+    const { error } = await supabase.storage
+      .from('receipts')
+      .upload(filePath, file)
+
+    if (error) throw error
+    return filePath
+  },
+
+  async updateExpenseStatus(id, status) {
     if (!supabase) throw new Error('Supabase client not initialized')
 
     const { data, error } = await supabase
@@ -43,25 +57,6 @@ export const expenseService = {
 
     if (error) throw error
     return data
-  }
-}
-  async uploadReceipt(file) {
-    if (!supabase) throw new Error('Supabase client not initialized')
-    if (!file) return null
-
-    const filePath = `demo/${Date.now()}-${file.name}`
-
-    try {
-      const { data, error } = await supabase.storage
-        .from('receipts')
-        .upload(filePath, file)
-
-      if (error) throw error
-      return filePath
-    } catch (err) {
-      console.error('uploadReceipt failed:', err)
-      throw err
-    }
   },
 
   mode() {
