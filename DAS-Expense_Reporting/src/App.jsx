@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { expenseService } from "./expenseService";
+import { supabase } from "./supabaseClient";
 
 export default function TravelExpenseApp() {
   const shell = "min-h-screen bg-slate-50 text-slate-900 p-4 md:p-6";
@@ -130,6 +131,9 @@ export default function TravelExpenseApp() {
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState("");
   const [view, setView] = useState("user");
+  const [user, setUser] = useState(null);
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
   const [form, setForm] = useState({
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
@@ -197,6 +201,25 @@ const extractReceiptData = async (file) => {
     setIsExtracting(false);
   }
 };
+  useEffect(() => {
+  const loadUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    setUser(user || null);
+  };
+
+  loadUser();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setUser(session?.user || null);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
   
   useEffect(() => {
     const loadExpenses = async () => {
