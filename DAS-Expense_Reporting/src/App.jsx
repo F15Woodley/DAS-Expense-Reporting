@@ -428,7 +428,7 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
               Backend-Ready MVP
             </div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Travel Expense Tool for QuickBooks
+              DAS Expense Tool for QuickBooks
             </h1>
             <p className="text-slate-600 mt-2 max-w-3xl">
               This version is connected to Supabase for real expense storage and
