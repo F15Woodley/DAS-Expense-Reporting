@@ -437,6 +437,9 @@ const handleSignOut = async () => {
         receipt_path: receiptPath,
       };
 
+      console.log("SIGNED IN USER", user);
+      console.log("RECORD BEING INSERTED", record);
+      
       console.log("saving record to supabase", record);
 
       const saved = await expenseService.saveExpense(record);
