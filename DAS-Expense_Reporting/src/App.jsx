@@ -134,6 +134,7 @@ export default function TravelExpenseApp() {
   const [user, setUser] = useState(null);
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
+  const [profile, setProfile] = useState(null);
   const [form, setForm] = useState({
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
@@ -219,6 +220,32 @@ const extractReceiptData = async (file) => {
   });
   return () => subscription.unsubscribe();
 }, []);
+
+useEffect(() => {
+  const loadProfile = async () => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, email, role")
+      .eq("id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Failed to load profile:", error);
+      setProfile(null);
+      return;
+    }
+
+    console.log("PROFILE LOADED", data);
+    setProfile(data);
+  };
+
+  loadProfile();
+}, [user]);
   
 const handleSignUp = async () => {
   const { error } = await supabase.auth.signUp({
@@ -248,19 +275,21 @@ const handleSignOut = async () => {
   await supabase.auth.signOut();
 };
  
-  useEffect(() => {
-    const loadExpenses = async () => {
-      try {
-        const records = await expenseService.list();
-        setSavedExpenses(records);
-      } catch (error) {
-        console.error("Failed to load expenses:", error);
-        setSavedExpenses([]);
-      }
-    };
+useEffect(() => {
+  const loadExpenses = async () => {
+    if (!user || !profile) return;
 
-    loadExpenses();
-  }, []);
+    try {
+      const records = await expenseService.list(profile.role);
+      setSavedExpenses(records);
+    } catch (error) {
+      console.error("Failed to load expenses:", error);
+      setSavedExpenses([]);
+    }
+  };
+
+  loadExpenses();
+}, [user, profile]);
 
   const mobileInbox = useMemo(() => {
     const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
@@ -517,7 +546,7 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
 }
 const handleApprove = async (id) => {
   try {
-    const updated = await expenseService.updateExpenseStatus(id, "approved");
+    const updated = await expenseService.updateExpenseStatus(id, "Approved");
 
     setSavedExpenses((prev) =>
       prev.map((item) => (item.id === id ? updated : item))
@@ -530,7 +559,7 @@ const handleApprove = async (id) => {
 
 const handleReject = async (id) => {
   try {
-    const updated = await expenseService.updateExpenseStatus(id, "rejected");
+    const updated = await expenseService.updateExpenseStatus(id, "Rejected");
 
     setSavedExpenses((prev) =>
       prev.map((item) => (item.id === id ? updated : item))
@@ -544,7 +573,7 @@ const handleReject = async (id) => {
     <div className={shell}>
       <div className="max-w-7xl mx-auto">
         
-      <div className="flex gap-2 mb-4">
+<div className="flex gap-2 mb-4">
   <button
     className={`px-3 py-1 rounded-lg text-sm ${
       view === "user" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
@@ -554,14 +583,16 @@ const handleReject = async (id) => {
     My Expenses
   </button>
 
-  <button
-    className={`px-3 py-1 rounded-lg text-sm ${
-      view === "manager" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
-    }`}
-    onClick={() => setView("manager")}
-  >
-    Approval Queue
-  </button>
+  {profile?.role === "manager" && (
+    <button
+      className={`px-3 py-1 rounded-lg text-sm ${
+        view === "manager" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
+      }`}
+      onClick={() => setView("manager")}
+    >
+      Approval Queue
+    </button>
+  )}
 </div>
         
         <div className="mb-8 flex items-start justify-between gap-4">
