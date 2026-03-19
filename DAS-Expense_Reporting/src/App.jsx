@@ -247,48 +247,7 @@ const handleSignIn = async () => {
 const handleSignOut = async () => {
   await supabase.auth.signOut();
 };
- if (!user) {
-  return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">Expense Login</h1>
-
-        <div className="space-y-3">
-          <input
-            className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm"
-            type="email"
-            placeholder="Email"
-            value={authEmail}
-            onChange={(e) => setAuthEmail(e.target.value)}
-          />
-          <input
-            className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm"
-            type="password"
-            placeholder="Password"
-            value={authPassword}
-            onChange={(e) => setAuthPassword(e.target.value)}
-          />
-
-          <div className="flex gap-2">
-            <button
-              className="rounded-xl px-4 py-2.5 text-sm font-medium bg-slate-900 text-white"
-              onClick={handleSignIn}
-            >
-              Sign In
-            </button>
-            <button
-              className="rounded-xl px-4 py-2.5 text-sm font-medium border border-slate-300 bg-white"
-              onClick={handleSignUp}
-            >
-              Sign Up
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}   
-
+ 
   useEffect(() => {
     const loadExpenses = async () => {
       try {
@@ -347,6 +306,48 @@ const handleSignOut = async () => {
     };
   }, [previewUrl]);
 
+  if (!user) {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4">Expense Login</h1>
+
+        <div className="space-y-3">
+          <input
+            className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm"
+            type="email"
+            placeholder="Email"
+            value={authEmail}
+            onChange={(e) => setAuthEmail(e.target.value)}
+          />
+          <input
+            className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm"
+            type="password"
+            placeholder="Password"
+            value={authPassword}
+            onChange={(e) => setAuthPassword(e.target.value)}
+          />
+
+          <div className="flex gap-2">
+            <button
+              className="rounded-xl px-4 py-2.5 text-sm font-medium bg-slate-900 text-white"
+              onClick={handleSignIn}
+            >
+              Sign In
+            </button>
+            <button
+              className="rounded-xl px-4 py-2.5 text-sm font-medium border border-slate-300 bg-white"
+              onClick={handleSignUp}
+            >
+              Sign Up
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}   
+  
   const inferExpenseType = (name) => {
     const n = name.toLowerCase();
     if (n.includes("hotel") || n.includes("hilton") || n.includes("marriott"))
