@@ -420,6 +420,7 @@ const handleSignOut = async () => {
       console.log("receipt uploaded", { receiptPath });
 
       const record = {
+        user_id: user.id, 
         traveler: form.traveler,
         trip: form.trip,
         expense_type: form.expenseType,
