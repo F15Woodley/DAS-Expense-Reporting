@@ -15,43 +15,39 @@ export const expenseService = {
 
     const { data, error } = await query;
 
-    if (error) throw error;F
+    if (error) throw error;
     return data ?? [];
   },
 
   async saveExpense(record) {
     if (!supabase) throw new Error("Supabase client not initialized");
 
-    try {
-      const { data, error } = await supabase
-        .from("expenses")
-        .insert([record])
-        .select()
-        .single();
+    const { data, error } = await supabase
+      .from("expenses")
+      .insert([record])
+      .select()
+      .single();
 
-      if (error) throw error;
-      return data;
-    } catch (err) {
-      console.error("saveExpense failed:", err);
-      throw err;
-    }
+    if (error) throw error;
+    return data;
   },
 
-async uploadReceipt(file, userId) {
-  if (!supabase) throw new Error("Supabase client not initialized");
-  if (!file) return null;
-  if (!userId) throw new Error("Missing user id for receipt upload");
+  async uploadReceipt(file, userId) {
+    if (!supabase) throw new Error("Supabase client not initialized");
+    if (!file) return null;
+    if (!userId) throw new Error("Missing user id for receipt upload");
 
-  const safeName = file.name.replace(/\s+/g, "-");
-  const filePath = `${userId}/${Date.now()}-${safeName}`;
+    const safeName = file.name.replace(/\s+/g, "-");
+    const filePath = `${userId}/${Date.now()}-${safeName}`;
 
-  const { error } = await supabase.storage
-    .from("RECEIPTS")
-    .upload(filePath, file, { upsert: false });
+    const { error } = await supabase.storage
+      .from("RECEIPTS")
+      .upload(filePath, file, { upsert: false });
 
-  if (error) throw error;
-  return filePath;
-}
+    if (error) throw error;
+
+    return filePath;
+  },
 
   async updateExpenseStatus(id, status) {
     if (!supabase) throw new Error("Supabase client not initialized");
