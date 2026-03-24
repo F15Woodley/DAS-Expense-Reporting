@@ -442,9 +442,9 @@ useEffect(() => {
       const numericAmount =
         Number(String(form.amount).replace(/[^\d.]/g, "")) || 0;
 
-      const receiptPath = selectedFile
-        ? await expenseService.uploadReceipt(selectedFile)
-        : null;
+const receiptPath = selectedFile
+  ? await expenseService.uploadReceipt(selectedFile, user.id)
+  : null;
 
       console.log("receipt uploaded", { receiptPath });
 
