@@ -135,19 +135,21 @@ export default function TravelExpenseApp() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [profile, setProfile] = useState(null);
-  const [form, setForm] = useState({
+  const emptyForm = {
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
-    expenseType: "Hotel",
-    paymentMethod: "Personal Card",
-    vendor: "Hilton Denver City Center",
-    date: "2026-03-11",
-    amount: "$318.42",
+    expenseType: "",
+    paymentMethod: "",
+    vendor: "",
+    date: "",
+    amount: "",
     billable: "Yes",
-    businessPurpose: "Lodging for USGS coordination meetings and site visit.",
+    businessPurpose: "",
     qbClass: "Travel",
     projectCode: "GPSCv5-241",
-  });
+  };
+
+const [form, setForm] = useState(emptyForm);
  
   const fileToBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -426,7 +428,7 @@ useEffect(() => {
   if (isImage || isPdf) {
     console.log("calling extractReceiptData...");
     await extractReceiptData(file);
-    persistExpense("Draft");
+    setSubmitState("receipt-loaded");
   } else {
     console.log("NOT calling extractReceiptData (unsupported type)");
   }
@@ -477,6 +479,8 @@ const receiptPath = selectedFile
 
       setSavedExpenses((prev) => [saved, ...prev].slice(0, 8));
       setLastSavedAt(new Date());
+      setForm(emptyForm);
+      setSelectedFile(null);
     } catch (error) {
       console.error("Failed to save expense:", error);
       alert(`Could not save expense. See browser console for details. ${error?.message || ''}`)
