@@ -1,65 +1,71 @@
-import { supabase } from './supabaseClient'
+import { supabase } from "./supabaseClient";
 
 export const expenseService = {
-  async list() {
-    if (!supabase) throw new Error('Supabase client not initialized')
+  async list(role) {
+    if (!supabase) throw new Error("Supabase client not initialized");
 
-    const { data, error } = await supabase
-      .from('expenses')
-      .select('*')
-      .order('created_at', { ascending: false })
+    let query = supabase
+      .from("expenses")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    if (error) throw error
-    return data ?? []
+    if (role === "manager") {
+      query = query.eq("status", "Submitted");
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return data ?? [];
   },
 
   async saveExpense(record) {
-    if (!supabase) throw new Error('Supabase client not initialized')
+    if (!supabase) throw new Error("Supabase client not initialized");
 
     try {
       const { data, error } = await supabase
-        .from('expenses')
+        .from("expenses")
         .insert([record])
         .select()
-        .single()
+        .single();
 
-      if (error) throw error
-      return data
+      if (error) throw error;
+      return data;
     } catch (err) {
-      console.error('saveExpense failed:', err)
-      throw err
+      console.error("saveExpense failed:", err);
+      throw err;
     }
   },
 
   async uploadReceipt(file) {
-    if (!supabase) throw new Error('Supabase client not initialized')
-    if (!file) return null
+    if (!supabase) throw new Error("Supabase client not initialized");
+    if (!file) return null;
 
-    const filePath = `demo/${Date.now()}-${file.name}`
+    const filePath = `demo/${Date.now()}-${file.name}`;
 
     const { error } = await supabase.storage
-      .from('receipts')
-      .upload(filePath, file)
+      .from("receipts")
+      .upload(filePath, file);
 
-    if (error) throw error
-    return filePath
+    if (error) throw error;
+    return filePath;
   },
 
   async updateExpenseStatus(id, status) {
-    if (!supabase) throw new Error('Supabase client not initialized')
+    if (!supabase) throw new Error("Supabase client not initialized");
 
     const { data, error } = await supabase
-      .from('expenses')
+      .from("expenses")
       .update({ status })
-      .eq('id', id)
+      .eq("id", id)
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
-    return data
+    if (error) throw error;
+    return data;
   },
 
   mode() {
-    return 'Supabase'
-  }
-}
+    return "Supabase";
+  },
+};
