@@ -44,7 +44,7 @@ export const expenseService = {
     const filePath = `${userId}/${Date.now()}-${safeName}`;
 
     const { error } = await supabase.storage
-      .from("RECEIPTS")
+      .from("receipts")
       .upload(filePath, file, { upsert: false });
 
     if (error) throw error;
