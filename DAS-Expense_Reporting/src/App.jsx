@@ -550,11 +550,10 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
 }
 const handleApprove = async (id) => {
   try {
-    const updated = await expenseService.updateExpenseStatus(id, "Approved");
+    await expenseService.updateExpenseStatus(id, "Approved");
 
-    setSavedExpenses((prev) =>
-      prev.map((item) => (item.id === id ? updated : item))
-    );
+    const records = await expenseService.list(profile.role);
+    setSavedExpenses(records);
   } catch (error) {
     console.error("Approve failed:", error);
     alert("Could not approve expense.");
@@ -563,16 +562,16 @@ const handleApprove = async (id) => {
 
 const handleReject = async (id) => {
   try {
-    const updated = await expenseService.updateExpenseStatus(id, "Rejected");
+    await expenseService.updateExpenseStatus(id, "Rejected");
 
-    setSavedExpenses((prev) =>
-      prev.map((item) => (item.id === id ? updated : item))
-    );
+    const records = await expenseService.list(profile.role);
+    setSavedExpenses(records);
   } catch (error) {
     console.error("Reject failed:", error);
     alert("Could not reject expense.");
   }
 };
+  
   return (
     <div className={shell}>
       <div className="max-w-7xl mx-auto">
