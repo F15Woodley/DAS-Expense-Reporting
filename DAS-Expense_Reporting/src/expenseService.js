@@ -15,7 +15,7 @@ export const expenseService = {
 
     const { data, error } = await query;
 
-    if (error) throw error;
+    if (error) throw error;F
     return data ?? [];
   },
 
@@ -37,19 +37,21 @@ export const expenseService = {
     }
   },
 
-  async uploadReceipt(file) {
-    if (!supabase) throw new Error("Supabase client not initialized");
-    if (!file) return null;
+async uploadReceipt(file, userId) {
+  if (!supabase) throw new Error("Supabase client not initialized");
+  if (!file) return null;
+  if (!userId) throw new Error("Missing user id for receipt upload");
 
-    const filePath = `demo/${Date.now()}-${file.name}`;
+  const safeName = file.name.replace(/\s+/g, "-");
+  const filePath = `${userId}/${Date.now()}-${safeName}`;
 
-    const { error } = await supabase.storage
-      .from("receipts")
-      .upload(filePath, file);
+  const { error } = await supabase.storage
+    .from("RECEIPTS")
+    .upload(filePath, file, { upsert: false });
 
-    if (error) throw error;
-    return filePath;
-  },
+  if (error) throw error;
+  return filePath;
+}
 
   async updateExpenseStatus(id, status) {
     if (!supabase) throw new Error("Supabase client not initialized");
