@@ -19,21 +19,23 @@ export const expenseService = {
     return data ?? [];
   },
 
-  async saveExpense(record) {
-    if (!supabase) throw new Error("Supabase client not initialized");
+async saveExpense(record) {
+  if (!supabase) throw new Error("Supabase client not initialized");
 
-    try {
-      const { error } = await supabase
-        .from("expenses")
-        .insert([record]);
+  try {
+    const { data, error } = await supabase
+      .from("expenses")
+      .insert([record])
+      .select()
+      .single();
 
-      if (error) throw error;
-      return record;
-    } catch (err) {
-      console.error("saveExpense failed:", err);
-      throw err;
-    }
-  },
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error("saveExpense failed:", err);
+    throw err;
+  }
+},
 
   async uploadReceipt(file, userId) {
     if (!supabase) throw new Error("Supabase client not initialized");
