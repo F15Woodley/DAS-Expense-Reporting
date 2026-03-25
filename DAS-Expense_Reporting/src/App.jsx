@@ -492,8 +492,6 @@ const receiptPath = selectedFile
       });
       setLastSavedAt(new Date());
       setCurrentExpenseId(saved.id || null);
-      setForm(emptyForm);
-      setSelectedFile(null);
     } catch (error) {
       console.error("Failed to save expense:", error);
       alert(`Could not save expense. See browser console for details. ${error?.message || ''}`)
@@ -511,6 +509,8 @@ const handleSubmit = async () => {
   await persistExpense("Submitted");
   setSubmitState("submitted");
   setCurrentExpenseId(null);
+  setForm(emptyForm);
+  setSelectedFile(null);
 };
 
 const handleSaveDraft = async () => {
