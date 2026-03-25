@@ -501,6 +501,13 @@ const receiptPath = selectedFile
   };
 
 const handleSubmit = async () => {
+  const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
+
+  if (!form.vendor || !form.date || !numericAmount) {
+    alert("Please complete vendor, date, and amount before submitting.");
+    return;
+  }
+
   await persistExpense("Submitted");
   setSubmitState("submitted");
   setCurrentExpenseId(null);
@@ -566,8 +573,11 @@ const handleApprove = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Approved");
 
-    const records = await expenseService.list(profile?.role || "employee");
-    setSavedExpenses(records);
+    setSavedExpenses((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, status: "Approved" } : item
+      )
+    );
   } catch (error) {
     console.error("Approve failed:", error);
     alert("Could not approve expense.");
@@ -578,13 +588,16 @@ const handleReject = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Rejected");
 
-    const records = await expenseService.list(profile?.role || "employee");
-    setSavedExpenses(records);
+    setSavedExpenses((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, status: "Rejected" } : item
+      )
+    );
   } catch (error) {
     console.error("Reject failed:", error);
     alert("Could not reject expense.");
   }
-};;
+};
   
   return (
     <div className={shell}>
@@ -928,9 +941,9 @@ const handleReject = async (id) => {
                     {savedExpenses
                       .filter((item) => {
                         if (view === "manager") {
-                          return String(item.status).toLowerCase() === "submitted";
-                        }
-                        return true;
+        return (item.status || "").toLowerCase() === "submitted";
+      }
+                        return (item.status || "").toLowerCase() !== "approved";
                       })
                       .map((item) => (
                       <div
