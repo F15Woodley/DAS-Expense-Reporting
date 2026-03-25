@@ -235,7 +235,10 @@ useEffect(() => {
       .from("profiles")
       .select("id, email, role")
       .eq("id", user.id)
-      .single();
+      .maybeSingle()
+    if (!data) {
+  setProfile({ id: user.id, email: user.email, role: "employee" });
+}
 
     if (error) {
       console.error("Failed to load profile:", error);
