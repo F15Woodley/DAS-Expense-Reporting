@@ -129,6 +129,7 @@ export default function TravelExpenseApp() {
   const [savedExpenses, setSavedExpenses] = useState([]);
   const [currentExpenseId, setCurrentExpenseId] = useState(null);
   const [expandedGroup, setExpandedGroup] = useState(null);
+  const [expandedDetailId, setExpandedDetailId] = useState(null);
   const [lastSavedAt, setLastSavedAt] = useState(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState("");
@@ -1055,11 +1056,25 @@ const handleReject = async (id) => {
       <div
         key={item.id}
         className="rounded-xl border border-slate-200 p-3 bg-white"
-      >
-        <div className="flex justify-between">
-          <div className="text-sm font-medium">{item.vendor}</div>
+            >
+      <div className="flex justify-between items-start">
+        <div className="text-sm font-medium">{item.vendor}</div>
+      
+        <div className="text-right">
           <div className="text-sm">${item.amount}</div>
+          <button
+            className="mt-2 px-2 py-1 text-xs bg-blue-600 text-white rounded"
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpandedDetailId(
+                expandedDetailId === item.id ? null : item.id
+              );
+            }}
+          >
+            Details
+          </button>
         </div>
+      </div>
 
         <div className="text-xs text-slate-500 mt-1">
           {(item.expense_type || "—")} • {(item.payment_method || "—")}
@@ -1069,6 +1084,24 @@ const handleReject = async (id) => {
           {(item.expense_date || item.date || "—")}
         </div>
 
+        {expandedDetailId === item.id && (
+        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div className="text-xs text-slate-500 mb-2">
+            Receipt: {item.file_name || "No file name"}
+          </div>
+      
+          {item.receipt_path ? (
+            <div className="text-xs text-slate-600">
+              Receipt path: {item.receipt_path}
+            </div>
+          ) : (
+            <div className="text-xs text-rose-600">
+              No receipt uploaded.
+            </div>
+          )}
+        </div>
+      )}
+        
         <div className="flex gap-2 mt-2">
           <button
             className="px-2 py-1 text-xs bg-emerald-600 text-white rounded"
