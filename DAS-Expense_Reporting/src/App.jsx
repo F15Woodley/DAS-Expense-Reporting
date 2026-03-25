@@ -552,7 +552,7 @@ const handleApprove = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Approved");
 
-    const records = await expenseService.list(profile.role);
+    const records = await expenseService.list(profile?.role || "employee");
     setSavedExpenses(records);
   } catch (error) {
     console.error("Approve failed:", error);
@@ -564,13 +564,13 @@ const handleReject = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Rejected");
 
-    const records = await expenseService.list(profile.role);
+    const records = await expenseService.list(profile?.role || "employee");
     setSavedExpenses(records);
   } catch (error) {
     console.error("Reject failed:", error);
     alert("Could not reject expense.");
   }
-};
+};;
   
   return (
     <div className={shell}>
