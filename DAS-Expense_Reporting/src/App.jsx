@@ -127,6 +127,7 @@ export default function TravelExpenseApp() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [submitState, setSubmitState] = useState("idle");
   const [savedExpenses, setSavedExpenses] = useState([]);
+  const [currentExpenseId, setCurrentExpenseId] = useState(null);
   const [lastSavedAt, setLastSavedAt] = useState(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState("");
@@ -473,12 +474,21 @@ const receiptPath = selectedFile
       
       console.log("saving record to supabase", record);
 
-      const saved = await expenseService.saveExpense(record);
+     let saved;
+
+      if (currentExpenseId) {
+        // UPDATE existing draft
+        saved = await expenseService.updateExpenseStatus(currentExpenseId, status);
+      } else {
+        // CREATE new record
+        saved = await expenseService.saveExpense(record);
+    }
 
       console.log("saved to supabase OK", saved);
 
       setSavedExpenses((prev) => [saved, ...prev].slice(0, 8));
       setLastSavedAt(new Date());
+      setCurrentExpenseId(saved.id || null);
       setForm(emptyForm);
       setSelectedFile(null);
     } catch (error) {
@@ -487,15 +497,16 @@ const receiptPath = selectedFile
     }
   };
 
-  const handleSubmit = async () => {
-    await persistExpense("Submitted");
-    setSubmitState("submitted");
-  };
+const handleSubmit = async () => {
+  await persistExpense("Submitted");
+  setSubmitState("submitted");
+  setCurrentExpenseId(null);
+};
 
-  const handleSaveDraft = async () => {
-    await persistExpense("Draft");
-    setSubmitState("draft");
-  };
+const handleSaveDraft = async () => {
+  await persistExpense("Draft");
+  setSubmitState("draft");
+};
 
   const handleClearSaved = () => {
     setSavedExpenses([]);
