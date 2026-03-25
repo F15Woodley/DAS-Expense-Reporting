@@ -128,6 +128,7 @@ export default function TravelExpenseApp() {
   const [submitState, setSubmitState] = useState("idle");
   const [savedExpenses, setSavedExpenses] = useState([]);
   const [currentExpenseId, setCurrentExpenseId] = useState(null);
+  const [expandedGroup, setExpandedGroup] = useState(null);
   const [lastSavedAt, setLastSavedAt] = useState(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState("");
@@ -976,10 +977,13 @@ const handleReject = async (id) => {
             {view === "manager" && managerGroups.length > 0 && (
               <div className="mb-4 space-y-3">
                 {managerGroups.map((group) => (
-                  <div
-                    key={group.key}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                  >
+                <div
+                  key={group.key}
+                  onClick={() =>
+                    setExpandedGroup(expandedGroup === group.key ? null : group.key)
+                  }
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4 cursor-pointer"
+                >
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <div className="font-semibold text-sm">{group.traveler}</div>
@@ -990,13 +994,60 @@ const handleReject = async (id) => {
                       </span>
                     </div>
             
-                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
-                      <div>Total: ${group.total.toFixed(2)}</div>
-                      <div>
-                        Note: {group.hasPersonalCard ? "Contains personal card" : "Company-paid only"}
-                      </div>
-                    </div>
-                  </div>
+<div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
+  <div>Total: ${group.total.toFixed(2)}</div>
+  <div>
+    Note: {group.hasPersonalCard ? "Contains personal card" : "Company-paid only"}
+  </div>
+</div>
+
+{expandedGroup === group.key && (
+  <div className="mt-4 space-y-3">
+    {group.items.map((item) => (
+      <div
+        key={item.id}
+        className="rounded-xl border border-slate-200 p-3 bg-white"
+      >
+        <div className="flex justify-between">
+          <div className="text-sm font-medium">{item.vendor}</div>
+          <div className="text-sm">${item.amount}</div>
+        </div>
+
+        <div className="text-xs text-slate-500 mt-1">
+          {(item.expense_type || "—")} • {(item.payment_method || "—")}
+        </div>
+
+        <div className="text-xs text-slate-500 mt-1">
+          {(item.expense_date || item.date || "—")}
+        </div>
+
+        <div className="flex gap-2 mt-2">
+          <button
+            className="px-2 py-1 text-xs bg-emerald-600 text-white rounded"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleApprove(item.id);
+            }}
+          >
+            Approve
+          </button>
+
+          <button
+            className="px-2 py-1 text-xs bg-rose-600 text-white rounded"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleReject(item.id);
+            }}
+          >
+            Reject
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+</div>   // ← keep this closing div
                 ))}
               </div>
             )}
