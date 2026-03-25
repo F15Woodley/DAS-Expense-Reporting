@@ -1007,14 +1007,14 @@ const handleReject = async (id) => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {savedExpenses
-                      .filter((item) => {
-                        if (view === "manager") {
-        return (item.status || "").toLowerCase() === "submitted";
-      }
-                        return (item.status || "").toLowerCase() !== "approved";
-                      })
-                      .map((item) => (
+                 {savedExpenses
+                .filter((item) => {
+                  if (view === "manager") {
+                    return false; // hide individual rows in manager view
+                  }
+                  return true;
+                })
+                .map((item) => (
                       <div
                         key={item.id}
                         className="rounded-2xl border border-slate-200 p-4 bg-white"
