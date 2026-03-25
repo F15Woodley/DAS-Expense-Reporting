@@ -1036,7 +1036,7 @@ const handleReject = async (id) => {
 
   {group.missingReceipt && (
     <span className="text-xs bg-rose-100 text-rose-800 px-2 py-1 rounded">
-      Missing receipt &gt; $75
+      Missing receipt 
     </span>
   )}
 
