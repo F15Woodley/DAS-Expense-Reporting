@@ -993,6 +993,28 @@ const handleReject = async (id) => {
                         {group.itemCount} item{group.itemCount === 1 ? "" : "s"}
                       </span>
                     </div>
+
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      className="px-3 py-1 text-xs bg-emerald-700 text-white rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        group.items.forEach((item) => handleApprove(item.id));
+                      }}
+                    >
+                      Approve All
+                    </button>
+                  
+                    <button
+                      className="px-3 py-1 text-xs bg-rose-700 text-white rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        group.items.forEach((item) => handleReject(item.id));
+                      }}
+                    >
+                      Reject All
+                    </button>
+                  </div>
             
 <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
   <div>Total: ${group.total.toFixed(2)}</div>
