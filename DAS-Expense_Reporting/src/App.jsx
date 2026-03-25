@@ -330,6 +330,43 @@ useEffect(() => {
     ];
   }, [savedExpenses]);
 
+  const managerGroups = useMemo(() => {
+  const submittedItems = savedExpenses.filter(
+    (item) => (item.status || "").toLowerCase() === "submitted"
+  );
+
+  const groups = {};
+
+  for (const item of submittedItems) {
+    const traveler = item.traveler || "Unknown Traveler";
+    const trip = item.trip || "Unknown Trip";
+    const key = `${traveler}__${trip}`;
+
+    if (!groups[key]) {
+      groups[key] = {
+        key,
+        traveler,
+        trip,
+        items: [],
+        total: 0,
+        itemCount: 0,
+        hasPersonalCard: false,
+      };
+    }
+
+    const amount = Number(item.amount) || 0;
+
+    groups[key].items.push(item);
+    groups[key].total += amount;
+    groups[key].itemCount += 1;
+
+    if ((item.payment_method || "").toLowerCase() === "personal card") {
+      groups[key].hasPersonalCard = true;
+    }
+  }
+
+  return Object.values(groups);
+}, [savedExpenses]);
   const previewUrl = useMemo(() => {
     if (!selectedFile) return null;
     return URL.createObjectURL(selectedFile);
@@ -935,6 +972,35 @@ const handleReject = async (id) => {
                     Clear Screen List
                   </button>
                 </div>
+
+            {view === "manager" && managerGroups.length > 0 && (
+              <div className="mb-4 space-y-3">
+                {managerGroups.map((group) => (
+                  <div
+                    key={group.key}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="font-semibold text-sm">{group.traveler}</div>
+                        <div className="text-xs text-slate-500 mt-1">{group.trip}</div>
+                      </div>
+                      <span className={badge}>
+                        {group.itemCount} item{group.itemCount === 1 ? "" : "s"}
+                      </span>
+                    </div>
+            
+                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
+                      <div>Total: ${group.total.toFixed(2)}</div>
+                      <div>
+                        Note: {group.hasPersonalCard ? "Contains personal card" : "Company-paid only"}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+                
                 {savedExpenses.length === 0 ? (
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
                     No records loaded yet.
