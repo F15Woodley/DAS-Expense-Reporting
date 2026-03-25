@@ -361,9 +361,17 @@ useEffect(() => {
     groups[key].total += amount;
     groups[key].itemCount += 1;
 
-    if ((item.payment_method || "").toLowerCase() === "personal card") {
-      groups[key].hasPersonalCard = true;
-    }
+if ((item.payment_method || "").toLowerCase() === "personal card") {
+  groups[key].hasPersonalCard = true;
+}
+
+if (!item.receipt_path) {
+  groups[key].missingReceipt = true;
+}
+
+if (!item.project_code) {
+  groups[key].missingProject = true;
+}
   }
 
   return Object.values(groups);
@@ -1019,7 +1027,25 @@ const handleReject = async (id) => {
 <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
   <div>Total: ${group.total.toFixed(2)}</div>
   <div>
-    Note: {group.hasPersonalCard ? "Contains personal card" : "Company-paid only"}
+    <div className="flex flex-wrap gap-2">
+  {group.hasPersonalCard && (
+    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
+      Personal card
+    </span>
+  )}
+
+  {group.missingReceipt && (
+    <span className="text-xs bg-rose-100 text-rose-800 px-2 py-1 rounded">
+      Missing receipt &gt; $75
+    </span>
+  )}
+
+  {group.missingProject && (
+    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+      Missing project code
+    </span>
+  )}
+</div>
   </div>
 </div>
 
