@@ -486,7 +486,10 @@ const receiptPath = selectedFile
 
       console.log("saved to supabase OK", saved);
 
-      setSavedExpenses((prev) => [saved, ...prev].slice(0, 8));
+      setSavedExpenses((prev) => {
+        const withoutSaved = prev.filter((item) => item.id !== saved.id);
+        return [saved, ...withoutSaved].slice(0, 8);
+      });
       setLastSavedAt(new Date());
       setCurrentExpenseId(saved.id || null);
       setForm(emptyForm);
