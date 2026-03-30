@@ -2,6 +2,67 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { expenseService } from "./expenseService";
 import { supabase } from "./supabaseClient";
 
+const ReceiptViewer = ({ path }) => {
+  const [url, setUrl] = useState(null);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data, error } = await supabase.storage
+        .from("receipts")
+        .createSignedUrl(path, 3600);
+
+      if (error) {
+        console.error("Signed URL error:", error);
+        return;
+      }
+
+      setUrl(data.signedUrl);
+    };
+
+    load();
+  }, [path]);
+
+  if (!url) {
+    return <div className="text-xs text-slate-500">Loading receipt...</div>;
+  }
+
+  if (path.toLowerCase().endsWith(".pdf")) {
+    return (
+      <object
+        data={url}
+        type="application/pdf"
+        className="w-full h-96 rounded border"
+      >
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-blue-600 underline"
+        >
+          Open PDF
+        </a>
+      </object>
+    );
+  }
+
+  return (
+    <img
+      src={url}
+      alt="Receipt"
+      className="max-h-64 rounded border"
+    />
+  );
+};
+
+  return (
+    <img
+      src={url}
+      alt="Receipt"
+      className="max-h-64 rounded border"
+    />
+  );
+};
+
 export default function TravelExpenseApp() {
   const shell = "min-h-screen bg-slate-50 text-slate-900 p-4 md:p-6";
   const card = "bg-white rounded-2xl shadow-sm border border-slate-200";
@@ -1090,22 +1151,14 @@ const handleReject = async (id) => {
             Receipt: {item.file_name || "No file name"}
           </div>
       
-          {item.receipt_path ? (
-            <div>
-              <img
-                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/receipts/${item.receipt_path}`}
-                alt="Receipt"
-                className="max-h-64 rounded border"
-              />
-            </div>
-          ) : (
-            <div className="text-xs text-rose-600">
-              No receipt uploaded.
-            </div>
-          )}
-        </div>
-      )}
-        
+        {item.receipt_path ? (
+          <ReceiptViewer path={item.receipt_path} />
+        ) : (
+          <div className="text-xs text-rose-600">
+            No receipt uploaded.
+          </div>
+        )}
+                
         <div className="flex gap-2 mt-2">
           <button
             className="px-2 py-1 text-xs bg-emerald-600 text-white rounded"
