@@ -1107,25 +1107,25 @@ const handleReject = async (id) => {
       <div
         key={item.id}
         className="rounded-xl border border-slate-200 p-3 bg-white"
+      >
+        <div className="flex justify-between items-start">
+          <div className="text-sm font-medium">{item.vendor}</div>
+
+          <div className="text-right">
+            <div className="text-sm">${item.amount}</div>
+            <button
+              className="mt-2 px-2 py-1 text-xs bg-blue-600 text-white rounded"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedDetailId(
+                  expandedDetailId === item.id ? null : item.id
+                );
+              }}
             >
-      <div className="flex justify-between items-start">
-        <div className="text-sm font-medium">{item.vendor}</div>
-      
-        <div className="text-right">
-          <div className="text-sm">${item.amount}</div>
-          <button
-            className="mt-2 px-2 py-1 text-xs bg-blue-600 text-white rounded"
-            onClick={(e) => {
-              e.stopPropagation();
-              setExpandedDetailId(
-                expandedDetailId === item.id ? null : item.id
-              );
-            }}
-          >
-            Details
-          </button>
+              Details
+            </button>
+          </div>
         </div>
-      </div>
 
         <div className="text-xs text-slate-500 mt-1">
           {(item.expense_type || "—")} • {(item.payment_method || "—")}
@@ -1136,40 +1136,42 @@ const handleReject = async (id) => {
         </div>
 
         {expandedDetailId === item.id && (
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <div className="text-xs text-slate-500 mb-2">
-            Receipt: {item.file_name || "No file name"}
-          </div>
-      
-        {item.receipt_path ? (
-          <ReceiptViewer path={item.receipt_path} />
-        ) : (
-          <div className="text-xs text-rose-600">
-            No receipt uploaded.
+          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <div className="text-xs text-slate-500 mb-2">
+              Receipt: {item.file_name || "No file name"}
+            </div>
+
+            {item.receipt_path ? (
+              <ReceiptViewer path={item.receipt_path} />
+            ) : (
+              <div className="text-xs text-rose-600">
+                No receipt uploaded.
+              </div>
+            )}
+
+            <div className="flex gap-2 mt-2">
+              <button
+                className="px-2 py-1 text-xs bg-emerald-600 text-white rounded"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleApprove(item.id);
+                }}
+              >
+                Approve
+              </button>
+
+              <button
+                className="px-2 py-1 text-xs bg-rose-600 text-white rounded"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReject(item.id);
+                }}
+              >
+                Reject
+              </button>
+            </div>
           </div>
         )}
-                
-        <div className="flex gap-2 mt-2">
-          <button
-            className="px-2 py-1 text-xs bg-emerald-600 text-white rounded"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleApprove(item.id);
-            }}
-          >
-            Approve
-          </button>
-
-          <button
-            className="px-2 py-1 text-xs bg-rose-600 text-white rounded"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleReject(item.id);
-            }}
-          >
-            Reject
-          </button>
-        </div>
       </div>
     ))}
   </div>
