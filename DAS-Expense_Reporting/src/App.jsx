@@ -1091,8 +1091,12 @@ const handleReject = async (id) => {
           </div>
       
           {item.receipt_path ? (
-            <div className="text-xs text-slate-600">
-              Receipt path: {item.receipt_path}
+            <div>
+              <img
+                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/receipts/${item.receipt_path}`}
+                alt="Receipt"
+                className="max-h-64 rounded border"
+              />
             </div>
           ) : (
             <div className="text-xs text-rose-600">
