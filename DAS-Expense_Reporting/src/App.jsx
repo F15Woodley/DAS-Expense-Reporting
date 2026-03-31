@@ -190,6 +190,43 @@ export default function TravelExpenseApp() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [profile, setProfile] = useState(null);
+  useEffect(() => {
+  const loadProfile = async () => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, email, role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Failed to load profile:", error);
+      setProfile(null);
+      return;
+    }
+
+    if (!data) {
+      const fallbackProfile = {
+        id: user.id,
+        email: user.email,
+        role: "employee",
+      };
+
+      console.log("PROFILE LOADED (fallback)", fallbackProfile);
+      setProfile(fallbackProfile);
+      return;
+    }
+
+    console.log("PROFILE LOADED", data);
+    setProfile(data);
+  };
+
+  loadProfile();
+}, [user]);
   const emptyForm = {
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
@@ -259,58 +296,6 @@ const extractReceiptData = async (file) => {
     setIsExtracting(false);
   }
 };
-  useEffect(() => {
-  const loadUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    setUser(user || null);
-  };
-
-  loadUser();
-
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    setUser(session?.user || null);
-  });
-  return () => subscription.unsubscribe();
-}, []);
-
-useEffect(() => {
-  const loadProfile = async () => {
-    if (!user) {
-      setProfile(null);
-      return;
-    }
-
-const { data, error } = await supabase
-  .from("profiles")
-  .select("id, email, role")
-  .eq("id", user.id)
-  .maybeSingle();
-
-if (error) {
-  console.error("Failed to load profile:", error);
-  setProfile(null);
-  return;
-}
-
-if (!data) {
-  const fallbackProfile = {
-    id: user.id,
-    email: user.email,
-    role: "employee",
-  };
-
-  console.log("PROFILE LOADED (fallback)", fallbackProfile);
-  setProfile(fallbackProfile);
-  return;
-}
-
-console.log("PROFILE LOADED", data);
-setProfile(data);
   
 const handleSignUp = async () => {
   const { error } = await supabase.auth.signUp({
