@@ -53,6 +53,7 @@ const ReceiptViewer = ({ path }) => {
     />
   );
 };
+
 export default function TravelExpenseApp() {
   const shell = "min-h-screen bg-slate-50 text-slate-900 p-4 md:p-6";
   const card = "bg-white rounded-2xl shadow-sm border border-slate-200";
