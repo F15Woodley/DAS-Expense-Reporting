@@ -284,27 +284,32 @@ useEffect(() => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, email, role")
-      .eq("id", user.id)
-      .maybeSingle()
-    if (!data) {
-  setProfile({ id: user.id, email: user.email, role: "employee" });
+const { data, error } = await supabase
+  .from("profiles")
+  .select("id, email, role")
+  .eq("id", user.id)
+  .maybeSingle();
+
+if (error) {
+  console.error("Failed to load profile:", error);
+  setProfile(null);
+  return;
 }
 
-    if (error) {
-      console.error("Failed to load profile:", error);
-      setProfile(null);
-      return;
-    }
-
-    console.log("PROFILE LOADED", data);
-    setProfile(data);
+if (!data) {
+  const fallbackProfile = {
+    id: user.id,
+    email: user.email,
+    role: "employee",
   };
 
-  loadProfile();
-}, [user]);
+  console.log("PROFILE LOADED (fallback)", fallbackProfile);
+  setProfile(fallbackProfile);
+  return;
+}
+
+console.log("PROFILE LOADED", data);
+setProfile(data);
   
 const handleSignUp = async () => {
   const { error } = await supabase.auth.signUp({
