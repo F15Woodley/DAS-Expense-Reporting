@@ -1577,6 +1577,169 @@ const handleReject = async (id) => {
   )}
 
 
+            {view === "manager" && (
+          <div className={section}>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold">3. Approval Queue Screen</h2>
+              <span className={badge}>Manager / Finance View</span>
+            </div>
+        
+            <div className={`${card} p-5`}>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <h3 className="text-lg font-semibold">Approval Queue</h3>
+              </div>
+        
+              {    {view === "manager" && managerGroups.length > 0 && (
+              <div className="mb-4 space-y-3">
+                {managerGroups.map((group) => (
+                <div
+                  key={group.key}
+                  onClick={() =>
+                    setExpandedGroup(expandedGroup === group.key ? null : group.key)
+                  }
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4 cursor-pointer"
+                >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="font-semibold text-sm">{group.traveler}</div>
+                        <div className="text-xs text-slate-500 mt-1">{group.trip}</div>
+                      </div>
+                      <span className={badge}>
+                        {group.itemCount} item{group.itemCount === 1 ? "" : "s"}
+                      </span>
+                    </div>
+
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      className="px-3 py-1 text-xs bg-emerald-700 text-white rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        group.items.forEach((item) => handleApprove(item.id));
+                      }}
+                    >
+                      Approve All
+                    </button>
+                  
+                    <button
+                      className="px-3 py-1 text-xs bg-rose-700 text-white rounded"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        group.items.forEach((item) => handleReject(item.id));
+                      }}
+                    >
+                      Reject All
+                    </button>
+                  </div>
+            
+<div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
+  <div>Total: ${group.total.toFixed(2)}</div>
+  <div>
+    <div className="flex flex-wrap gap-2">
+  {group.hasPersonalCard && (
+    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
+      Personal card
+    </span>
+  )}
+
+  {group.missingReceipt && (
+    <span className="text-xs bg-rose-100 text-rose-800 px-2 py-1 rounded">
+      Missing receipt 
+    </span>
+  )}
+
+  {group.missingProject && (
+    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+      Missing project code
+    </span>
+  )}
+</div>
+  </div>
+</div>
+
+{expandedGroup === group.key && (
+  <div className="mt-4 space-y-3">
+    {group.items.map((item) => (
+      <div
+        key={item.id}
+        className="rounded-xl border border-slate-200 p-3 bg-white"
+      >
+        <div className="flex justify-between items-start">
+          <div className="text-sm font-medium">{item.vendor}</div>
+
+          <div className="text-right">
+            <div className="text-sm">${item.amount}</div>
+            <button
+              className="mt-2 px-2 py-1 text-xs bg-blue-600 text-white rounded"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedDetailId(
+                  expandedDetailId === item.id ? null : item.id
+                );
+              }}
+            >
+              Details
+            </button>
+          </div>
+        </div>
+
+        <div className="text-xs text-slate-500 mt-1">
+          {(item.expense_type || "—")} • {(item.payment_method || "—")}
+        </div>
+
+        <div className="text-xs text-slate-500 mt-1">
+          {(item.expense_date || item.date || "—")}
+        </div>
+
+        {expandedDetailId === item.id && (
+          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <div className="text-xs text-slate-500 mb-2">
+              Receipt: {item.file_name || "No file name"}
+            </div>
+
+            {item.receipt_path ? (
+              <ReceiptViewer path={item.receipt_path} />
+            ) : (
+              <div className="text-xs text-rose-600">
+                No receipt uploaded.
+              </div>
+            )}
+
+            <div className="flex gap-2 mt-2">
+              <button
+                className="px-2 py-1 text-xs bg-emerald-600 text-white rounded"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleApprove(item.id);
+                }}
+              >
+                Approve
+              </button>
+
+              <button
+                className="px-2 py-1 text-xs bg-rose-600 text-white rounded"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReject(item.id);
+                }}
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+
+</div>   // ← keep this closing div
+                ))}
+              </div>
+            )}}
+            </div>
+          </div>
+        )}
+        
         {view === "manager" && (
           <div className={section}>
           <div className="flex items-center justify-between">
