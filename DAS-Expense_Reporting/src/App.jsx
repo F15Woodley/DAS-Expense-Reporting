@@ -371,6 +371,12 @@ useEffect(() => {
   loadExpenses();
 }, [profile]);
 
+useEffect(() => {
+  if (!isManager && view === "manager") {
+    setView("user");
+  }
+}, [isManager, view]);
+  
   const mobileInbox = useMemo(() => {
     const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
     const pending = savedExpenses.filter(
