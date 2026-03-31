@@ -340,11 +340,11 @@ const handleSignOut = async () => {
 };
  
 useEffect(() => {
-  const loadExpenses = async () => {
-    if (!user || !profile) return;
+  if (!profile) return;
 
+  const loadExpenses = async () => {
     try {
-      const records = await expenseService.list(profile.role);
+      const records = await expenseService.list(profile?.role);
       setSavedExpenses(records);
     } catch (error) {
       console.error("Failed to load expenses:", error);
@@ -353,7 +353,7 @@ useEffect(() => {
   };
 
   loadExpenses();
-}, [user, profile]);
+}, [profile]);
 
   const mobileInbox = useMemo(() => {
     const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
