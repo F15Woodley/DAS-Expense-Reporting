@@ -357,6 +357,9 @@ const handleSignIn = async () => {
 
 const handleSignOut = async () => {
   await supabase.auth.signOut();
+  setSession(null);
+  setUser(null);
+  setProfile(null);
 };
  
 useEffect(() => {
@@ -463,6 +466,9 @@ if (!item.project_code) {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  console.log("RENDER SESSION:", session);
+  console.log("RENDER USER:", user);
 
   if (!session) {
   return (
