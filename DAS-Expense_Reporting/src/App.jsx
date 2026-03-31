@@ -336,7 +336,7 @@ const handleSignUp = async () => {
 };
 
 const handleSignIn = async () => {
-  console.log("SIGN IN CLICKED", { authEmail });
+  console.log("SIGN IN CLICKED");
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: authEmail,
@@ -347,7 +347,12 @@ const handleSignIn = async () => {
 
   if (error) {
     alert(error.message);
+    return;
   }
+
+  console.log("SETTING SESSION AFTER SIGN IN:", data.session);
+  setSession(data.session);
+  setUser(data.session?.user ?? null);
 };
 
 const handleSignOut = async () => {
