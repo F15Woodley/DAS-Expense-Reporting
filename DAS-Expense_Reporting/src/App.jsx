@@ -801,7 +801,8 @@ const handleReject = async (id) => {
           ))}
         </div>
 
-        <div className={section}>
+        {view === "user" && (
+          <div className={section}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">0. Mobile Quick Submit</h2>
             <span className={badge}>Phone-First Employee View</span>
@@ -1326,6 +1327,7 @@ const handleReject = async (id) => {
             </div>
           </div>
         </div>
+  )}
 
         <div className={section}>
           <div className="flex items-center justify-between">
