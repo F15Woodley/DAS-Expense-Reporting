@@ -1018,7 +1018,7 @@ const handleReject = async (id) => {
                       Save Draft
                     </button>
                     <button className={buttonPrimary} onClick={handleSubmit}>
-                      Submit in 10 sec
+                      Submit
                     </button>
                   </div>
                   {submitState === "draft" && (
@@ -1071,7 +1071,9 @@ const handleReject = async (id) => {
 
               <div className={`${card} p-5`}>
                 <div className="flex items-center justify-between gap-3 mb-4">
-                  <h3 className="text-lg font-semibold">Recent saved items</h3>
+                 <h3 className="text-lg font-semibold">
+                  {view === "manager" ? "Approval Queue" : "Recent saved items"}
+                </h3>
                   <button className={buttonSecondary} onClick={handleClearSaved}>
                     Clear Screen List
                   </button>
@@ -1574,51 +1576,6 @@ const handleReject = async (id) => {
         </div>
   )}
 
-        {view === "manager" && (
-          <div className={section}>
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">3. Approval Queue Screen</h2>
-            <span className={badge}>Manager / Finance View</span>
-          </div>
-          <div className={`${card} p-6`}>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left border-b border-slate-200 text-slate-500">
-                    <th className="py-3 pr-4">Employee</th>
-                    <th className="py-3 pr-4">Trip</th>
-                    <th className="py-3 pr-4">Items</th>
-                    <th className="py-3 pr-4">Total</th>
-                    <th className="py-3 pr-4">Policy Note</th>
-                    <th className="py-3 pr-4">Status</th>
-                    <th className="py-3 pr-4">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {queue.map((row) => (
-                    <tr key={row.employee + row.trip} className="border-b border-slate-100">
-                      <td className="py-3 pr-4 font-medium">{row.employee}</td>
-                      <td className="py-3 pr-4">{row.trip}</td>
-                      <td className="py-3 pr-4">{row.items}</td>
-                      <td className="py-3 pr-4">{row.total}</td>
-                      <td className="py-3 pr-4">{row.issue}</td>
-                      <td className="py-3 pr-4">
-                        <span className={badge}>{row.status}</span>
-                      </td>
-                      <td className="py-3 pr-4">
-                        <div className="flex gap-2">
-                          <button className={buttonSecondary}>Return</button>
-                          <button className={buttonPrimary}>Approve</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-  )}
 
         {view === "manager" && (
           <div className={section}>
