@@ -189,7 +189,28 @@ export default function TravelExpenseApp() {
   const [user, setUser] = useState(null);
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
+  const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
+  
+  useEffect(() => {
+  const getSession = async () => {
+    console.log("CHECKING SESSION...");
+
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("getSession error:", error);
+      return;
+    }
+
+    console.log("INITIAL SESSION:", data.session);
+
+    setSession(data.session);
+    setUser(data.session?.user ?? null);
+  };
+
+  getSession();
+}, []);
   useEffect(() => {
   const loadProfile = async () => {
     if (!user) {
