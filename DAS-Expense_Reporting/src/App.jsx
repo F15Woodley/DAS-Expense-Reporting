@@ -1589,7 +1589,7 @@ const handleReject = async (id) => {
                 <h3 className="text-lg font-semibold">Approval Queue</h3>
               </div>
         
-              {    {view === "manager" && managerGroups.length > 0 && (
+             {view === "manager" && managerGroups.length > 0 && (
               <div className="mb-4 space-y-3">
                 {managerGroups.map((group) => (
                 <div
