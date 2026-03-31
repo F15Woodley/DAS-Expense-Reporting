@@ -1500,7 +1500,8 @@ const handleReject = async (id) => {
         </div>
   )}
 
-        <div className={section}>
+        {view === "user" && (
+          <div className={section}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">2. Trip & Expense List Screen</h2>
             <span className={badge}>Employee / Admin View</span>
@@ -1571,6 +1572,7 @@ const handleReject = async (id) => {
             </div>
           </div>
         </div>
+  )}
 
         <div className={section}>
           <div className="flex items-center justify-between">
