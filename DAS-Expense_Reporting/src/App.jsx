@@ -1735,7 +1735,7 @@ const handleReject = async (id) => {
 </div>   // ← keep this closing div
                 ))}
               </div>
-            )}}
+            )}
             </div>
           </div>
         )}
