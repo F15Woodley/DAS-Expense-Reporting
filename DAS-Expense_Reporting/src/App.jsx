@@ -464,7 +464,7 @@ if (!item.project_code) {
     };
   }, [previewUrl]);
 
-  if (!user) {
+  if (!session) {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 w-full max-w-md">
