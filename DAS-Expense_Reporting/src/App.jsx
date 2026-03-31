@@ -372,10 +372,10 @@ useEffect(() => {
 }, [profile]);
 
 useEffect(() => {
-  if (!isManager && view === "manager") {
+  if (profile && profile.role !== "manager" && view === "manager") {
     setView("user");
   }
-}, [isManager, view]);
+}, [profile, view]);
   
   const mobileInbox = useMemo(() => {
     const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
