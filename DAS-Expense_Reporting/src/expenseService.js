@@ -1,23 +1,29 @@
 import { supabase } from "./supabaseClient";
 
 export const expenseService = {
-  async list(role) {
-    if (!supabase) throw new Error("Supabase client not initialized");
+async list(role) {
+  if (!supabase) throw new Error("Supabase client not initialized");
 
-    let query = supabase
-      .from("expenses")
-      .select("*")
-      .order("created_at", { ascending: false });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (role === "manager") {
-      query = query.eq("status", "Submitted");
-    }
+  let query = supabase
+    .from("expenses")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    const { data, error } = await query;
+  if (role === "manager") {
+    query = query.eq("status", "Submitted");
+  } else {
+    query = query.eq("user_id", user.id);
+  }
 
-    if (error) throw error;
-    return data ?? [];
-  },
+  const { data, error } = await query;
+
+  if (error) throw error;
+  return data ?? [];
+},
 
 async saveExpense(record) {
   if (!supabase) throw new Error("Supabase client not initialized");
