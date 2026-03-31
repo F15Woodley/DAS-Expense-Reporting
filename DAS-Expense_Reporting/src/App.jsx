@@ -1327,9 +1327,10 @@ const handleReject = async (id) => {
             </div>
           </div>
         </div>
-  )}
-
-        <div className={section}>
+  )} 
+        
+        {view === "user" && (
+          <div className={section}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">1. Submit Expense Screen</h2>
             <span className={badge}>Employee View</span>
@@ -1455,7 +1456,7 @@ const handleReject = async (id) => {
                 />
               </div>
             </div>
-
+        
             <div className="space-y-4">
               <div className="rounded-2xl border-2 border-dashed border-slate-300 p-6 bg-slate-50">
                 <div className="text-sm font-medium">Upload Receipt</div>
@@ -1497,6 +1498,7 @@ const handleReject = async (id) => {
             </div>
           </div>
         </div>
+  )}
 
         <div className={section}>
           <div className="flex items-center justify-between">
