@@ -516,49 +516,6 @@ if (!item.project_code) {
           );
         }
 
-    if (isManager && view === "manager") {
-      return (
-        <div className="min-h-screen bg-slate-50">
-          <div className="border-b border-slate-200 bg-white px-4 py-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold">Manager Dashboard</h1>
-              <p className="text-sm text-slate-500">{profile?.email}</p>
-            </div>
-    
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setView("user")}
-                className="rounded-xl px-4 py-2 text-sm font-medium border border-slate-300 bg-white"
-              >
-                Employee View
-              </button>
-    
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="rounded-xl px-4 py-2 text-sm font-medium bg-slate-900 text-white"
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
-    
-          <div className="p-6">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold mb-2">Manager Dashboard</h2>
-              <p className="text-sm text-slate-600 mb-4">
-                This is the manager-only view.
-              </p>
-    
-              <div className="text-sm text-slate-700">
-                Pending submitted groups: {managerGroups.length}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
   
   const inferExpenseType = (name) => {
     const n = name.toLowerCase();
@@ -793,7 +750,7 @@ const handleReject = async (id) => {
     My Expenses
   </button>
 
-  {profile?.role === "manager" && (
+      {isManager && (
     <button
       className={`px-3 py-1 rounded-lg text-sm ${
         view === "manager" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
