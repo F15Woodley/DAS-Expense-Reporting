@@ -298,10 +298,14 @@ const extractReceiptData = async (file) => {
 };
   
 const handleSignUp = async () => {
-  const { error } = await supabase.auth.signUp({
+  console.log("SIGN UP CLICKED", { authEmail });
+
+  const { data, error } = await supabase.auth.signUp({
     email: authEmail,
     password: authPassword,
   });
+
+  console.log("SIGN UP RESULT", { data, error });
 
   if (error) {
     alert(error.message);
@@ -311,10 +315,14 @@ const handleSignUp = async () => {
 };
 
 const handleSignIn = async () => {
-  const { error } = await supabase.auth.signInWithPassword({
+  console.log("SIGN IN CLICKED", { authEmail });
+
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: authEmail,
     password: authPassword,
   });
+
+  console.log("SIGN IN RESULT", { data, error });
 
   if (error) {
     alert(error.message);
@@ -453,18 +461,21 @@ if (!item.project_code) {
           />
 
           <div className="flex gap-2">
-            <button
-              className="rounded-xl px-4 py-2.5 text-sm font-medium bg-slate-900 text-white"
-              onClick={handleSignIn}
-            >
-              Sign In
-            </button>
-            <button
-              className="rounded-xl px-4 py-2.5 text-sm font-medium border border-slate-300 bg-white"
-              onClick={handleSignUp}
-            >
-              Sign Up
-            </button>
+          <button
+            type="button"
+            className="rounded-xl px-4 py-2.5 text-sm font-medium bg-slate-900 text-white"
+            onClick={handleSignIn}
+          >
+            Sign In
+          </button>
+          
+          <button
+            type="button"
+            className="rounded-xl px-4 py-2.5 text-sm font-medium border border-slate-300 bg-white"
+            onClick={handleSignUp}
+          >
+            Sign Up
+          </button>
           </div>
         </div>
       </div>
