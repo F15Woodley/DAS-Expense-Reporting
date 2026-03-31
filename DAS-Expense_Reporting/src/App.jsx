@@ -194,7 +194,6 @@ export default function TravelExpenseApp() {
   
   useEffect(() => {
   const getSession = async () => {
-    console.log("CHECKING SESSION...");
 
     const { data, error } = await supabase.auth.getSession();
 
@@ -202,8 +201,6 @@ export default function TravelExpenseApp() {
       console.error("getSession error:", error);
       return;
     }
-
-    console.log("INITIAL SESSION:", data.session);
 
     setSession(data.session);
     setUser(data.session?.user ?? null);
@@ -336,21 +333,17 @@ const handleSignUp = async () => {
 };
 
 const handleSignIn = async () => {
-  console.log("SIGN IN CLICKED");
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: authEmail,
     password: authPassword,
   });
 
-  console.log("SIGN IN RESULT", { data, error });
-
   if (error) {
     alert(error.message);
     return;
   }
 
-  console.log("SETTING SESSION AFTER SIGN IN:", data.session);
   setSession(data.session);
   setUser(data.session?.user ?? null);
 };
@@ -466,9 +459,6 @@ if (!item.project_code) {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
-
-  console.log("RENDER SESSION:", session);
-  console.log("RENDER USER:", user);
 
   if (!session) {
   return (
