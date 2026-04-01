@@ -1610,7 +1610,7 @@ const handleReject = async (id) => {
                   <div className="flex gap-2 mt-3">
                     <button
                       className="px-3 py-1 text-xs bg-emerald-700 text-white rounded"
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
                         for (const item of group.items) {
                         try {
