@@ -609,6 +609,26 @@ if (!item.project_code) {
     try {
       console.log("persistExpense started", { status, form, selectedFile });
 
+      if (isAddingTrip && form.trip?.trim() && form.projectCode?.trim()) {
+  const alreadyExists = tripOptions.some(
+    (t) =>
+      t.name.toLowerCase() === form.trip.trim().toLowerCase() ||
+      t.code.toLowerCase() === form.projectCode.trim().toLowerCase()
+  );
+
+  if (!alreadyExists) {
+    setTripOptions((prev) => [
+      ...prev,
+      {
+        name: form.trip.trim(),
+        code: form.projectCode.trim(),
+        status: "Active",
+        traveler: form.traveler,
+      },
+    ]);
+  }
+}
+
       const numericAmount =
         Number(String(form.amount).replace(/[^\d.]/g, "")) || 0;
 
