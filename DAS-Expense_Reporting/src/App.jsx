@@ -192,6 +192,9 @@ export default function TravelExpenseApp() {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   
+  const [tripOptions, setTripOptions] = useState(trips);
+  const [isAddingTrip, setIsAddingTrip] = useState(false);
+  
   useEffect(() => {
   const getSession = async () => {
 
@@ -580,6 +583,27 @@ if (!item.project_code) {
   const handleInputChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
+
+ const handleTripChange = (value) => {
+  if (value === "__new__") {
+    setIsAddingTrip(true);
+    setForm((prev) => ({
+      ...prev,
+      trip: "",
+      projectCode: "",
+    }));
+    return;
+  }
+
+  const selectedTrip = tripOptions.find((t) => t.name === value);
+
+  setIsAddingTrip(false);
+  setForm((prev) => ({
+    ...prev,
+    trip: value,
+    projectCode: selectedTrip?.code || "",
+  }));
+}; 
 
   const persistExpense = async (status) => {
     try {
@@ -1202,17 +1226,20 @@ const handleReject = async (id) => {
                 />
               </div>
               <div>
-                <div className={label}>Trip / Project</div>
-                <select
-                  className={input}
-                  value={form.trip}
-                  onChange={(e) => handleInputChange("trip", e.target.value)}
-                >
-                  <option>USGS Site Visit – Denver</option>
-                  <option>Client Meeting – Tampa</option>
-                  <option>MAPPS Montana</option>
-                </select>
-              </div>
+            <div className={label}>Trip / Project</div>
+            <select
+              className={input}
+              value={isAddingTrip ? "__new__" : form.trip}
+              onChange={(e) => handleTripChange(e.target.value)}
+            >
+              {tripOptions.map((trip) => (
+                <option key={trip.code} value={trip.name}>
+                  {trip.name}
+                </option>
+              ))}
+              <option value="__new__">+ Add new trip/project</option>
+            </select>
+            </div>
               <div>
                 <div className={label}>Expense Type</div>
                 <select
