@@ -1025,7 +1025,18 @@ const handleReject = async (id) => {
                 />
               </div>
             )} 
-                  
+
+               <div>
+            <div className={label}>Project Code</div>
+            <input
+              className={input}
+              value={form.projectCode}
+              onChange={(e) => handleInputChange("projectCode", e.target.value)}
+              placeholder="Example: GPSCv5-241"
+              readOnly={!isAddingTrip}
+            />
+          </div>   
+                            
                   <div>
                     <div className={label}>Payment Method</div>
                     <select
