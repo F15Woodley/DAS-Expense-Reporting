@@ -688,9 +688,15 @@ const receiptPath = selectedFile
 const handleSubmit = async () => {
   const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
 
-  if (!form.vendor || !form.date || !numericAmount) {
-    alert("Please complete vendor, date, and amount before submitting.");
-    return;
+  if (if (
+  !form.trip?.trim() ||
+  !form.projectCode?.trim() ||
+  !form.vendor?.trim() ||
+  !form.date?.trim() ||
+  !numericAmount
+) {
+  alert("Please complete trip, project code, vendor, date, and amount before submitting.");
+  return;
   }
 
   await persistExpense("Submitted");
