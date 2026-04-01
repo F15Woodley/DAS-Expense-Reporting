@@ -608,11 +608,12 @@ if (!item.project_code) {
  const handleTripChange = (value) => {
   if (value === "__new__") {
     setIsAddingTrip(true);
-    setForm((prev) => ({
-      ...prev,
-      trip: "",
-      projectCode: "",
-    }));
+setForm((prev) => ({
+  ...prev,
+  trip: "",
+  projectCode: "",
+}));
+setExpandedGroup(null);
     return;
   }
 
