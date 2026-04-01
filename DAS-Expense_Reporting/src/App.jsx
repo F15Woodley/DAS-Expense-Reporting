@@ -1091,13 +1091,14 @@ const handleReject = async (id) => {
               />
             </div>
                     
-                    <div className={label}>Amount</div>
-                    <input
-                      className={input}
-                      value={form.amount}
-                      onChange={(e) => handleInputChange("amount", e.target.value)}
-                    />
-                  </div>
+          <div>
+            <div className={label}>Amount</div>
+            <input
+              className={input}
+              value={form.amount}
+              onChange={(e) => handleInputChange("amount", e.target.value)}
+            />
+          </div>
                   <details className="rounded-2xl border border-slate-200 bg-white p-3">
                     <summary className="cursor-pointer text-sm font-medium">
                       More details
