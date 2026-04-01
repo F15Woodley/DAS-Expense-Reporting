@@ -1070,7 +1070,27 @@ const handleReject = async (id) => {
                       <option>Ground Transport</option>
                     </select>
                   </div>
-                  <div>
+
+                    <div>
+              <div className={label}>Vendor</div>
+              <input
+                className={input}
+                value={form.vendor}
+                onChange={(e) => handleInputChange("vendor", e.target.value)}
+                placeholder="Vendor name"
+              />
+            </div>
+            
+            <div>
+              <div className={label}>Date</div>
+              <input
+                className={input}
+                value={form.date}
+                onChange={(e) => handleInputChange("date", e.target.value)}
+                placeholder="YYYY-MM-DD"
+              />
+            </div>
+                    
                     <div className={label}>Amount</div>
                     <input
                       className={input}
