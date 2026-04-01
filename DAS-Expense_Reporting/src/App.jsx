@@ -998,18 +998,34 @@ const handleReject = async (id) => {
 </div>
                 
                 <div className="space-y-3 mb-20">
-                  <div>
-                    <div className={label}>Trip / Project</div>
-                    <select
-                      className={input}
-                      value={form.trip}
-                      onChange={(e) => handleInputChange("trip", e.target.value)}
-                    >
-                      <option>USGS Site Visit – Denver</option>
-                      <option>Client Meeting – Tampa</option>
-                      <option>MAPPS Montana</option>
-                    </select>
-                  </div>
+                <div>
+                <div className={label}>Trip / Project</div>
+                <select
+                  className={input}
+                  value={isAddingTrip ? "__new__" : form.trip}
+                  onChange={(e) => handleTripChange(e.target.value)}
+                >
+                  {tripOptions.map((trip) => (
+                    <option key={trip.code} value={trip.name}>
+                      {trip.name}
+                    </option>
+                  ))}
+                  <option value="__new__">+ Add new trip/project</option>
+                </select>
+              </div>
+
+               {isAddingTrip && (
+              <div>
+                <div className={label}>New Trip / Project Name</div>
+                <input
+                  className={input}
+                  value={form.trip}
+                  onChange={(e) => handleInputChange("trip", e.target.value)}
+                  placeholder="Example: Escambia County Site Visit"
+                />
+              </div>
+            )} 
+                  
                   <div>
                     <div className={label}>Payment Method</div>
                     <select
