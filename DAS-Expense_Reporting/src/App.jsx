@@ -853,10 +853,12 @@ const handleReject = async (id) => {
               receipt uploads.
             </p>
           </div>
+        {view === "manager" && (
           <div className="hidden md:flex gap-2">
             <button className={buttonSecondary}>Admin Settings</button>
             <button className={buttonPrimary}>New Expense</button>
           </div>
+        )}
         </div>
 
         <div className="grid md:grid-cols-4 gap-4 mb-8">
