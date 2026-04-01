@@ -391,6 +391,10 @@ useEffect(() => {
   loadExpenses();
 }, [profile]);
 
+  useEffect(() => {
+  loadTrips();
+}, []);
+
 useEffect(() => {
   if (profile && profile.role !== "manager" && view === "manager") {
     setView("user");
