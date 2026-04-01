@@ -1240,6 +1240,19 @@ const handleReject = async (id) => {
               <option value="__new__">+ Add new trip/project</option>
             </select>
             </div>
+
+            {isAddingTrip && (
+              <div>
+                <div className={label}>New Trip / Project Name</div>
+                <input
+                  className={input}
+                  value={form.trip}
+                  onChange={(e) => handleInputChange("trip", e.target.value)}
+                  placeholder="Example: Escambia County Site Visit"
+                />
+              </div>
+            )}
+              
               <div>
                 <div className={label}>Expense Type</div>
                 <select
