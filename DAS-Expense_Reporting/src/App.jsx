@@ -861,10 +861,30 @@ const handleReject = async (id) => {
 
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           {[
-            ["Open Trips", "12"],
-            ["Pending Expenses", "37"],
-            ["Awaiting Approval", "9"],
-            ["Ready for QuickBooks", "22"],
+            [
+              "To Submit",
+              String(
+                savedExpenses.filter((item) => String(item.status).toLowerCase() === "draft").length
+              ),
+            ],
+            [
+              "Pending Approval",
+              String(
+                savedExpenses.filter((item) => String(item.status).toLowerCase() === "submitted").length
+              ),
+            ],
+            [
+              "Returned",
+              String(
+                savedExpenses.filter((item) => String(item.status).toLowerCase() === "rejected").length
+              ),
+            ],
+            [
+              "Approved",
+              String(
+                savedExpenses.filter((item) => String(item.status).toLowerCase() === "approved").length
+              ),
+            ],
           ].map(([title, value]) => (
             <div key={title} className={`${card} p-5`}>
               <div className="text-sm text-slate-500">{title}</div>
