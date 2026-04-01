@@ -784,18 +784,18 @@ const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
 if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
   validationWarnings.push("Receipt should be attached for expenses over $75.");
 }
-const handleApprove = async (id) => {
+const handleReject = async (id) => {
   try {
-    await expenseService.updateExpenseStatus(id, "Approved");
+    await expenseService.updateExpenseStatus(id, "Rejected");
 
     setSavedExpenses((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, status: "Approved" } : item
+        item.id === id ? { ...item, status: "Rejected" } : item
       )
     );
   } catch (error) {
-    console.error("Approve failed:", error);
-    alert("Could not approve expense.");
+    console.error("Reject failed:", error, "Expense ID:", id);
+    alert(`Could not reject expense. ID: ${id}. Check browser console.`);
   }
 };
 
@@ -809,8 +809,8 @@ const handleReject = async (id) => {
       )
     );
   } catch (error) {
-    console.error("Reject failed:", error);
-    alert("Could not reject expense.");
+    console.error("Reject failed:", error, "Expense ID:", id);
+    alert(`Could not reject expense. ID: ${id}. Check browser console.`);
   }
 };
   
@@ -1626,7 +1626,13 @@ const handleReject = async (id) => {
                       className="px-3 py-1 text-xs bg-emerald-700 text-white rounded"
                       onClick={(e) => {
                         e.stopPropagation();
-                        group.items.forEach((item) => handleApprove(item.id));
+                        for (const item of group.items) {
+                        try {
+                          await handleApprove(item.id);
+                        } catch (e) {
+                          console.error("Bulk approve failed for item:", item);
+                        }
+                      }
                       }}
                     >
                       Approve All
@@ -1634,9 +1640,15 @@ const handleReject = async (id) => {
                   
                     <button
                       className="px-3 py-1 text-xs bg-rose-700 text-white rounded"
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
-                        group.items.forEach((item) => handleReject(item.id));
+                        for (const item of group.items) {
+                      try {
+                        await handleReject(item.id);
+                      } catch (e) {
+                        console.error("Bulk reject failed for item:", item);
+                      }
+                    }
                       }}
                     >
                       Reject All
