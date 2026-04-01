@@ -248,6 +248,23 @@ export default function TravelExpenseApp() {
 
   loadProfile();
 }, [user]);
+
+    const loadTrips = async () => {
+      const { data, error } = await supabase
+        .from("trips")
+        .select("id, name, code, status, traveler")
+        .order("name", { ascending: true });
+    
+      if (error) {
+        console.error("Failed to load trips:", error);
+        return;
+      }
+    
+      if (data && data.length > 0) {
+        setTripOptions(data);
+      }
+    };
+      
   const emptyForm = {
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
