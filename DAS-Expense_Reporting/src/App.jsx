@@ -784,20 +784,6 @@ const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
 if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
   validationWarnings.push("Receipt should be attached for expenses over $75.");
 }
-const handleReject = async (id) => {
-  try {
-    await expenseService.updateExpenseStatus(id, "Rejected");
-
-    setSavedExpenses((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: "Rejected" } : item
-      )
-    );
-  } catch (error) {
-    console.error("Reject failed:", error, "Expense ID:", id);
-    alert(`Could not reject expense. ID: ${id}. Check browser console.`);
-  }
-};
 
 const handleReject = async (id) => {
   try {
