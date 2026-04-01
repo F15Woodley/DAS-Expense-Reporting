@@ -688,7 +688,7 @@ const receiptPath = selectedFile
 const handleSubmit = async () => {
   const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
 
-  if (if (
+  if (
   !form.trip?.trim() ||
   !form.projectCode?.trim() ||
   !form.vendor?.trim() ||
