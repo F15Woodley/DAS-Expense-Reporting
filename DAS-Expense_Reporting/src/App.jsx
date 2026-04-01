@@ -1340,15 +1340,17 @@ const handleReject = async (id) => {
                 />
               </div>
               <div>
-                <div className={label}>Customer / Project Code</div>
-                <input
-                  className={input}
-                  value={form.projectCode}
-                  onChange={(e) =>
-                    handleInputChange("projectCode", e.target.value)
-                  }
-                />
-              </div>
+            <div className={label}>Customer / Project Code</div>
+            <input
+              className={input}
+              value={form.projectCode}
+              onChange={(e) =>
+                handleInputChange("projectCode", e.target.value)
+              }
+              placeholder="Example: GPSCv5-241"
+              readOnly={!isAddingTrip}
+            />
+          </div>
             </div>
         
             <div className="space-y-4">
