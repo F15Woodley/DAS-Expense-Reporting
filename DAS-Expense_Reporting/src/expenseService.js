@@ -56,6 +56,17 @@ async saveExpense(record) {
     if (error) throw error;
     return data;
   },
+
+  async deleteExpense(id) {
+  if (!supabase) throw new Error("Supabase client not initialized");
+
+  const { error } = await supabase
+    .from("expenses")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+},
   async uploadReceipt(file, userId) {
     if (!supabase) throw new Error("Supabase client not initialized");
     if (!file) return null;
