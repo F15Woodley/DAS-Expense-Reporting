@@ -690,12 +690,10 @@ const receiptPath = selectedFile
      let saved;
 
       if (currentExpenseId) {
-        // UPDATE existing draft
-        saved = await expenseService.updateExpenseStatus(currentExpenseId, status);
+        saved = await expenseService.updateExpense(currentExpenseId, record);
       } else {
-        // CREATE new record
         saved = await expenseService.saveExpense(record);
-    }
+      }
 
       console.log("saved to supabase OK", saved);
 
