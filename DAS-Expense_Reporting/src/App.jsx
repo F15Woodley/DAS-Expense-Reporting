@@ -175,25 +175,26 @@ export default function TravelExpenseApp() {
     },
   ];
 
-  const fileRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [submitState, setSubmitState] = useState("idle");
-  const [savedExpenses, setSavedExpenses] = useState([]);
-  const [currentExpenseId, setCurrentExpenseId] = useState(null);
-  const [expandedGroup, setExpandedGroup] = useState(null);
-  const [expandedDetailId, setExpandedDetailId] = useState(null);
-  const [lastSavedAt, setLastSavedAt] = useState(null);
-  const [isExtracting, setIsExtracting] = useState(false);
-  const [extractionError, setExtractionError] = useState("");
-  const [view, setView] = useState("user");
-  const [user, setUser] = useState(null);
-  const [authEmail, setAuthEmail] = useState("");
-  const [authPassword, setAuthPassword] = useState("");
-  const [session, setSession] = useState(null);
-  const [profile, setProfile] = useState(null);
-  
-  const [tripOptions, setTripOptions] = useState(trips);
-  const [isAddingTrip, setIsAddingTrip] = useState(false);
+const fileRef = useRef(null);
+const [selectedFile, setSelectedFile] = useState(null);
+const [editingReceiptPath, setEditingReceiptPath] = useState(null);
+const [submitState, setSubmitState] = useState("idle");
+const [savedExpenses, setSavedExpenses] = useState([]);
+const [currentExpenseId, setCurrentExpenseId] = useState(null);
+const [expandedGroup, setExpandedGroup] = useState(null);
+const [expandedDetailId, setExpandedDetailId] = useState(null);
+const [lastSavedAt, setLastSavedAt] = useState(null);
+const [isExtracting, setIsExtracting] = useState(false);
+const [extractionError, setExtractionError] = useState("");
+const [view, setView] = useState("user");
+const [user, setUser] = useState(null);
+const [authEmail, setAuthEmail] = useState("");
+const [authPassword, setAuthPassword] = useState("");
+const [session, setSession] = useState(null);
+const [profile, setProfile] = useState(null);
+
+const [tripOptions, setTripOptions] = useState(trips);
+const [isAddingTrip, setIsAddingTrip] = useState(false);
   
   useEffect(() => {
   const getSession = async () => {
@@ -759,6 +760,7 @@ const handleEditExpense = (item) => {
   });
 
   setSelectedFile(null);
+  setEditingReceiptPath(item.receipt_path || null);
   setSubmitState("idle");
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
