@@ -812,6 +812,22 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
   validationWarnings.push("Receipt should be attached for expenses over $75.");
 }
 
+  const handleApprove = async (id) => {
+  try {
+    await expenseService.updateExpenseStatus(id, "Approved");
+
+    setSavedExpenses((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, status: "Approved" } : item
+      )
+    );
+  } catch (error) {
+    console.error("Approve failed:", error, "Expense ID:", id);
+    alert(`Could not approve expense. ID: ${id}. Check browser console.`);
+  }
+};
+
+  
 const handleReject = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Returned");
