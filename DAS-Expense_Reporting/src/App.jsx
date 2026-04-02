@@ -409,7 +409,10 @@ useEffect(() => {
     const approved = savedExpenses.filter(
       (item) => item.status === "Approved"
     ).length;
-
+    const returned = savedExpenses.filter(
+    (item) => item.status === "Returned"
+  ).length;
+    
     return [
       {
         title: "To submit",
@@ -423,7 +426,7 @@ useEffect(() => {
       },
       {
         title: "Returned",
-        count: defaultMobileInbox[2].count,
+        count: returned || defaultMobileInbox[2].count,
         note: "Needs receipt or coding fix",
       },
       {
@@ -864,7 +867,7 @@ const handleReject = async (id) => {
             [
               "Returned",
               String(
-                savedExpenses.filter((item) => String(item.status).toLowerCase() === "rejected").length
+                savedExpenses.filter((item) => String(item.status).toLowerCase() === "returned").length
               ),
             ],
             [
