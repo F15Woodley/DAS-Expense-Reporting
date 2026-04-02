@@ -741,6 +741,28 @@ const handleSaveDraft = async () => {
     setSubmitState("idle");
   };
 
+const handleEditExpense = (item) => {
+  setCurrentExpenseId(item.id);
+
+  setForm({
+    traveler: item.traveler || "",
+    trip: item.trip || "",
+    expenseType: item.expense_type || item.expenseType || "",
+    paymentMethod: item.payment_method || item.paymentMethod || "",
+    vendor: item.vendor || "",
+    date: item.expense_date || item.date || "",
+    amount: String(item.amount ?? ""),
+    billable: item.billable ? "Yes" : "No",
+    businessPurpose: item.business_purpose || item.businessPurpose || "",
+    qbClass: item.qb_class || item.qbClass || "Travel",
+    projectCode: item.project_code || item.projectCode || "",
+  });
+
+  setSelectedFile(null);
+  setSubmitState("idle");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+  
  const getFieldConfidence = () => {
   const amountNum = Number(String(form.amount).replace(/[^\d.]/g, ""));
   const hasVendor = !!form.vendor?.trim();
