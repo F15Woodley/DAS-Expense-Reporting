@@ -1261,7 +1261,17 @@ const handleReject = async (id) => {
                         <div className="text-xs mt-2">
                             Status: <span className="font-semibold">{item.status}</span>
                           </div>
-                          
+                      {["draft", "returned"].includes(String(item.status).toLowerCase()) && (
+                        <div className="flex gap-2 mt-3">
+                          <button
+                            className={buttonSecondary}
+                            onClick={() => handleEditExpense(item)}
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                        
                   {view === "manager" && String(item.status).toLowerCase() === "submitted" ? (
                     <div className="flex gap-2 mt-3">
                       <button
