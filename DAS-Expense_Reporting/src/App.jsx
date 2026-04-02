@@ -274,7 +274,7 @@ const [isAddingTrip, setIsAddingTrip] = useState(false);
     vendor: "",
     date: "",
     amount: "",
-    billable: "Yes",
+    billable: "No",
     businessPurpose: "",
     qbClass: "Travel",
     projectCode: "GPSCv5-241",
@@ -402,41 +402,41 @@ useEffect(() => {
   }
 }, [profile, view]);
   
-  const mobileInbox = useMemo(() => {
-    const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
-    const pending = savedExpenses.filter(
-      (item) => item.status === "Submitted"
-    ).length;
-    const approved = savedExpenses.filter(
-      (item) => item.status === "Approved"
-    ).length;
-    const returned = savedExpenses.filter(
+const mobileInbox = useMemo(() => {
+  const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
+  const pending = savedExpenses.filter(
+    (item) => item.status === "Submitted"
+  ).length;
+  const approved = savedExpenses.filter(
+    (item) => item.status === "Approved"
+  ).length;
+  const returned = savedExpenses.filter(
     (item) => item.status === "Returned"
   ).length;
-    
-    return [
-      {
-        title: "To submit",
-        count: drafts || defaultMobileInbox[0].count,
-        note: "Receipts waiting for details",
-      },
-      {
-        title: "Pending approval",
-        count: pending || defaultMobileInbox[1].count,
-        note: "Sent to PM or finance",
-      },
-      {
-        title: "Returned",
-        count: returned || defaultMobileInbox[2].count,
-        note: "Needs receipt or coding fix",
-      },
-      {
-        title: "Approved",
-        count: approved || defaultMobileInbox[3].count,
-        note: "Ready or exported",
-      },
-    ];
-  }, [savedExpenses]);
+
+  return [
+    {
+      title: "To submit",
+      count: drafts,
+      note: "Receipts waiting for details",
+    },
+    {
+      title: "Pending approval",
+      count: pending,
+      note: "Sent to PM or finance",
+    },
+    {
+      title: "Returned",
+      count: returned,
+      note: "Needs receipt or coding fix",
+    },
+    {
+      title: "Approved",
+      count: approved,
+      note: "Ready or exported",
+    },
+  ];
+}, [savedExpenses]);
 
   const managerGroups = useMemo(() => {
   const submittedItems = savedExpenses.filter(
