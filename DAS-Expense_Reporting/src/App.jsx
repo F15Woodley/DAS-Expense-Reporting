@@ -817,6 +817,29 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
   validationWarnings.push("Receipt should be attached for expenses over $75.");
 }
 
+const handleDeleteExpense = async (id) => {
+  const confirmed = window.confirm("Delete this draft?");
+
+  if (!confirmed) return;
+
+  try {
+    await expenseService.deleteExpense(id);
+
+    setSavedExpenses((prev) => prev.filter((item) => item.id !== id));
+
+    if (currentExpenseId === id) {
+      setCurrentExpenseId(null);
+      setForm(emptyForm);
+      setSelectedFile(null);
+      setEditingReceiptPath(null);
+      setSubmitState("idle");
+    }
+  } catch (error) {
+    console.error("Delete failed:", error);
+    alert("Could not delete draft.");
+  }
+};
+  
   const handleApprove = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Approved");
