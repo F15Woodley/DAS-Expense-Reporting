@@ -787,16 +787,16 @@ if (Number.isFinite(numericAmount) && numericAmount > 75 && !selectedFile) {
 
 const handleReject = async (id) => {
   try {
-    await expenseService.updateExpenseStatus(id, "Rejected");
+    await expenseService.updateExpenseStatus(id, "Returned");
 
     setSavedExpenses((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, status: "Rejected" } : item
+        item.id === id ? { ...item, status: "Returned" } : item
       )
     );
   } catch (error) {
-    console.error("Reject failed:", error, "Expense ID:", id);
-    alert(`Could not reject expense. ID: ${id}. Check browser console.`);
+    console.error("Return failed:", error);
+    alert("Could not return expense.");
   }
 };
   
