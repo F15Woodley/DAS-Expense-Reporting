@@ -733,6 +733,10 @@ const handleSubmit = async () => {
 const handleSaveDraft = async () => {
   await persistExpense("Draft");
   setSubmitState("draft");
+  setCurrentExpenseId(null);
+  setForm(emptyForm);
+  setSelectedFile(null);
+  setEditingReceiptPath(null);
 };
 
   const handleClearSaved = () => {
