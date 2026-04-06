@@ -535,6 +535,47 @@ const userTripGroups = useMemo(() => {
     };
   });
 }, [savedExpenses]);
+
+const filteredTripExpenses = useMemo(() => {
+  let rows = savedExpenses;
+
+  // Filter by selected trip
+  if (selectedTripKey) {
+    rows = rows.filter((item) => {
+      const tripName = item.trip || "Unassigned Trip";
+      const tripCode = item.project_code || "No Code";
+      const key = `${tripName}__${tripCode}`;
+      return key === selectedTripKey;
+    });
+  }
+
+  // Search filter
+  if (tripSearch.trim()) {
+    const q = tripSearch.trim().toLowerCase();
+
+    rows = rows.filter((item) => {
+      return (
+        String(item.vendor || "").toLowerCase().includes(q) ||
+        String(item.trip || "").toLowerCase().includes(q) ||
+        String(item.traveler || "").toLowerCase().includes(q) ||
+        String(item.project_code || "").toLowerCase().includes(q)
+      );
+    });
+  }
+
+  // Status filter
+  if (statusFilter !== "All Statuses") {
+    rows = rows.filter((item) => item.status === statusFilter);
+  }
+
+  // Payment filter
+  if (paymentFilter !== "All Payment Methods") {
+    rows = rows.filter((item) => item.payment_method === paymentFilter);
+  }
+
+  return rows;
+}, [savedExpenses, selectedTripKey, tripSearch, statusFilter, paymentFilter]);
+  
   
   const previewUrl = useMemo(() => {
     if (!selectedFile) return null;
@@ -1733,7 +1774,7 @@ const handleReject = async (id) => {
                   </tr>
                 </thead>
               <tbody>
-                {savedExpenses.map((row) => (
+                {filteredTripExpenses.map((row) => (
                   <tr key={row.id} className="border-b border-slate-100">
                     <td className="py-3 pr-4 font-medium">{row.vendor || "—"}</td>
                     <td className="py-3 pr-4">{row.expense_date || "—"}</td>
