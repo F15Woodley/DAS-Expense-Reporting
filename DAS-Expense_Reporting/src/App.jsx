@@ -192,7 +192,7 @@ const [authEmail, setAuthEmail] = useState("");
 const [authPassword, setAuthPassword] = useState("");
 const [session, setSession] = useState(null);
 const [profile, setProfile] = useState(null);
-
+const [selectedTripKey, setSelectedTripKey] = useState(null);
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
   
@@ -491,18 +491,28 @@ const userTripGroups = useMemo(() => {
     const tripName = item.trip || "Unassigned Trip";
     const tripCode = item.project_code || "No Code";
     const key = `${tripName}__${tripCode}`;
-
+    
     if (!groups[key]) {
       groups[key] = {
+        key, // ✅ ADD THIS
         name: tripName,
         code: tripCode,
         traveler: item.traveler || "—",
         statuses: [],
+        latestCreatedAt: item.created_at || null, // ✅ ADD THIS
       };
-    }
+}
 
     if (item.status) {
       groups[key].statuses.push(item.status);
+    }
+    
+      if (
+      item.created_at &&
+      (!groups[key].latestCreatedAt ||
+        item.created_at > groups[key].latestCreatedAt)
+    ) {
+      groups[key].latestCreatedAt = item.created_at;
     }
   }
 
