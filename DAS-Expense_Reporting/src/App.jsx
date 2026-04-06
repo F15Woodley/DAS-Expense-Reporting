@@ -275,7 +275,7 @@ const [isAddingTrip, setIsAddingTrip] = useState(false);
     traveler: "Ross Woodley",
     trip: "USGS Site Visit – Denver",
     expenseType: "",
-    paymentMethod: "",
+    paymentMethod: "Company Card",
     vendor: "",
     date: "",
     amount: "",
