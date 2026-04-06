@@ -483,6 +483,44 @@ if (!item.project_code) {
 
   return Object.values(groups);
 }, [savedExpenses]);
+
+const userTripGroups = useMemo(() => {
+  const groups = {};
+
+  for (const item of savedExpenses) {
+    const tripName = item.trip || "Unassigned Trip";
+    const tripCode = item.project_code || "No Code";
+    const key = `${tripName}__${tripCode}`;
+
+    if (!groups[key]) {
+      groups[key] = {
+        name: tripName,
+        code: tripCode,
+        traveler: item.traveler || "—",
+        statuses: [],
+      };
+    }
+
+    if (item.status) {
+      groups[key].statuses.push(item.status);
+    }
+  }
+
+  return Object.values(groups).map((group) => {
+    let status = "Active";
+
+    if (group.statuses.some((s) => s === "Submitted")) status = "Pending Approval";
+    if (group.statuses.some((s) => s === "Returned")) status = "Returned";
+    if (group.statuses.some((s) => s === "Draft")) status = "Draft";
+    if (group.statuses.every((s) => s === "Approved")) status = "Approved";
+
+    return {
+      ...group,
+      status,
+    };
+  });
+}, [savedExpenses]);
+  
   const previewUrl = useMemo(() => {
     if (!selectedFile) return null;
     return URL.createObjectURL(selectedFile);
@@ -1634,18 +1672,27 @@ const handleReject = async (id) => {
             </div>
 
             <div className="grid lg:grid-cols-3 gap-4 mb-6">
-              {trips.map((trip) => (
-                <div key={trip.code} className="rounded-2xl border border-slate-200 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="font-semibold">{trip.name}</div>
-                    <span className={badge}>{trip.status}</span>
-                  </div>
-                  <div className="text-sm text-slate-600 mt-2">Code: {trip.code}</div>
-                  <div className="text-sm text-slate-600">
-                    Traveler: {trip.traveler}
-                  </div>
+          {userTripGroups.length === 0 ? (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 lg:col-span-3">
+              No trips yet.
+            </div>
+          ) : (
+            userTripGroups.map((trip) => (
+              <div
+                key={`${trip.name}-${trip.code}`}
+                className="rounded-2xl border border-slate-200 p-4"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="font-semibold">{trip.name}</div>
+                  <span className={badge}>{trip.status}</span>
                 </div>
-              ))}
+                <div className="text-sm text-slate-600 mt-2">Code: {trip.code}</div>
+                <div className="text-sm text-slate-600">
+                  Traveler: {trip.traveler}
+                </div>
+              </div>
+            ))
+          )}
             </div>
 
             <div className="overflow-x-auto">
