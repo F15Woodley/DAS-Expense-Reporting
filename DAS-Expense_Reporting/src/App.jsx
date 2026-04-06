@@ -1660,20 +1660,24 @@ const handleReject = async (id) => {
                     <th className="py-3 pr-4">Status</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {expenses.map((row) => (
-                    <tr key={row.vendor + row.date} className="border-b border-slate-100">
-                      <td className="py-3 pr-4 font-medium">{row.vendor}</td>
-                      <td className="py-3 pr-4">{row.date}</td>
-                      <td className="py-3 pr-4">{row.amount}</td>
-                      <td className="py-3 pr-4">{row.category}</td>
-                      <td className="py-3 pr-4">{row.payment}</td>
-                      <td className="py-3 pr-4">
-                        <span className={badge}>{row.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+              <tbody>
+                {savedExpenses.map((row) => (
+                  <tr key={row.id} className="border-b border-slate-100">
+                    <td className="py-3 pr-4 font-medium">{row.vendor || "—"}</td>
+                    <td className="py-3 pr-4">{row.expense_date || "—"}</td>
+                    <td className="py-3 pr-4">
+                      {row.amount !== null && row.amount !== undefined
+                        ? `$${Number(row.amount).toFixed(2)}`
+                        : "—"}
+                    </td>
+                    <td className="py-3 pr-4">{row.expense_type || "—"}</td>
+                    <td className="py-3 pr-4">{row.payment_method || "—"}</td>
+                    <td className="py-3 pr-4">
+                      <span className={badge}>{row.status || "—"}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
               </table>
             </div>
           </div>
