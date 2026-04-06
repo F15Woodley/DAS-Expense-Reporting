@@ -1347,25 +1347,23 @@ const handleReject = async (id) => {
                         <div className="text-xs mt-2">
                             Status: <span className="font-semibold">{item.status}</span>
                           </div>
-            {["draft", "returned"].includes(String(item.status).toLowerCase()) && (
-              <div className="flex gap-2 mt-3">
-                <button
-                  className={buttonSecondary}
-                  onClick={() => handleEditExpense(item)}
-                >
-                  Edit
-                </button>
-            
-                {String(item.status).toLowerCase() === "draft" && (
-                  <button
-                    className="rounded-xl px-4 py-2.5 text-sm font-medium border border-rose-300 bg-white text-rose-700"
-                    onClick={() => handleDeleteExpense(item.id)}
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
-            )}
+                  {["draft", "returned"].includes(String(item.status).toLowerCase()) && (
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        className={buttonSecondary}
+                        onClick={() => handleEditExpense(item)}
+                      >
+                        Edit
+                      </button>
+                  
+                      <button
+                        className="rounded-xl px-4 py-2.5 text-sm font-medium border border-rose-300 bg-white text-rose-700"
+                        onClick={() => handleDeleteExpense(item.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
                         
                   {view === "manager" && String(item.status).toLowerCase() === "submitted" ? (
                     <div className="flex gap-2 mt-3">
