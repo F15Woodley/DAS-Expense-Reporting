@@ -193,6 +193,11 @@ const [authPassword, setAuthPassword] = useState("");
 const [session, setSession] = useState(null);
 const [profile, setProfile] = useState(null);
 const [selectedTripKey, setSelectedTripKey] = useState(null);
+const [tripSearch, setTripSearch] = useState("");
+const [statusFilter, setStatusFilter] = useState("All Statuses");
+const [paymentFilter, setPaymentFilter] = useState("All Payment Methods");
+
+  
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
   
@@ -1662,23 +1667,33 @@ const handleReject = async (id) => {
           </div>
           <div className={`${card} p-6`}>
             <div className="grid lg:grid-cols-3 gap-6 mb-6">
-              <input
-                className={input}
-                defaultValue="Search by traveler, trip, vendor..."
-              />
-              <select className={input} defaultValue="All Statuses">
-                <option>All Statuses</option>
-                <option>Draft</option>
-                <option>Submitted</option>
-                <option>Approved</option>
-                <option>Exported</option>
-              </select>
-              <select className={input} defaultValue="All Payment Methods">
-                <option>All Payment Methods</option>
-                <option>Company Card</option>
-                <option>Personal Card</option>
-                <option>Cash</option>
-              </select>
+          <input
+            className={input}
+            placeholder="Search by traveler, trip, vendor..."
+            value={tripSearch}
+            onChange={(e) => setTripSearch(e.target.value)}
+          />
+          <select
+            className={input}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option>All Statuses</option>
+            <option>Draft</option>
+            <option>Submitted</option>
+            <option>Returned</option>
+            <option>Approved</option>
+          </select>
+          <select
+            className={input}
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+          >
+            <option>All Payment Methods</option>
+            <option>Company Card</option>
+            <option>Personal Card</option>
+            <option>Cash</option>
+          </select>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-4 mb-6">
