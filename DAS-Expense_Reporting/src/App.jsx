@@ -569,9 +569,13 @@ const filteredTripExpenses = useMemo(() => {
   }
 
   // Payment filter
-  if (paymentFilter !== "All Payment Methods") {
-    rows = rows.filter((item) => item.payment_method === paymentFilter);
-  }
+if (paymentFilter !== "All Payment Methods") {
+  rows = rows.filter((item) => {
+    const paymentValue =
+      item.payment_method || item.payment || item.paymentMethod || "";
+    return paymentValue === paymentFilter;
+  });
+}
 
   return rows;
 }, [savedExpenses, selectedTripKey, tripSearch, statusFilter, paymentFilter]);
@@ -1784,7 +1788,9 @@ const handleReject = async (id) => {
                         : "—"}
                     </td>
                     <td className="py-3 pr-4">{row.expense_type || "—"}</td>
-                    <td className="py-3 pr-4">{row.payment_method || "—"}</td>
+                    <td className="py-3 pr-4">
+                      {row.payment_method || row.payment || row.paymentMethod || "—"}
+                    </td>
                     <td className="py-3 pr-4">
                       <span className={badge}>{row.status || "—"}</span>
                     </td>
