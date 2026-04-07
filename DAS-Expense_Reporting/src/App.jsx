@@ -397,11 +397,12 @@ const handleSignOut = async () => {
 };
  
 useEffect(() => {
-  if (!profile) return;
+  if (!profile || !user) return;
 
   const loadExpenses = async () => {
     try {
-      const records = await expenseService.list(profile?.role);
+      const scope = view === "manager" ? "manager" : "employee";
+      const records = await expenseService.list(scope);
       setSavedExpenses(records);
     } catch (error) {
       console.error("Failed to load expenses:", error);
@@ -410,7 +411,7 @@ useEffect(() => {
   };
 
   loadExpenses();
-}, [profile]);
+}, [profile, user, view]);
 
   useEffect(() => {
   loadTrips();
