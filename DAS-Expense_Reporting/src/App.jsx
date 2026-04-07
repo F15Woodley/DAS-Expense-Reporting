@@ -953,7 +953,7 @@ const handleDeleteExpense = async (id) => {
   }
 };
   
-  const handleApprove = async (id) => {
+const handleApprove = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Approved");
 
@@ -964,11 +964,10 @@ const handleDeleteExpense = async (id) => {
     );
   } catch (error) {
     console.error("Approve failed:", error, "Expense ID:", id);
-    alert(`Could not approve expense. ID: ${id}. Check browser console.`);
+    alert(`Could not approve expense. ${error?.message || "Check browser console."}`);
   }
 };
 
-  
 const handleReject = async (id) => {
   try {
     await expenseService.updateExpenseStatus(id, "Returned");
@@ -979,8 +978,8 @@ const handleReject = async (id) => {
       )
     );
   } catch (error) {
-    console.error("Return failed:", error);
-    alert("Could not return expense.");
+    console.error("Return failed:", error, "Expense ID:", id);
+    alert(`Could not return expense. ${error?.message || "Check browser console."}`);
   }
 };
   
