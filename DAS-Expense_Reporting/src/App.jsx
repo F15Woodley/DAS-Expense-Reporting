@@ -610,11 +610,9 @@ if (paymentFilter !== "All Payment Methods") {
   const role = profile?.role ?? "employee";
   const isManager = role === "manager";
   const isEmployee = role === "employee";
-  const currentTravelerName =
-  profile?.full_name ||
-  profile?.email ||
-  user?.email ||
-  "Unknown User";
+  const role = profile?.role ?? "employee";
+  const isManager = role === "manager";
+  const isEmployee = role === "employee";
 
   if (!session) {
   return (
