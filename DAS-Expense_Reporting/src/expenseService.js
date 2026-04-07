@@ -83,20 +83,18 @@ async saveExpense(record) {
     return filePath;
   },
 
-  async updateExpenseStatus(id, status) {
-    if (!supabase) throw new Error("Supabase client not initialized");
+async updateExpenseStatus(id, status) {
+  if (!supabase) throw new Error("Supabase client not initialized");
 
-    const { data, error } = await supabase
-      .from("expenses")
-      .update({ status })
-      .eq("id", id)
-      .select()
-      .single();
+  const { error } = await supabase
+    .from("expenses")
+    .update({ status })
+    .eq("id", id);
 
-    if (error) throw error;
-    return data;
-  },
+  if (error) throw error;
 
+  return { id, status };
+}
   mode() {
     return "Supabase";
   },
