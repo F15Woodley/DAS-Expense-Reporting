@@ -255,6 +255,21 @@ const [isAddingTrip, setIsAddingTrip] = useState(false);
   loadProfile();
 }, [user]);
 
+const currentTravelerName =
+  profile?.full_name ||
+  profile?.email ||
+  user?.email ||
+  "Unknown User";
+
+useEffect(() => {
+  if (!currentTravelerName) return;
+
+  setForm((prev) => ({
+    ...prev,
+    traveler: currentTravelerName,
+  }));
+}, [currentTravelerName]);
+
     const loadTrips = async () => {
       const { data, error } = await supabase
         .from("trips")
@@ -272,7 +287,7 @@ const [isAddingTrip, setIsAddingTrip] = useState(false);
     };
       
   const emptyForm = {
-    traveler: "Ross Woodley",
+    traveler: "",
     trip: "USGS Site Visit – Denver",
     expenseType: "",
     paymentMethod: "Company Card",
@@ -595,6 +610,11 @@ if (paymentFilter !== "All Payment Methods") {
   const role = profile?.role ?? "employee";
   const isManager = role === "manager";
   const isEmployee = role === "employee";
+  const currentTravelerName =
+  profile?.full_name ||
+  profile?.email ||
+  user?.email ||
+  "Unknown User";
 
   if (!session) {
   return (
@@ -764,7 +784,7 @@ setExpandedGroup(null);
 
       const record = {
         user_id: user.id, 
-        traveler: form.traveler,
+        traveler: currentTravelerName,
         trip: form.trip,
         expense_type: form.expenseType,
         payment_method: form.paymentMethod,
