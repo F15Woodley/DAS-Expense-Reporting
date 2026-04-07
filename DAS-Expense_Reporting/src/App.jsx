@@ -610,9 +610,6 @@ if (paymentFilter !== "All Payment Methods") {
   const role = profile?.role ?? "employee";
   const isManager = role === "manager";
   const isEmployee = role === "employee";
-  const role = profile?.role ?? "employee";
-  const isManager = role === "manager";
-  const isEmployee = role === "employee";
 
   if (!session) {
   return (
