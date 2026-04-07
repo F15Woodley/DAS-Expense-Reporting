@@ -94,7 +94,7 @@ async updateExpenseStatus(id, status) {
   if (error) throw error;
 
   return { id, status };
-}
+},
   mode() {
     return "Supabase";
   },
