@@ -481,6 +481,7 @@ const mobileInbox = useMemo(() => {
         total: 0,
         itemCount: 0,
         hasPersonalCard: false,
+        hasMissingReceipt: false, 
       };
     }
     const amount = Number(item.amount) || 0;
@@ -494,7 +495,7 @@ if ((item.payment_method || "").toLowerCase() === "personal card") {
 }
 
 if (!item.receipt_path) {
-  groups[key].missingReceipt = true;
+  groups[key].hasMissingReceipt = true;
 }
 
 if (!item.project_code) {
@@ -1842,13 +1843,27 @@ const handleReject = async (id) => {
                   className="rounded-2xl border border-slate-200 bg-slate-50 p-4 cursor-pointer"
                 >
                     <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="font-semibold text-sm">{group.traveler}</div>
-                      <div className="text-xs text-slate-500 mt-1">{group.trip}</div>
-                      <div className="text-xs text-slate-500 mt-1">
-                        Project Code: {group.projectCode}
-                      </div>
-                    </div>
+              <div>
+                <div className="font-semibold text-sm">{group.traveler}</div>
+                <div className="text-xs text-slate-500 mt-1">{group.trip}</div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Project Code: {group.projectCode}
+                </div>
+              
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {group.hasPersonalCard && (
+                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                      Personal Card
+                    </span>
+                  )}
+              
+                  {group.hasMissingReceipt && (
+                    <span className="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">
+                      Missing Receipt
+                    </span>
+                  )}
+                </div>
+              </div>
                       <span className={badge}>
                         {group.itemCount} item{group.itemCount === 1 ? "" : "s"}
                       </span>
