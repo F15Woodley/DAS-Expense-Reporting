@@ -2072,7 +2072,6 @@ const handleReject = async (id) => {
                 <th className="py-3 pr-4">Ready</th>
               </tr>
             </thead>
-
             <tbody>
               {exportItems.length === 0 ? (
                 <tr>
@@ -2085,22 +2084,15 @@ const handleReject = async (id) => {
                   <tr key={item.id} className="border-b border-slate-100">
                     <td className="py-3 pr-4">
                       <div className="font-medium text-slate-900">
-                        {item.vendor || "Unnamed Expense"} / $
-                        {Number(item.amount || 0).toFixed(2)}
+                        {item.vendor || "Unnamed Expense"} / ${Number(item.amount || 0).toFixed(2)}
                       </div>
                       <div className="text-xs text-slate-500">
                         {item.expense_type || "Uncategorized"}
                       </div>
                     </td>
-
                     <td className="py-3 pr-4">{item.qbAccount}</td>
-
                     <td className="py-3 pr-4">{item.customerJob}</td>
-
-                    <td className="py-3 pr-4">
-                      {item.payment_method || "Unknown"}
-                    </td>
-
+                    <td className="py-3 pr-4">{item.payment_method || "Unknown"}</td>
                     <td className="py-3 pr-4">
                       <span
                         className={
@@ -2112,7 +2104,6 @@ const handleReject = async (id) => {
                         {item.receiptStatus}
                       </span>
                     </td>
-
                     <td className="py-3 pr-4">
                       <span
                         className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
@@ -2123,7 +2114,6 @@ const handleReject = async (id) => {
                       >
                         {item.ready ? "Yes" : "No"}
                       </span>
-
                       {!item.ready && (
                         <div className="mt-1 text-xs text-slate-500">
                           {item.blockReason}
@@ -2183,7 +2173,8 @@ const handleReject = async (id) => {
     </div>
   </div>
 )}
-              </div>
+
+      </div>
     </div>
   );
 }
