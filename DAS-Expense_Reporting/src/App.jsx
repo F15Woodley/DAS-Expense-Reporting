@@ -1868,11 +1868,17 @@ const handleReject = async (id) => {
             </div>
           </div>
         </div>
-  )}
+)}
+      </div>
+    ))}
+  </div>
+)}
+            </div>
+          </div>
+        )}
 
-
-            {view === "manager" && (
-          <div className={section}>
+{view === "manager" && (
+  <div className={section}>
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">3. Approval Queue Screen</h2>
               <span className={badge}>Manager / Finance View</span>
@@ -2173,8 +2179,6 @@ const handleReject = async (id) => {
     </div>
   </div>
 )}
-
-      </div>
     </div>
   );
 }
