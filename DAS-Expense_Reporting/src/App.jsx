@@ -1907,11 +1907,6 @@ const handleReject = async (id) => {
   <div>Total: ${group.total.toFixed(2)}</div>
   <div>
     <div className="flex flex-wrap gap-2">
-  {group.hasPersonalCard && (
-    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
-      Personal card
-    </span>
-  )}
 
   {group.missingReceipt && (
     <span className="text-xs bg-rose-100 text-rose-800 px-2 py-1 rounded">
