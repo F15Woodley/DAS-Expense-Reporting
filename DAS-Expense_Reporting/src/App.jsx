@@ -2173,6 +2173,7 @@ const handleReject = async (id) => {
           disabled={!readyExportItems.length}
           onClick={() => console.log("Export these items:", readyExportItems)}
         >
+        >
           Export Approved Items to QuickBooks
         </button>
       </div>
@@ -2180,5 +2181,6 @@ const handleReject = async (id) => {
   </div>
 )}
     </div>
+  </div>
   );
 }
