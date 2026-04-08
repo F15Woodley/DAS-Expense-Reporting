@@ -2050,15 +2050,8 @@ const handleReject = async (id) => {
   </div>
 )}
 
-</div>   // ← keep this closing div
-                ))}
-              </div>
-            )}
-            </div>
-          </div>
-        )}
         
-     {view === "manager" && (
+{view === "manager" && (
   <div className={section}>
     <div className="flex items-center justify-between">
       <h2 className="text-2xl font-semibold">4. QuickBooks Export Screen</h2>
@@ -2190,7 +2183,7 @@ const handleReject = async (id) => {
     </div>
   </div>
 )}
-      </div>
+              </div>
     </div>
   );
 }
