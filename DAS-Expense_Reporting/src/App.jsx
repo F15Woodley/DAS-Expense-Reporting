@@ -657,6 +657,62 @@ if (paymentFilter !== "All Payment Methods") {
     </div>
   );
 }   
+
+const getQBAccount = (expenseType) => {
+  switch ((expenseType || "").toLowerCase()) {
+    case "airfare":
+      return "Travel: Airfare";
+    case "lodging":
+      return "Travel: Lodging";
+    case "meals":
+      return "Travel: Meals";
+    case "ground":
+    case "ground transport":
+    case "rental car":
+    case "taxi":
+    case "uber":
+        return "Travel: Ground";
+    default:
+      return "Travel: Other";
+  }
+};
+
+const hasReceipt = (item) => Boolean(item.receipt_path);
+
+const getExportBlockReason = (item) => {
+  if (item.status !== "Approved") return "Not approved";
+  if (!item.project_code) return "Missing project code";
+  if (Number(item.amount || 0) > 25 && !hasReceipt(item)) return "Missing receipt";
+  if (item.payment_method === "Personal Card") return "Reimbursement flow";
+  return null;
+};
+
+const isExportReady = (item) => !getExportBlockReason(item);
+
+const exportItems = expenses
+  .filter((item) => item.status === "Approved")
+  .map((item) => ({
+    ...item,
+    qbAccount: getQBAccount(item.expense_type),
+    customerJob: item.project_code || "Missing",
+    receiptStatus: hasReceipt(item) ? "Attached" : "Missing",
+    blockReason: getExportBlockReason(item),
+    ready: isExportReady(item),
+  }));
+
+const readyExportItems = exportItems.filter((item) => item.ready);
+const blockedExportItems = exportItems.filter((item) => !item.ready);
+
+const totalExportValue = exportItems.reduce(
+  (sum, item) => sum + Number(item.amount || 0),
+  0
+);
+
+const readyExportValue = readyExportItems.reduce(
+  (sum, item) => sum + Number(item.amount || 0),
+  0
+);
+  
         if (session && !profile) {
           return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -2002,78 +2058,138 @@ const handleReject = async (id) => {
           </div>
         )}
         
-        {view === "manager" && (
-          <div className={section}>
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">4. QuickBooks Export Screen</h2>
-            <span className={badge}>Finance Admin View</span>
-          </div>
-          <div className={`${card} p-6 grid lg:grid-cols-3 gap-6`}>
-            <div className="lg:col-span-2">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left border-b border-slate-200 text-slate-500">
-                      <th className="py-3 pr-4">Expense</th>
-                      <th className="py-3 pr-4">QB Account</th>
-                      <th className="py-3 pr-4">Customer/Job</th>
-                      <th className="py-3 pr-4">Receipt</th>
-                      <th className="py-3 pr-4">Ready</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      ["Delta Air Lines / $482.16", "Travel: Airfare", "GPSCv5-241", "Attached", "Yes"],
-                      ["Hilton Denver / $318.42", "Travel: Lodging", "GPSCv5-241", "Attached", "Yes"],
-                      ["Uber / $36.18", "Travel: Ground", "GPSCv5-241", "Missing", "No"],
-                    ].map((r) => (
-                      <tr key={r[0]} className="border-b border-slate-100">
-                        <td className="py-3 pr-4 font-medium">{r[0]}</td>
-                        <td className="py-3 pr-4">{r[1]}</td>
-                        <td className="py-3 pr-4">{r[2]}</td>
-                        <td className="py-3 pr-4">{r[3]}</td>
-                        <td className="py-3 pr-4">{r[4]}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+     {view === "manager" && (
+  <div className={section}>
+    <div className="flex items-center justify-between">
+      <h2 className="text-2xl font-semibold">4. QuickBooks Export Screen</h2>
+      <span className={badge}>Finance Admin View</span>
+    </div>
+
+    <div className={`${card} p-6 grid lg:grid-cols-3 gap-6`}>
+      <div className="lg:col-span-2">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b border-slate-200 text-slate-500">
+                <th className="py-3 pr-4">Expense</th>
+                <th className="py-3 pr-4">QB Account</th>
+                <th className="py-3 pr-4">Customer/Job</th>
+                <th className="py-3 pr-4">Payment</th>
+                <th className="py-3 pr-4">Receipt</th>
+                <th className="py-3 pr-4">Ready</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {exportItems.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-6 text-slate-500">
+                    No approved expenses available for export yet.
+                  </td>
+                </tr>
+              ) : (
+                exportItems.map((item) => (
+                  <tr key={item.id} className="border-b border-slate-100">
+                    <td className="py-3 pr-4">
+                      <div className="font-medium text-slate-900">
+                        {item.vendor || "Unnamed Expense"} / $
+                        {Number(item.amount || 0).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {item.expense_type || "Uncategorized"}
+                      </div>
+                    </td>
+
+                    <td className="py-3 pr-4">{item.qbAccount}</td>
+
+                    <td className="py-3 pr-4">{item.customerJob}</td>
+
+                    <td className="py-3 pr-4">
+                      {item.payment_method || "Unknown"}
+                    </td>
+
+                    <td className="py-3 pr-4">
+                      <span
+                        className={
+                          item.receiptStatus === "Attached"
+                            ? "text-green-700 font-medium"
+                            : "text-red-600 font-medium"
+                        }
+                      >
+                        {item.receiptStatus}
+                      </span>
+                    </td>
+
+                    <td className="py-3 pr-4">
+                      <span
+                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                          item.ready
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {item.ready ? "Yes" : "No"}
+                      </span>
+
+                      {!item.ready && (
+                        <div className="mt-1 text-xs text-slate-500">
+                          {item.blockReason}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+          <div className="text-sm font-semibold">Export Summary</div>
+          <div className="mt-3 space-y-2 text-sm text-slate-700">
+            <div className="flex justify-between">
+              <span>Ready to export</span>
+              <span>{readyExportItems.length}</span>
             </div>
-            <div className="space-y-4">
-              <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4">
-                <div className="text-sm font-semibold">Export Summary</div>
-                <div className="mt-3 space-y-2 text-sm text-slate-700">
-                  <div className="flex justify-between">
-                    <span>Ready to export</span>
-                    <span>2</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Blocked</span>
-                    <span>1</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Total value</span>
-                    <span>$800.58</span>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4">
-                <div className="text-sm font-semibold text-amber-800">
-                  Validation Rules
-                </div>
-                <ul className="mt-2 text-sm text-amber-900 space-y-1 list-disc pl-4">
-                  <li>Receipt required for expenses over $25</li>
-                  <li>Project code required on all travel items</li>
-                  <li>Personal card items must route for reimbursement</li>
-                </ul>
-              </div>
-              <button className={`${buttonPrimary} w-full`}>
-                Export Approved Items to QuickBooks
-              </button>
+            <div className="flex justify-between">
+              <span>Blocked</span>
+              <span>{blockedExportItems.length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Ready value</span>
+              <span>${readyExportValue.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between font-medium">
+              <span>Total value</span>
+              <span>${totalExportValue.toFixed(2)}</span>
             </div>
           </div>
         </div>
-      )}
+
+        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4">
+          <div className="text-sm font-semibold text-amber-800">
+            Validation Rules
+          </div>
+          <ul className="mt-2 text-sm text-amber-900 space-y-1 list-disc pl-4">
+            <li>Receipt required for expenses over $25</li>
+            <li>Project code required on all travel items</li>
+            <li>Personal card items must route for reimbursement</li>
+          </ul>
+        </div>
+
+        <button
+          className={`${buttonPrimary} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
+          disabled={!readyExportItems.length}
+          onClick={() => console.log("Export these items:", readyExportItems)}
+        >
+          Export Approved Items to QuickBooks
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );
