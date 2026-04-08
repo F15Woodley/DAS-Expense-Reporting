@@ -680,7 +680,9 @@ const getQBAccount = (expenseType) => {
 const hasReceipt = (item) => Boolean(item.receipt_path);
 
 const getExportBlockReason = (item) => {
-  if (item.status !== "Approved") return "Not approved";
+  if ((item.status || "").toLowerCase().trim() !== "approved") {
+  return "Not approved";
+}
   if (!item.project_code) return "Missing project code";
   if (Number(item.amount || 0) > 25 && !hasReceipt(item)) return "Missing receipt";
   if (item.payment_method === "Personal Card") return "Reimbursement flow";
@@ -690,7 +692,7 @@ const getExportBlockReason = (item) => {
 const isExportReady = (item) => !getExportBlockReason(item);
 
 const exportItems = expenses
-  .filter((item) => item.status === "Approved")
+  .filter((item) => (item.status || "").toLowerCase().trim() === "approved")
   .map((item) => ({
     ...item,
     qbAccount: getQBAccount(item.expense_type),
