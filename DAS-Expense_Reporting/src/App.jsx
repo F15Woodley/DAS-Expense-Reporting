@@ -2049,7 +2049,14 @@ const handleReject = async (id) => {
   </div>
 )}
 
-        
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+)}
+
 {view === "manager" && (
   <div className={section}>
     <div className="flex items-center justify-between">
