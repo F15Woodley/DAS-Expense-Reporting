@@ -469,20 +469,20 @@ const mobileInbox = useMemo(() => {
   for (const item of submittedItems) {
     const traveler = item.traveler || "Unknown Traveler";
     const trip = item.trip || "Unknown Trip";
-    const key = `${traveler}__${trip}`;
+    const key = `${traveler}__${trip}__${item.project_code || "No Code"}`;
 
     if (!groups[key]) {
       groups[key] = {
         key,
         traveler,
         trip,
+        projectCode: item.project_code || "No Code",
         items: [],
         total: 0,
         itemCount: 0,
         hasPersonalCard: false,
       };
     }
-
     const amount = Number(item.amount) || 0;
 
     groups[key].items.push(item);
@@ -1842,10 +1842,13 @@ const handleReject = async (id) => {
                   className="rounded-2xl border border-slate-200 bg-slate-50 p-4 cursor-pointer"
                 >
                     <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="font-semibold text-sm">{group.traveler}</div>
-                        <div className="text-xs text-slate-500 mt-1">{group.trip}</div>
+                    <div>
+                      <div className="font-semibold text-sm">{group.traveler}</div>
+                      <div className="text-xs text-slate-500 mt-1">{group.trip}</div>
+                      <div className="text-xs text-slate-500 mt-1">
+                        Project Code: {group.projectCode}
                       </div>
+                    </div>
                       <span className={badge}>
                         {group.itemCount} item{group.itemCount === 1 ? "" : "s"}
                       </span>
