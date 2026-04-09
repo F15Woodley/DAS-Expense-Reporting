@@ -1030,9 +1030,13 @@ const handleExportApproved = async () => {
       });
     }
 
-    const refreshedExpenses = await expenseService.getExpenses();
-
-    setSavedExpenses(refreshedExpenses || []);
+    setSavedExpenses((prev) =>
+      prev.map((item) =>
+        readyExportItems.some((exportItem) => exportItem.id === item.id)
+          ? { ...item, status: "Exported" }
+          : item
+      )
+    );
 
     alert(`Exported ${readyExportItems.length} item${readyExportItems.length === 1 ? "" : "s"} successfully.`);
   } catch (error) {
