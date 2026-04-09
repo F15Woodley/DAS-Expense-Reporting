@@ -1019,6 +1019,27 @@ const handleReject = async (id) => {
     alert(`Could not return expense. ${error?.message || "Check browser console."}`);
   }
 };
+
+const handleExportApproved = async () => {
+  if (!readyExportItems.length) return;
+
+  try {
+    for (const item of readyExportItems) {
+      await expenseService.updateExpense(item.id, {
+        status: "Exported",
+      });
+    }
+
+    const refreshedExpenses = await expenseService.getExpenses();
+
+    setSavedExpenses(refreshedExpenses || []);
+
+    alert(`Exported ${readyExportItems.length} item${readyExportItems.length === 1 ? "" : "s"} successfully.`);
+  } catch (error) {
+    console.error("Export failed:", error);
+    alert(`Could not export approved items. ${error?.message || ""}`);
+  }
+};
   
   return (
     <div className={shell}>
@@ -2150,7 +2171,7 @@ const handleReject = async (id) => {
         <button
           className={`${buttonPrimary} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
           disabled={!readyExportItems.length}
-          onClick={() => console.log("Export these items:", readyExportItems)}
+          onClick={handleExportApproved}
         >
         >
           Export Approved Items to QuickBooks
