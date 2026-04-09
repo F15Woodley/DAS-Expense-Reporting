@@ -1183,20 +1183,6 @@ const handleExportApproved = async () => {
               ),
             ],
           [
-            "Returned",
-            String(
-              savedExpenses.filter((item) => String(item.status).toLowerCase() === "returned").length
-            ),
-          ],
-          [
-            "Approved",
-            String(
-              savedExpenses.filter((item) => String(item.status).toLowerCase() === "approved").length
-            ),
-          ],
-        
-          // 👉 ADD THIS BLOCK
-          [
             "Exported",
             String(exportedCount),
           ],
