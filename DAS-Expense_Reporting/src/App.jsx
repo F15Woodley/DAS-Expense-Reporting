@@ -1030,13 +1030,12 @@ const handleExportApproved = async () => {
       });
     }
 
-    setSavedExpenses((prev) =>
-      prev.map((item) =>
-        readyExportItems.some((exportItem) => exportItem.id === item.id)
-          ? { ...item, status: "Exported" }
-          : item
-      )
-    );
+    const { data } = await supabase
+      .from("expenses")
+      .select("*")
+      .order("created_at", { ascending: false });
+    
+    setSavedExpenses(data || []);
 
     alert(`Exported ${readyExportItems.length} item${readyExportItems.length === 1 ? "" : "s"} successfully.`);
   } catch (error) {
