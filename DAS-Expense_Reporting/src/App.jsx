@@ -1020,10 +1020,72 @@ const handleReject = async (id) => {
   }
 };
 
+
+  const downloadQuickBooksCsv = (items) => {
+  const headers = [
+    "TxnDate",
+    "Vendor",
+    "Account",
+    "Amount",
+    "CustomerJob",
+    "Memo",
+    "PaymentMethod",
+    "Traveler",
+    "Trip",
+    "ProjectCode",
+    "ExpenseType",
+    "ReceiptAttached",
+    "ExpenseId",
+  ];
+
+  const escapeCsv = (value) => {
+    const str = String(value ?? "");
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  const rows = items.map((item) => [
+    item.expense_date || "",
+    item.vendor || "",
+    item.qbAccount || "",
+    Number(item.amount || 0).toFixed(2),
+    item.customerJob || "",
+    item.trip || item.business_purpose || "",
+    item.payment_method || "",
+    item.traveler || "",
+    item.trip || "",
+    item.project_code || "",
+    item.expense_type || "",
+    item.receipt_path ? "Yes" : "No",
+    item.id || "",
+  ]);
+
+  const csvContent = [
+    headers.map(escapeCsv).join(","),
+    ...rows.map((row) => row.map(escapeCsv).join(",")),
+  ].join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = window.URL.createObjectURL(blob);
+
+  const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `quickbooks-desktop-export-${timestamp}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
 const handleExportApproved = async () => {
   if (!readyExportItems.length) return;
 
   try {
+    downloadQuickBooksCsv(readyExportItems);
+
     for (const item of readyExportItems) {
       await expenseService.updateExpense(item.id, {
         status: "Exported",
@@ -1034,10 +1096,14 @@ const handleExportApproved = async () => {
       .from("expenses")
       .select("*")
       .order("created_at", { ascending: false });
-    
+
     setSavedExpenses(data || []);
 
-    alert(`Exported ${readyExportItems.length} item${readyExportItems.length === 1 ? "" : "s"} successfully.`);
+    alert(
+      `Downloaded QuickBooks Desktop CSV and exported ${
+        readyExportItems.length
+      } item${readyExportItems.length === 1 ? "" : "s"} successfully.`
+    );
   } catch (error) {
     console.error("Export failed:", error);
     alert(`Could not export approved items. ${error?.message || ""}`);
@@ -2177,7 +2243,7 @@ const handleExportApproved = async () => {
           onClick={handleExportApproved}
         >
         >
-          Export Approved Items to QuickBooks
+          Download QuickBooks Desktop CSV
         </button>
       </div>
     </div>
