@@ -1161,33 +1161,39 @@ const handleExportApproved = async () => {
             [
               "To Submit",
               String(
-                savedExpenses.filter((item) => String(item.status).toLowerCase() === "draft").length
+                savedExpenses.filter(
+                  (item) => String(item.status).toLowerCase() === "draft"
+                ).length
               ),
             ],
             [
               "Pending Approval",
               String(
-                savedExpenses.filter((item) => String(item.status).toLowerCase() === "submitted").length
+                savedExpenses.filter(
+                  (item) => String(item.status).toLowerCase() === "submitted"
+                ).length
               ),
             ],
             [
               "Returned",
               String(
-                savedExpenses.filter((item) => String(item.status).toLowerCase() === "returned").length
+                savedExpenses.filter(
+                  (item) => String(item.status).toLowerCase() === "returned"
+                ).length
               ),
             ],
             [
               "Approved",
               String(
-                savedExpenses.filter((item) => String(item.status).toLowerCase() === "approved").length
+                savedExpenses.filter(
+                  (item) => String(item.status).toLowerCase() === "approved"
+                ).length
               ),
             ],
-          [
-            "Exported",
-            String(exportedCount),
-          ],
-        ]
-  
+            [
+              "Exported",
+              String(exportedCount),
+            ],
           ].map(([title, value]) => (
             <div key={title} className={`${card} p-5`}>
               <div className="text-sm text-slate-500">{title}</div>
