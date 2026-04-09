@@ -657,10 +657,10 @@ const getExportBlockReason = (item) => {
 
 const isExportReady = (item) => !getExportBlockReason(item);
 
-  console.log("expenses for export screen:", expenses);
-  console.log(
+console.log("expenses for export screen:", savedExpenses);
+console.log(
   "expense statuses:",
-  expenses.map((item) => ({
+  savedExpenses.map((item) => ({
     id: item.id,
     vendor: item.vendor,
     status: item.status,
@@ -668,7 +668,7 @@ const isExportReady = (item) => !getExportBlockReason(item);
   }))
 );
 
-const exportItems = expenses
+const exportItems = savedExpenses
   .filter((item) => (item.status || "").toLowerCase().trim() === "approved")
   .map((item) => ({
     ...item,
