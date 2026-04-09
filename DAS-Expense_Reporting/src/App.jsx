@@ -90,40 +90,6 @@ export default function TravelExpenseApp() {
     },
   ];
 
-  const expenses = [
-    {
-      vendor: "Delta Air Lines",
-      date: "Mar 11, 2026",
-      amount: "$482.16",
-      category: "Airfare",
-      payment: "Company Card",
-      status: "Ready",
-    },
-    {
-      vendor: "Hilton Denver City Center",
-      date: "Mar 11, 2026",
-      amount: "$318.42",
-      category: "Hotel",
-      payment: "Personal Card",
-      status: "Needs Approval",
-    },
-    {
-      vendor: "Uber",
-      date: "Mar 12, 2026",
-      amount: "$36.18",
-      category: "Ground Transport",
-      payment: "Company Card",
-      status: "Missing Receipt",
-    },
-    {
-      vendor: "Shell",
-      date: "Mar 12, 2026",
-      amount: "$54.80",
-      category: "Fuel",
-      payment: "Cash",
-      status: "Ready",
-    },
-  ];
 
   const queue = [
     {
