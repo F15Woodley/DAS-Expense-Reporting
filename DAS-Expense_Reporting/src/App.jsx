@@ -691,8 +691,12 @@ const readyExportValue = readyExportItems.reduce(
   (sum, item) => sum + Number(item.amount || 0),
   0
 );
-  
-        if (session && !profile) {
+
+const exportedCount = savedExpenses.filter(
+  (item) => (item.status || "").toLowerCase().trim() === "exported"
+).length;
+
+if (session && !profile) {
           return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
               <div className="text-sm text-slate-600">Loading profile...</div>
@@ -1152,7 +1156,7 @@ const handleExportApproved = async () => {
 
         </div>
 
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
+        <div className="grid md:grid-cols-5 gap-4 mb-8">
           {[
             [
               "To Submit",
@@ -1178,6 +1182,26 @@ const handleExportApproved = async () => {
                 savedExpenses.filter((item) => String(item.status).toLowerCase() === "approved").length
               ),
             ],
+          [
+            "Returned",
+            String(
+              savedExpenses.filter((item) => String(item.status).toLowerCase() === "returned").length
+            ),
+          ],
+          [
+            "Approved",
+            String(
+              savedExpenses.filter((item) => String(item.status).toLowerCase() === "approved").length
+            ),
+          ],
+        
+          // 👉 ADD THIS BLOCK
+          [
+            "Exported",
+            String(exportedCount),
+          ],
+        ]
+  
           ].map(([title, value]) => (
             <div key={title} className={`${card} p-5`}>
               <div className="text-sm text-slate-500">{title}</div>
