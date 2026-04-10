@@ -1454,7 +1454,7 @@ setExportMessage({
 )}
         
 
-        {view === "user" && (
+        {view === "user" && isMobileView && (
           <div className={section}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">0. Mobile Quick Submit</h2>
@@ -1919,7 +1919,7 @@ setExportMessage({
         </div>
   )} 
         
-        {view === "user" && (
+        {view === "user" && !isMobileView && (
           <div className={section}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">1. Submit Expense Screen</h2>
@@ -2108,8 +2108,8 @@ setExportMessage({
         </div>
   )}
 
-        {view === "user" && (
-          <div className={section}>
+          {view === "user" && !isMobileView && (
+            <div className={section}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">2. Trip & Expense List Screen</h2>
             <span className={badge}>Employee / Admin View</span>
