@@ -2411,9 +2411,7 @@ const handleExportApproved = async () => {
               {exportedItems.map((item) => (
                 <tr key={item.id} className="border-b border-slate-100">
                   <td className="py-3 pr-4 font-medium">{item.vendor || "—"}</td>
-                  <td className="py-3 pr-4">
-                    ${Number(item.amount || 0).toFixed(2)}
-                  </td>
+                  <td className="py-3 pr-4">${Number(item.amount || 0).toFixed(2)}</td>
                   <td className="py-3 pr-4">{item.project_code || "—"}</td>
                   <td className="py-3 pr-4">{item.traveler || "—"}</td>
                   <td className="py-3 pr-4">{item.export_batch_id || "—"}</td>
@@ -2432,7 +2430,7 @@ const handleExportApproved = async () => {
   </div>
 )}
 
+      </div>
     </div>
-  </div>
   );
 }
