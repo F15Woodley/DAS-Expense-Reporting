@@ -2059,18 +2059,26 @@ setExportMessage({
             </div>
         
             <div className="space-y-4">
-              <div className="rounded-2xl border-2 border-dashed border-slate-300 p-6 bg-slate-50">
-                <div className="text-sm font-medium">Upload Receipt</div>
-                <p className="text-sm text-slate-500 mt-2">
-                  Drag receipt image or PDF here
-                </p>
-                <button
-                  className={`${buttonSecondary} mt-4 w-full`}
-                  onClick={() => fileRef.current?.click()}
-                >
-                  Choose File
-                </button>
-              </div>
+            <div className="rounded-2xl border-2 border-dashed border-slate-300 p-6 bg-slate-50">
+              <div className="text-sm font-medium">Upload Receipt</div>
+              <p className="text-sm text-slate-500 mt-2">
+                Drag receipt image or PDF here
+              </p>
+              <button
+                className={`${buttonSecondary} mt-4 w-full`}
+                onClick={() => fileRef.current?.click()}
+              >
+                Choose File
+              </button>
+            
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={(e) => handleFile(e.target.files?.[0])}
+              />
+            </div>
               <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4">
                 <div className="text-sm font-semibold text-emerald-800">
                   OCR Suggestion
