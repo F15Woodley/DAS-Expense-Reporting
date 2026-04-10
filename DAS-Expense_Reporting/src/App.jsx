@@ -1141,6 +1141,14 @@ const downloadExportHistoryCsv = (items) => {
     "Status",
   ];
 
+const downloadSingleBatchCsv = (batchId) => {
+  const batchItems = exportedItems.filter(
+    (item) => (item.export_batch_id || "No Batch ID") === batchId
+  );
+
+  downloadExportHistoryCsv(batchItems);
+};
+  
   const escapeCsv = (value) => {
     const str = String(value ?? "");
     if (str.includes(",") || str.includes('"') || str.includes("\n")) {
@@ -2395,42 +2403,53 @@ const handleExportApproved = async () => {
         onClick={() => downloadExportHistoryCsv(exportedItems)}
         disabled={!exportedItems.length}
       >
-        Download History CSV
+        Download All History CSV
       </button>
     </div>
 
     <div className={`${card} p-6`}>
       <div className="text-sm text-slate-500 mb-4">
-        Exported items count: {exportedItems.length}
+        Export batches: {exportedBatches.length}
       </div>
 
-      {exportedItems.length === 0 ? (
-        <div className="text-sm text-slate-500">No exported items yet.</div>
+      {exportedBatches.length === 0 ? (
+        <div className="text-sm text-slate-500">No exported batches yet.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b border-slate-200 text-slate-500">
-                <th className="py-3 pr-4">Vendor</th>
-                <th className="py-3 pr-4">Amount</th>
-                <th className="py-3 pr-4">Project</th>
-                <th className="py-3 pr-4">Traveler</th>
                 <th className="py-3 pr-4">Batch ID</th>
                 <th className="py-3 pr-4">Exported</th>
+                <th className="py-3 pr-4">Items</th>
+                <th className="py-3 pr-4">Total</th>
+                <th className="py-3 pr-4">Action</th>
               </tr>
             </thead>
             <tbody>
-              {exportedItems.map((item) => (
-                <tr key={item.id} className="border-b border-slate-100">
-                  <td className="py-3 pr-4 font-medium">{item.vendor || "—"}</td>
-                  <td className="py-3 pr-4">${Number(item.amount || 0).toFixed(2)}</td>
-                  <td className="py-3 pr-4">{item.project_code || "—"}</td>
-                  <td className="py-3 pr-4">{item.traveler || "—"}</td>
-                  <td className="py-3 pr-4">{item.export_batch_id || "—"}</td>
+              {exportedBatches.map((batch) => (
+                <tr key={batch.batchId} className="border-b border-slate-100">
+                  <td className="py-3 pr-4 font-medium">
+                    {batch.batchId}
+                  </td>
                   <td className="py-3 pr-4">
-                    {item.exported_at
-                      ? new Date(item.exported_at).toLocaleString()
+                    {batch.exportedAt
+                      ? new Date(batch.exportedAt).toLocaleString()
                       : "—"}
+                  </td>
+                  <td className="py-3 pr-4">
+                    {batch.itemCount}
+                  </td>
+                  <td className="py-3 pr-4">
+                    ${batch.total.toFixed(2)}
+                  </td>
+                  <td className="py-3 pr-4">
+                    <button
+                      className={buttonSecondary}
+                      onClick={() => downloadSingleBatchCsv(batch.batchId)}
+                    >
+                      Download Batch CSV
+                    </button>
                   </td>
                 </tr>
               ))}
