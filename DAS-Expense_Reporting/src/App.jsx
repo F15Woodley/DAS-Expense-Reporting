@@ -417,12 +417,6 @@ useEffect(() => {
     setView("user");
   }
 }, [profile, view]);
-
-  useEffect(() => {
-  return () => {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-  };
-}, [previewUrl]);
   
 const mobileInbox = useMemo(() => {
   const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
@@ -1240,14 +1234,7 @@ const downloadExportHistoryCsv = (items) => {
     "Status",
   ];
 
-const downloadSingleBatchCsv = (batchId) => {
-  const batchItems = exportedItems.filter(
-    (item) => (item.export_batch_id || "No Batch ID") === batchId
-  );
 
-  downloadExportHistoryCsv(batchItems);
-};
-  
   const escapeCsv = (value) => {
     const str = String(value ?? "");
     if (str.includes(",") || str.includes('"') || str.includes("\n")) {
@@ -1291,6 +1278,15 @@ const downloadSingleBatchCsv = (batchId) => {
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 };
+
+  const downloadSingleBatchCsv = (batchId) => {
+  const batchItems = exportedItems.filter(
+    (item) => (item.export_batch_id || "No Batch ID") === batchId
+  );
+
+  downloadExportHistoryCsv(batchItems);
+};
+  
   
 const handleExportApproved = async () => {
   if (!readyExportItems.length || isExporting) return;
