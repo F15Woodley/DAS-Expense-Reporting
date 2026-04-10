@@ -1098,31 +1098,6 @@ const handleDeleteExpense = async (id) => {
   });
   }
 };
-
-const handleSubmitExpense = async (item) => {
-  try {
-    await expenseService.updateExpense(item.id, {
-      status: "Submitted",
-    });
-
-    setSavedExpenses((prev) =>
-      prev.map((row) =>
-        row.id === item.id ? { ...row, status: "Submitted" } : row
-      )
-    );
-
-    setAppMessage({
-      type: "success",
-      text: "Expense submitted successfully.",
-    });
-  } catch (error) {
-    console.error("Submit failed:", error);
-    setAppMessage({
-      type: "error",
-      text: "Could not submit expense.",
-    });
-  }
-};
   
 const handleSubmitExpense = async (item) => {
   setAppMessage(null);
