@@ -1230,24 +1230,55 @@ const handleExportApproved = async () => {
 
         </div>
 
-        <div className="grid md:grid-cols-5 gap-4 mb-8">
-          {[
-            [
-              "To Submit",
-              String(
-                savedExpenses.filter(
-                  (item) => String(item.status).toLowerCase() === "draft"
-                ).length
-              ),
-            ],
-            [
-              "Pending Approval",
-              String(
-                savedExpenses.filter(
-                  (item) => String(item.status).toLowerCase() === "submitted"
-                ).length
-              ),
-            ],
+     <div className={`grid gap-4 mb-8 ${view === "manager" ? "md:grid-cols-5" : "md:grid-cols-4"}`}>
+  {[
+    [
+      "To Submit",
+      String(
+        savedExpenses.filter(
+          (item) => String(item.status).toLowerCase() === "draft"
+        ).length
+      ),
+    ],
+    [
+      "Pending Approval",
+      String(
+        savedExpenses.filter(
+          (item) => String(item.status).toLowerCase() === "submitted"
+        ).length
+      ),
+    ],
+    [
+      "Returned",
+      String(
+        savedExpenses.filter(
+          (item) => String(item.status).toLowerCase() === "returned"
+        ).length
+      ),
+    ],
+    [
+      "Approved",
+      String(
+        savedExpenses.filter(
+          (item) => String(item.status).toLowerCase() === "approved"
+        ).length
+      ),
+    ],
+    ...(view === "manager"
+      ? [
+          [
+            "Exported",
+            String(exportedCount),
+          ],
+        ]
+      : []),
+  ].map(([title, value]) => (
+    <div key={title} className={`${card} p-5`}>
+      <div className="text-sm text-slate-500">{title}</div>
+      <div className="text-3xl font-bold mt-2">{value}</div>
+    </div>
+  ))}
+</div>
             [
               "Returned",
               String(
@@ -2339,7 +2370,7 @@ const handleExportApproved = async () => {
   </div>
 )}
 
-{view === "manager" && exportedItems.length > 0 && (
+{view === "manager" && (
   <div className={section}>
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -2357,6 +2388,10 @@ const handleExportApproved = async () => {
     </div>
 
     <div className={`${card} p-6`}>
+     <div className="text-sm text-slate-500 mb-4">
+  Exported items count: {exportedItems.length}
+</div> 
+      
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
