@@ -701,6 +701,38 @@ const exportedItems = savedExpenses
   .sort(
     (a, b) => new Date(b.exported_at || 0) - new Date(a.exported_at || 0)
   );
+
+  const exportedBatches = Object.values(
+  exportedItems.reduce((acc, item) => {
+    const batchId = item.export_batch_id || "No Batch ID";
+
+    if (!acc[batchId]) {
+      acc[batchId] = {
+        batchId,
+        exportedAt: item.exported_at || null,
+        items: [],
+        total: 0,
+        itemCount: 0,
+      };
+    }
+
+    acc[batchId].items.push(item);
+    acc[batchId].total += Number(item.amount || 0);
+    acc[batchId].itemCount += 1;
+
+    if (
+      item.exported_at &&
+      (!acc[batchId].exportedAt ||
+        new Date(item.exported_at) > new Date(acc[batchId].exportedAt))
+    ) {
+      acc[batchId].exportedAt = item.exported_at;
+    }
+
+    return acc;
+  }, {})
+).sort(
+  (a, b) => new Date(b.exportedAt || 0) - new Date(a.exportedAt || 0)
+);
   
 if (session && !profile) {
           return (
@@ -1279,6 +1311,13 @@ const handleExportApproved = async () => {
     </div>
   ))}
 </div>
+
+{view === "manager" && (
+  <div className="text-sm text-blue-600 mb-4">
+    Export batches: {exportedBatches.length}
+  </div>
+)}
+        
 
         {view === "user" && (
           <div className={section}>
