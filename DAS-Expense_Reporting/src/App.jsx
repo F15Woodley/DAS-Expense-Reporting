@@ -2404,5 +2404,6 @@ const handleExportApproved = async () => {
 )}
 
     </div>
+  </div>
   );
 }
