@@ -902,6 +902,21 @@ setExpandedGroup(null);
     }
   };
 
+  const canTransitionStatus = (from, to) => {
+  const current = String(from || "").trim();
+  const next = String(to || "").trim();
+
+  const allowedTransitions = {
+    Draft: ["Submitted"],
+    Submitted: ["Approved", "Returned"],
+    Returned: ["Submitted"],
+    Approved: ["Exported"],
+    Exported: [],
+  };
+
+  return (allowedTransitions[current] || []).includes(next);
+};
+
 const handleSubmit = async () => {
   const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
 
@@ -1035,6 +1050,13 @@ const handleDeleteExpense = async (id) => {
   
 const handleApprove = async (id) => {
   try {
+    const expense = savedExpenses.find((item) => item.id === id);
+
+    if (!expense || !canTransitionStatus(expense.status, "Approved")) {
+      alert("This expense cannot be moved to Approved from its current status.");
+      return;
+    }
+
     await expenseService.updateExpenseStatus(id, "Approved");
 
     setSavedExpenses((prev) =>
@@ -1047,9 +1069,16 @@ const handleApprove = async (id) => {
     alert(`Could not approve expense. ${error?.message || "Check browser console."}`);
   }
 };
-
+  
 const handleReject = async (id) => {
   try {
+    const expense = savedExpenses.find((item) => item.id === id);
+
+    if (!expense || !canTransitionStatus(expense.status, "Returned")) {
+      alert("This expense cannot be moved to Returned from its current status.");
+      return;
+    }
+
     await expenseService.updateExpenseStatus(id, "Returned");
 
     setSavedExpenses((prev) =>
@@ -1203,6 +1232,18 @@ const handleExportApproved = async () => {
   try {
     const exportBatchId = `EXP-${new Date().toISOString().slice(0, 10)}-${Date.now()}`;
     const exportedAt = new Date().toISOString();
+
+    const invalidItems = readyExportItems.filter(
+    (item) => !canTransitionStatus(item.status, "Exported")
+  );
+
+  if (invalidItems.length > 0) {
+    setExportMessage({
+      type: "error",
+      text: "One or more items are not in a valid status for export.",
+    });
+    return;
+  }
 
     downloadQuickBooksCsv(readyExportItems);
 
