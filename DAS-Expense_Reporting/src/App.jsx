@@ -1159,14 +1159,15 @@ const handleExportApproved = async () => {
   try {
     const exportBatchId = `EXP-${new Date().toISOString().slice(0, 10)}-${Date.now()}`;
     const exportedAt = new Date().toISOString();
-    
+
     downloadQuickBooksCsv(readyExportItems);
 
-    await expenseService.updateExpense(item.id, {
-      status: "Exported",
-      exported_at: exportedAt,
-      export_batch_id: exportBatchId,
-    });
+    for (const item of readyExportItems) {
+      await expenseService.updateExpense(item.id, {
+        status: "Exported",
+        exported_at: exportedAt,
+        export_batch_id: exportBatchId,
+      });
     }
 
     const { data } = await supabase
@@ -1177,9 +1178,9 @@ const handleExportApproved = async () => {
     setSavedExpenses(data || []);
 
     alert(
-      `Downloaded QuickBooks Desktop CSV and exported ${
-        readyExportItems.length
-      } item${readyExportItems.length === 1 ? "" : "s"} successfully.`
+      `Downloaded QuickBooks Desktop CSV and exported ${readyExportItems.length} item${
+        readyExportItems.length === 1 ? "" : "s"
+      } in batch ${exportBatchId}.`
     );
   } catch (error) {
     console.error("Export failed:", error);
