@@ -147,6 +147,7 @@ const [editingReceiptPath, setEditingReceiptPath] = useState(null);
 const [submitState, setSubmitState] = useState("idle");
 const [savedExpenses, setSavedExpenses] = useState([]);
 const [currentExpenseId, setCurrentExpenseId] = useState(null);
+const [isExporting, setIsExporting] = useState(false); 
 const [expandedGroup, setExpandedGroup] = useState(null);
 const [expandedDetailId, setExpandedDetailId] = useState(null);
 const [lastSavedAt, setLastSavedAt] = useState(null);
@@ -1194,7 +1195,9 @@ const downloadSingleBatchCsv = (batchId) => {
 };
   
 const handleExportApproved = async () => {
-  if (!readyExportItems.length) return;
+  if (!readyExportItems.length || isExporting) return;
+
+  setIsExporting(true);
 
   try {
     const exportBatchId = `EXP-${new Date().toISOString().slice(0, 10)}-${Date.now()}`;
@@ -1225,6 +1228,8 @@ const handleExportApproved = async () => {
   } catch (error) {
     console.error("Export failed:", error);
     alert(`Could not export approved items. ${error?.message || ""}`);
+  } finally {
+    setIsExporting(false);
   }
 };
   
@@ -2378,13 +2383,13 @@ const handleExportApproved = async () => {
           </ul>
         </div>
 
-        <button
-          className={`${buttonPrimary} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
-          disabled={!readyExportItems.length}
-          onClick={handleExportApproved}
-        >
-          Download QuickBooks Desktop CSV
-        </button>
+      <button
+        className={`${buttonPrimary} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
+        disabled={!readyExportItems.length || isExporting}
+        onClick={handleExportApproved}
+      >
+        {isExporting ? "Exporting..." : "Download QuickBooks Desktop CSV"}
+      </button>
       </div>
     </div>
   </div>
