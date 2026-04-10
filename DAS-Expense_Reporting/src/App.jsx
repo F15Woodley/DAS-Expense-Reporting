@@ -173,7 +173,7 @@ const [exportMessage, setExportMessage] = useState(null);
 const [appMessage, setAppMessage] = useState(null); 
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
-const [previewUrl, setPreviewUrl] = useState(null);
+
   
   useEffect(() => {
   const getSession = async () => {
@@ -805,8 +805,6 @@ const handleFile = async (file) => {
   console.log("handleFile triggered", file);
 
   if (!file) return;
-
-  setPreviewUrl(URL.createObjectURL(file));
 
   const vendor = inferVendor(file.name);
   const expenseType = inferExpenseType(file.name);
