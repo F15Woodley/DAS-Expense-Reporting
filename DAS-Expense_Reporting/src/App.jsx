@@ -1380,6 +1380,11 @@ setExportMessage({
               This version is connected to Supabase for real expense storage and
               receipt uploads.
             </p>
+            
+<div className="text-sm text-red-600">
+  isMobileView: {String(isMobileView)} / width: {window.innerWidth}
+</div>
+            
 
           {appMessage && (
             <div
