@@ -1279,33 +1279,6 @@ const handleExportApproved = async () => {
     </div>
   ))}
 </div>
-            [
-              "Returned",
-              String(
-                savedExpenses.filter(
-                  (item) => String(item.status).toLowerCase() === "returned"
-                ).length
-              ),
-            ],
-            [
-              "Approved",
-              String(
-                savedExpenses.filter(
-                  (item) => String(item.status).toLowerCase() === "approved"
-                ).length
-              ),
-            ],
-            [
-              "Exported",
-              String(exportedCount),
-            ],
-          ].map(([title, value]) => (
-            <div key={title} className={`${card} p-5`}>
-              <div className="text-sm text-slate-500">{title}</div>
-              <div className="text-3xl font-bold mt-2">{value}</div>
-            </div>
-          ))}
-        </div>
 
         {view === "user" && (
           <div className={section}>
