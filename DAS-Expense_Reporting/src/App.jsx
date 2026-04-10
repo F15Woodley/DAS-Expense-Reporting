@@ -244,6 +244,16 @@ useEffect(() => {
 }, [currentTravelerName]);
 
   useEffect(() => {
+  if (!appMessage) return;
+
+  const timer = setTimeout(() => {
+    setAppMessage(null);
+  }, 4000);
+
+  return () => clearTimeout(timer);
+}, [appMessage]);
+
+  useEffect(() => {
   const handleResize = () => {
     setIsMobileView(window.innerWidth < 768);
   };
