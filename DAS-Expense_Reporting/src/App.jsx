@@ -173,6 +173,7 @@ const [exportMessage, setExportMessage] = useState(null);
 const [appMessage, setAppMessage] = useState(null); 
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
+const [previewUrl, setPreviewUrl] = useState(null);
   
   useEffect(() => {
   const getSession = async () => {
@@ -416,6 +417,12 @@ useEffect(() => {
     setView("user");
   }
 }, [profile, view]);
+
+  useEffect(() => {
+  return () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  };
+}, [previewUrl]);
   
 const mobileInbox = useMemo(() => {
   const drafts = savedExpenses.filter((item) => item.status === "Draft").length;
@@ -794,10 +801,12 @@ if (session && !profile) {
       .replace(/\b(receipt|img|scan|invoice)\b/gi, "")
       .trim() || "Receipt Upload";
 
-  const handleFile = async (file) => {
+const handleFile = async (file) => {
   console.log("handleFile triggered", file);
 
   if (!file) return;
+
+  setPreviewUrl(URL.createObjectURL(file));
 
   const vendor = inferVendor(file.name);
   const expenseType = inferExpenseType(file.name);
@@ -2079,6 +2088,35 @@ setExportMessage({
                 onChange={(e) => handleFile(e.target.files?.[0])}
               />
             </div>
+
+{selectedFile || editingReceiptPath ? (
+  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+    <div className="text-sm font-medium mb-3">Receipt Preview</div>
+
+    {selectedFile ? (
+      selectedFile.type === "application/pdf" ? (
+        <object
+          data={previewUrl}
+          type="application/pdf"
+          className="w-full h-64 rounded border"
+        >
+          <div className="text-sm text-slate-500 p-3">
+            PDF preview not available
+          </div>
+        </object>
+      ) : (
+        <img
+          src={previewUrl}
+          alt="Receipt preview"
+          className="w-full max-h-64 object-contain rounded border"
+        />
+      )
+    ) : (
+      <ReceiptViewer path={editingReceiptPath} />
+    )}
+  </div>
+) : null}
+              
               <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4">
                 <div className="text-sm font-semibold text-emerald-800">
                   OCR Suggestion
