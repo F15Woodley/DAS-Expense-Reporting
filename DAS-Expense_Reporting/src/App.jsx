@@ -169,7 +169,7 @@ const [tripSearch, setTripSearch] = useState("");
 const [statusFilter, setStatusFilter] = useState("All Statuses");
 const [paymentFilter, setPaymentFilter] = useState("All Payment Methods");
 const [exportMessage, setExportMessage] = useState(null);
-  
+const [appMessage, setAppMessage] = useState(null); 
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
   
@@ -903,7 +903,10 @@ setExpandedGroup(null);
       setCurrentExpenseId(saved.id || null);
     } catch (error) {
       console.error("Failed to save expense:", error);
-      alert(`Could not save expense. See browser console for details. ${error?.message || ''}`)
+     setAppMessage({
+      type: "error",
+      text: `Could not save expense. ${error?.message || ""}`,
+    });
     }
   };
 
@@ -923,6 +926,8 @@ setExpandedGroup(null);
 };
 
 const handleSubmit = async () => {
+  setAppMessage(null);
+  
   const numericAmount = Number(String(form.amount).replace(/[^\d.]/g, ""));
 
   if (
@@ -932,7 +937,10 @@ const handleSubmit = async () => {
   !form.date?.trim() ||
   !numericAmount
 ) {
-  alert("Please complete trip, project code, vendor, date, and amount before submitting.");
+  setAppMessage({
+  type: "error",
+  text: "Please complete trip, project code, vendor, date, and amount before submitting.",
+});
   return;
   }
 
@@ -941,15 +949,26 @@ const handleSubmit = async () => {
   setCurrentExpenseId(null);
   setForm(emptyForm);
   setSelectedFile(null);
+
+  setAppMessage({
+  type: "success",
+  text: "Expense submitted successfully.",
+});
 };
 
 const handleSaveDraft = async () => {
+  setAppMessage(null);
+  
   await persistExpense("Draft");
   setSubmitState("draft");
   setCurrentExpenseId(null);
   setForm(emptyForm);
   setSelectedFile(null);
   setEditingReceiptPath(null);
+
+    setAppMessage({
+    type: "success",
+    text: "Draft saved successfully.",
 };
 
   const handleClearSaved = () => {
@@ -1049,7 +1068,10 @@ const handleDeleteExpense = async (id) => {
     }
   } catch (error) {
     console.error("Delete failed:", error);
-    alert("Could not delete draft.");
+    setAppMessage({
+    type: "error",
+    text: "Could not delete draft.",
+  });
   }
 };
   
@@ -1058,7 +1080,10 @@ const handleApprove = async (id) => {
     const expense = savedExpenses.find((item) => item.id === id);
 
     if (!expense || !canTransitionStatus(expense.status, "Approved")) {
-      alert("This expense cannot be moved to Approved from its current status.");
+      setAppMessage({
+      type: "error",
+      text: "This expense cannot be moved to Approved from its current status.",
+    });
       return;
     }
 
@@ -1071,7 +1096,10 @@ const handleApprove = async (id) => {
     );
   } catch (error) {
     console.error("Approve failed:", error, "Expense ID:", id);
-    alert(`Could not approve expense. ${error?.message || "Check browser console."}`);
+    setAppMessage({
+  type: "error",
+  text: `Could not approve expense. ${error?.message || "Check browser console."}`,
+});
   }
 };
   
@@ -1080,7 +1108,10 @@ const handleReject = async (id) => {
     const expense = savedExpenses.find((item) => item.id === id);
 
     if (!expense || !canTransitionStatus(expense.status, "Returned")) {
-      alert("This expense cannot be moved to Returned from its current status.");
+      setAppMessage({
+      type: "error",
+      text: "This expense cannot be moved to Returned from its current status.",
+    });
       return;
     }
 
@@ -1093,7 +1124,10 @@ const handleReject = async (id) => {
     );
   } catch (error) {
     console.error("Return failed:", error, "Expense ID:", id);
-    alert(`Could not return expense. ${error?.message || "Check browser console."}`);
+    setAppMessage({
+    type: "error",
+    text: `Could not return expense. ${error?.message || "Check browser console."}`,
+  });
   }
 };
 
@@ -1323,6 +1357,19 @@ setExportMessage({
               This version is connected to Supabase for real expense storage and
               receipt uploads.
             </p>
+
+          {appMessage && (
+            <div
+              className={`mt-4 rounded-2xl border p-4 text-sm ${
+                appMessage.type === "success"
+                  ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                  : "bg-rose-50 border-rose-200 text-rose-800"
+              }`}
+            >
+              {appMessage.text}
+            </div>
+          )}
+            
           </div>
 
         </div>
