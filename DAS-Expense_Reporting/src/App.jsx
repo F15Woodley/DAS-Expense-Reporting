@@ -1098,6 +1098,74 @@ const handleDeleteExpense = async (id) => {
   });
   }
 };
+
+const handleSubmitExpense = async (item) => {
+  try {
+    await expenseService.updateExpense(item.id, {
+      status: "Submitted",
+    });
+
+    setSavedExpenses((prev) =>
+      prev.map((row) =>
+        row.id === item.id ? { ...row, status: "Submitted" } : row
+      )
+    );
+
+    setAppMessage({
+      type: "success",
+      text: "Expense submitted successfully.",
+    });
+  } catch (error) {
+    console.error("Submit failed:", error);
+    setAppMessage({
+      type: "error",
+      text: "Could not submit expense.",
+    });
+  }
+};
+  
+const handleSubmitExpense = async (item) => {
+  setAppMessage(null);
+
+  const numericAmount = Number(String(item.amount || "").replace(/[^\d.]/g, ""));
+
+  if (
+    !item.trip?.trim() ||
+    !item.project_code?.trim() ||
+    !item.vendor?.trim() ||
+    !(item.expense_date || item.date)?.trim() ||
+    !numericAmount
+  ) {
+    setAppMessage({
+      type: "error",
+      text: "This item is missing required fields. Edit it before submitting.",
+    });
+    return;
+  }
+
+  try {
+    await expenseService.updateExpense(item.id, {
+      status: "Submitted",
+    });
+
+    setSavedExpenses((prev) =>
+      prev.map((row) =>
+        row.id === item.id ? { ...row, status: "Submitted" } : row
+      )
+    );
+
+    setAppMessage({
+      type: "success",
+      text: "Expense submitted successfully.",
+    });
+  } catch (error) {
+    console.error("Submit existing expense failed:", error);
+    setAppMessage({
+      type: "error",
+      text: `Could not submit expense. ${error?.message || ""}`,
+    });
+  }
+};
   
 const handleApprove = async (id) => {
   try {
@@ -2205,35 +2273,93 @@ setExportMessage({
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left border-b border-slate-200 text-slate-500">
-                    <th className="py-3 pr-4">Vendor</th>
-                    <th className="py-3 pr-4">Date</th>
-                    <th className="py-3 pr-4">Amount</th>
-                    <th className="py-3 pr-4">Category</th>
-                    <th className="py-3 pr-4">Payment</th>
-                    <th className="py-3 pr-4">Status</th>
-                  </tr>
+          <tr className="text-left border-b border-slate-200 text-slate-500">
+            <th className="py-3 pr-4">Vendor</th>
+            <th className="py-3 pr-4">Date</th>
+            <th className="py-3 pr-4">Amount</th>
+            <th className="py-3 pr-4">Category</th>
+            <th className="py-3 pr-4">Payment</th>
+            <th className="py-3 pr-4">Status</th>
+            <th className="py-3 pr-4">Actions</th>
+          </tr>
                 </thead>
-              <tbody>
-                {filteredTripExpenses.map((row) => (
-                  <tr key={row.id} className="border-b border-slate-100">
-                    <td className="py-3 pr-4 font-medium">{row.vendor || "—"}</td>
-                    <td className="py-3 pr-4">{row.expense_date || "—"}</td>
-                    <td className="py-3 pr-4">
-                      {row.amount !== null && row.amount !== undefined
-                        ? `$${Number(row.amount).toFixed(2)}`
-                        : "—"}
-                    </td>
-                    <td className="py-3 pr-4">{row.expense_type || "—"}</td>
-                    <td className="py-3 pr-4">
-                      {row.payment_method || row.payment || row.paymentMethod || "—"}
-                    </td>
-                    <td className="py-3 pr-4">
-                      <span className={badge}>{row.status || "—"}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+           <tbody>
+  {filteredTripExpenses.map((row) => {
+    const rowStatus = String(row.status || "").toLowerCase();
+
+    const canEdit =
+      rowStatus === "draft" || rowStatus === "returned";
+
+    return (
+      <tr key={row.id} className="border-b border-slate-100 align-top">
+        <td className="py-3 pr-4 font-medium">
+          {row.vendor || "—"}
+        </td>
+
+        <td className="py-3 pr-4">
+          {row.expense_date || row.date || "—"}
+        </td>
+
+        <td className="py-3 pr-4">
+          {row.amount !== null && row.amount !== undefined
+            ? `$${Number(row.amount).toFixed(2)}`
+            : "—"}
+        </td>
+
+        <td className="py-3 pr-4">
+          {row.expense_type || row.expenseType || "—"}
+        </td>
+
+        <td className="py-3 pr-4">
+          {row.payment_method ||
+            row.payment ||
+            row.paymentMethod ||
+            "—"}
+        </td>
+
+        <td className="py-3 pr-4">
+          <span className={badge}>{row.status || "—"}</span>
+        </td>
+
+        {/* 🔴 NEW COLUMN */}
+        <td className="py-3 pr-4">
+          {canEdit ? (
+            <div className="flex flex-wrap gap-2">
+              
+              {/* EDIT */}
+              <button
+                className={buttonSecondary}
+                onClick={() => handleEditExpense(row)}
+              >
+                Edit
+              </button>
+
+              {/* DELETE */}
+              <button
+                className="rounded-xl px-4 py-2.5 text-sm font-medium border border-rose-300 bg-white text-rose-700"
+                onClick={() => handleDeleteExpense(row.id)}
+              >
+                Delete
+              </button>
+
+              {/* SUBMIT */}
+              <button
+                className={buttonPrimary}
+                onClick={() => handleSubmitExpense(row)}
+              >
+                Submit
+              </button>
+            </div>
+          ) : (
+            <span className="text-xs text-slate-400">
+              —
+            </span>
+          )}
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
               </table>
             </div>
           </div>
