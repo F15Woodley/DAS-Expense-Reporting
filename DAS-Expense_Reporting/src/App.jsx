@@ -958,7 +958,7 @@ const handleSubmit = async () => {
 
 const handleSaveDraft = async () => {
   setAppMessage(null);
-  
+
   await persistExpense("Draft");
   setSubmitState("draft");
   setCurrentExpenseId(null);
@@ -966,9 +966,10 @@ const handleSaveDraft = async () => {
   setSelectedFile(null);
   setEditingReceiptPath(null);
 
-    setAppMessage({
+  setAppMessage({
     type: "success",
     text: "Draft saved successfully.",
+  });
 };
 
   const handleClearSaved = () => {
