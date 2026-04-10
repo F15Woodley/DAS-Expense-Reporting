@@ -163,7 +163,7 @@ const [selectedTripKey, setSelectedTripKey] = useState(null);
 const [tripSearch, setTripSearch] = useState("");
 const [statusFilter, setStatusFilter] = useState("All Statuses");
 const [paymentFilter, setPaymentFilter] = useState("All Payment Methods");
-
+const [exportMessage, setExportMessage] = useState(null);
   
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
@@ -1197,6 +1197,7 @@ const downloadSingleBatchCsv = (batchId) => {
 const handleExportApproved = async () => {
   if (!readyExportItems.length || isExporting) return;
 
+  setExportMessage(null);
   setIsExporting(true);
 
   try {
@@ -1220,14 +1221,19 @@ const handleExportApproved = async () => {
 
     setSavedExpenses(data || []);
 
-    alert(
-      `Downloaded QuickBooks Desktop CSV and exported ${readyExportItems.length} item${
+    setExportMessage({
+      type: "success",
+      text: `Downloaded QuickBooks Desktop CSV and exported ${readyExportItems.length} item${
         readyExportItems.length === 1 ? "" : "s"
-      } in batch ${exportBatchId}.`
-    );
+      } in batch ${exportBatchId}.`,
+    });
+    
   } catch (error) {
     console.error("Export failed:", error);
-    alert(`Could not export approved items. ${error?.message || ""}`);
+setExportMessage({
+  type: "error",
+  text: `Could not export approved items. ${error?.message || ""}`,
+});
   } finally {
     setIsExporting(false);
   }
@@ -2383,18 +2389,31 @@ const handleExportApproved = async () => {
           </ul>
         </div>
 
-      <button
-        className={`${buttonPrimary} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
-        disabled={!readyExportItems.length || isExporting}
-        onClick={handleExportApproved}
-      >
-        {isExporting ? "Exporting..." : "Download QuickBooks Desktop CSV"}
-      </button>
+        {exportMessage && (
+          <div
+            className={`rounded-2xl border p-4 text-sm ${
+              exportMessage.type === "success"
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : "bg-rose-50 border-rose-200 text-rose-800"
+            }`}
+          >
+            {exportMessage.text}
+          </div>
+        )}
+
+        <button
+          className={`${buttonPrimary} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
+          disabled={!readyExportItems.length || isExporting}
+          onClick={handleExportApproved}
+        >
+          {isExporting ? "Exporting..." : "Download QuickBooks Desktop CSV"}
+        </button>
       </div>
     </div>
   </div>
 )}
 
+        
 {view === "manager" && (
   <div className={section}>
     <div className="flex items-center justify-between">
