@@ -13,9 +13,7 @@ async list(role) {
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (role === "manager") {
-    query = query.eq("status", "Submitted");
-  } else {
+  if (role !== "manager") {
     query = query.eq("user_id", user.id);
   }
 
@@ -24,7 +22,7 @@ async list(role) {
   if (error) throw error;
   return data ?? [];
 },
-
+  
 async saveExpense(record) {
   if (!supabase) throw new Error("Supabase client not initialized");
 
