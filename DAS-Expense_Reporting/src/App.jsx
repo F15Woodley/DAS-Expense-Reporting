@@ -1381,11 +1381,6 @@ setExportMessage({
               receipt uploads.
             </p>
             
-<div className="text-sm text-red-600">
-  isMobileView: {String(isMobileView)} / width: {window.innerWidth}
-</div>
-            
-
           {appMessage && (
             <div
               className={`mt-4 rounded-2xl border p-4 text-sm ${
@@ -1451,13 +1446,6 @@ setExportMessage({
     </div>
   ))}
 </div>
-
-{view === "manager" && (
-  <div className="text-sm text-blue-600 mb-4">
-    Export batches: {exportedBatches.length}
-  </div>
-)}
-        
 
         {view === "user" && isMobileView && (
           <div className={section}>
