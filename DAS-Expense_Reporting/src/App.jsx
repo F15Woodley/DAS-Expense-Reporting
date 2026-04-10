@@ -69,6 +69,11 @@ export default function TravelExpenseApp() {
   const badge =
     "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700";
 
+  const DEBUG = false;
+  const debugLog = (...args) => {
+  if (DEBUG) console.log(...args);
+};
+
   const trips = [
     {
       name: "USGS Site Visit – Denver",
@@ -210,12 +215,12 @@ const [isAddingTrip, setIsAddingTrip] = useState(false);
         role: "employee",
       };
 
-      console.log("PROFILE LOADED (fallback)", fallbackProfile);
+      debugLog("PROFILE LOADED (fallback)", fallbackProfile);
       setProfile(fallbackProfile);
       return;
     }
 
-    console.log("PROFILE LOADED", data);
+    debugLog("PROFILE LOADED", data);
     setProfile(data);
   };
 
