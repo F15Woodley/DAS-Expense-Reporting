@@ -696,6 +696,12 @@ const exportedCount = savedExpenses.filter(
   (item) => (item.status || "").toLowerCase().trim() === "exported"
 ).length;
 
+const exportedItems = savedExpenses
+  .filter((item) => (item.status || "").toLowerCase().trim() === "exported")
+  .sort(
+    (a, b) => new Date(b.exported_at || 0) - new Date(a.exported_at || 0)
+  );
+  
 if (session && !profile) {
           return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -1084,16 +1090,83 @@ const handleReject = async (id) => {
   window.URL.revokeObjectURL(url);
 };
 
+const downloadExportHistoryCsv = (items) => {
+  const headers = [
+    "ExportBatchId",
+    "ExportedAt",
+    "TxnDate",
+    "Vendor",
+    "Amount",
+    "Account",
+    "CustomerJob",
+    "Traveler",
+    "Trip",
+    "ProjectCode",
+    "ExpenseType",
+    "PaymentMethod",
+    "ReceiptAttached",
+    "ExpenseId",
+    "Status",
+  ];
+
+  const escapeCsv = (value) => {
+    const str = String(value ?? "");
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  const rows = items.map((item) => [
+    item.export_batch_id || "",
+    item.exported_at || "",
+    item.expense_date || "",
+    item.vendor || "",
+    Number(item.amount || 0).toFixed(2),
+    getQBAccount(item.expense_type),
+    item.project_code || "",
+    item.traveler || "",
+    item.trip || "",
+    item.project_code || "",
+    item.expense_type || "",
+    item.payment_method || "",
+    item.receipt_path ? "Yes" : "No",
+    item.id || "",
+    item.status || "",
+  ]);
+
+  const csvContent = [
+    headers.map(escapeCsv).join(","),
+    ...rows.map((row) => row.map(escapeCsv).join(",")),
+  ].join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = window.URL.createObjectURL(blob);
+
+  const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `quickbooks-export-history-${timestamp}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+  
 const handleExportApproved = async () => {
   if (!readyExportItems.length) return;
 
   try {
+    const exportBatchId = `EXP-${new Date().toISOString().slice(0, 10)}-${Date.now()}`;
+    const exportedAt = new Date().toISOString();
+    
     downloadQuickBooksCsv(readyExportItems);
 
-    for (const item of readyExportItems) {
-      await expenseService.updateExpense(item.id, {
-        status: "Exported",
-      });
+    await expenseService.updateExpense(item.id, {
+      status: "Exported",
+      exported_at: exportedAt,
+      export_batch_id: exportBatchId,
+    });
     }
 
     const { data } = await supabase
@@ -2258,13 +2331,75 @@ const handleExportApproved = async () => {
           disabled={!readyExportItems.length}
           onClick={handleExportApproved}
         >
-        >
           Download QuickBooks Desktop CSV
         </button>
       </div>
     </div>
   </div>
 )}
+
+{view === "manager" && exportedItems.length > 0 && (
+  <div className={section}>
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <h2 className="text-2xl font-semibold">5. Export History</h2>
+        <span className={badge}>Finance View</span>
+      </div>
+
+      <button
+        className={buttonSecondary}
+        onClick={() => downloadExportHistoryCsv(exportedItems)}
+        disabled={!exportedItems.length}
+      >
+        Download History CSV
+      </button>
+    </div>
+
+    <div className={`${card} p-6`}>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left border-b border-slate-200 text-slate-500">
+              <th className="py-3 pr-4">Vendor</th>
+              <th className="py-3 pr-4">Amount</th>
+              <th className="py-3 pr-4">Project</th>
+              <th className="py-3 pr-4">Traveler</th>
+              <th className="py-3 pr-4">Batch ID</th>
+              <th className="py-3 pr-4">Exported</th>
+            </tr>
+          </thead>
+          <tbody>
+            {exportedItems.map((item) => (
+              <tr key={item.id} className="border-b border-slate-100">
+                <td className="py-3 pr-4 font-medium">
+                  {item.vendor || "—"}
+                </td>
+                <td className="py-3 pr-4">
+                  ${Number(item.amount || 0).toFixed(2)}
+                </td>
+                <td className="py-3 pr-4">
+                  {item.project_code || "—"}
+                </td>
+                <td className="py-3 pr-4">
+                  {item.traveler || "—"}
+                </td>
+                <td className="py-3 pr-4">
+                  {item.export_batch_id || "—"}
+                </td>
+                <td className="py-3 pr-4">
+                  {item.exported_at
+                    ? new Date(item.exported_at).toLocaleString()
+                    : "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+)}
+        
     </div>
   </div>
   );
