@@ -168,6 +168,7 @@ const [selectedTripKey, setSelectedTripKey] = useState(null);
 const [tripSearch, setTripSearch] = useState("");
 const [statusFilter, setStatusFilter] = useState("All Statuses");
 const [paymentFilter, setPaymentFilter] = useState("All Payment Methods");
+const [isMobileView, setIsMobileView] = useState(false);
 const [exportMessage, setExportMessage] = useState(null);
 const [appMessage, setAppMessage] = useState(null); 
 const [tripOptions, setTripOptions] = useState(trips);
@@ -241,6 +242,17 @@ useEffect(() => {
     traveler: currentTravelerName,
   }));
 }, [currentTravelerName]);
+
+  useEffect(() => {
+  const handleResize = () => {
+    setIsMobileView(window.innerWidth < 768);
+  };
+
+  handleResize(); // run once on load
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
     const loadTrips = async () => {
       const { data, error } = await supabase
