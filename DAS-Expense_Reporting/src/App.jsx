@@ -1141,6 +1141,214 @@ const handleSubmitExpense = async (item) => {
     });
   }
 };
+
+const handlePrintExpense = async (item) => {
+  const printWindow = window.open("", "_blank", "width=900,height=700");
+
+  if (!printWindow) {
+    setAppMessage({
+      type: "error",
+      text: "Popup blocked. Please allow popups to print expenses.",
+    });
+    return;
+  }
+
+  let receiptHtml = `<div style="color:#64748b;">No receipt attached</div>`;
+
+  if (item.receipt_path) {
+    const { data, error } = await supabase.storage
+      .from("receipts")
+      .createSignedUrl(item.receipt_path, 3600);
+
+    if (!error && data?.signedUrl) {
+      const isPdf = String(item.receipt_path).toLowerCase().endsWith(".pdf");
+
+      receiptHtml = isPdf
+        ? `
+          <div style="margin-top:12px;">
+            <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
+            <iframe
+              src="${data.signedUrl}"
+              style="width:100%; height:700px; border:1px solid #cbd5e1; border-radius:8px;"
+            ></iframe>
+          </div>
+        `
+        : `
+          <div style="margin-top:12px;">
+            <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
+            <img
+              src="${data.signedUrl}"
+              alt="Receipt"
+              style="max-width:100%; max-height:900px; border:1px solid #cbd5e1; border-radius:8px;"
+            />
+          </div>
+        `;
+    }
+  }
+
+  const printedAt = new Date().toLocaleString();
+  const amount =
+    item.amount !== null && item.amount !== undefined
+      ? `$${Number(item.amount).toFixed(2)}`
+      : "—";
+
+  const html = `
+    <html>
+      <head>
+        <title>Expense Print</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 32px;
+            color: #0f172a;
+          }
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 16px;
+          }
+          .title {
+            font-size: 28px;
+            font-weight: 700;
+          }
+          .meta {
+            font-size: 12px;
+            color: #475569;
+            text-align: right;
+          }
+          .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #e2e8f0;
+            margin-top: 8px;
+          }
+          .section {
+            margin-top: 24px;
+          }
+          .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+          }
+          .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+          }
+          .field {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 12px;
+          }
+          .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 4px;
+          }
+          .value {
+            font-size: 14px;
+            font-weight: 500;
+          }
+          .full {
+            grid-column: 1 / -1;
+          }
+          @media print {
+            body {
+              padding: 16px;
+            }
+            .no-print {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <div class="title">DAS Expense Report</div>
+            <div class="status">${item.status || "—"}</div>
+          </div>
+          <div class="meta">
+            <div><strong>Printed:</strong> ${printedAt}</div>
+            <div><strong>Expense ID:</strong> ${item.id || "—"}</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Expense Details</div>
+          <div class="grid">
+            <div class="field">
+              <div class="label">Traveler</div>
+              <div class="value">${item.traveler || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="label">Trip / Project</div>
+              <div class="value">${item.trip || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="label">Project Code</div>
+              <div class="value">${item.project_code || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="label">Expense Date</div>
+              <div class="value">${item.expense_date || item.date || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="label">Vendor</div>
+              <div class="value">${item.vendor || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="label">Amount</div>
+              <div class="value">${amount}</div>
+            </div>
+            <div class="field">
+              <div class="label">Expense Type</div>
+              <div class="value">${item.expense_type || item.expenseType || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="label">Payment Method</div>
+              <div class="value">${item.payment_method || item.paymentMethod || "—"}</div>
+            </div>
+            <div class="field">
+              <div class="label">Billable</div>
+              <div class="value">${item.billable ? "Yes" : "No"}</div>
+            </div>
+            <div class="field">
+              <div class="label">QuickBooks Class</div>
+              <div class="value">${item.qb_class || item.qbClass || "—"}</div>
+            </div>
+            <div class="field full">
+              <div class="label">Business Purpose</div>
+              <div class="value">${item.business_purpose || item.businessPurpose || "—"}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Receipt</div>
+          ${receiptHtml}
+        </div>
+
+        <script>
+          window.onload = () => {
+            window.print();
+          };
+        </script>
+      </body>
+    </html>
+  `;
+
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+};
   
 const handleApprove = async (id) => {
   try {
@@ -2298,38 +2506,45 @@ setExportMessage({
 
         {/* 🔴 NEW COLUMN */}
         <td className="py-3 pr-4">
-          {canEdit ? (
-            <div className="flex flex-wrap gap-2">
-              
-              {/* EDIT */}
-              <button
-                className={buttonSecondary}
-                onClick={() => handleEditExpense(row)}
-              >
-                Edit
-              </button>
-
-              {/* DELETE */}
-              <button
-                className="rounded-xl px-4 py-2.5 text-sm font-medium border border-rose-300 bg-white text-rose-700"
-                onClick={() => handleDeleteExpense(row.id)}
-              >
-                Delete
-              </button>
-
-              {/* SUBMIT */}
-              <button
-                className={buttonPrimary}
-                onClick={() => handleSubmitExpense(row)}
-              >
-                Submit
-              </button>
-            </div>
-          ) : (
-            <span className="text-xs text-slate-400">
-              —
-            </span>
-          )}
+          <div className="flex flex-wrap gap-2">
+            
+            {canEdit && (
+              <>
+                {/* EDIT */}
+                <button
+                  className={buttonSecondary}
+                  onClick={() => handleEditExpense(row)}
+                >
+                  Edit
+                </button>
+        
+                {/* DELETE */}
+                <button
+                  className="rounded-xl px-4 py-2.5 text-sm font-medium border border-rose-300 bg-white text-rose-700"
+                  onClick={() => handleDeleteExpense(row.id)}
+                >
+                  Delete
+                </button>
+        
+                {/* SUBMIT */}
+                <button
+                  className={buttonPrimary}
+                  onClick={() => handleSubmitExpense(row)}
+                >
+                  Submit
+                </button>
+              </>
+            )}
+        
+            {/* ✅ PRINT (ALWAYS AVAILABLE) */}
+            <button
+              className={buttonSecondary}
+              onClick={() => handlePrintExpense(row)}
+            >
+              Print
+            </button>
+        
+          </div>
         </td>
       </tr>
     );
