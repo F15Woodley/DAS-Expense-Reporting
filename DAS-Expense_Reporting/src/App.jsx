@@ -174,6 +174,22 @@ const [appMessage, setAppMessage] = useState(null);
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
 
+  const handleLogout = async () => {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error("Logout error:", error);
+    setAppMessage("Logout failed. Please try again.");
+    return;
+  }
+
+  setSession(null);
+  setUser(null);
+  setProfile(null);
+  setSavedExpenses([]);
+  setView("user");
+  setAppMessage(null);
+};
   
   useEffect(() => {
   const getSession = async () => {
@@ -1622,34 +1638,53 @@ setExportMessage({
   )}
 </div>
         
-        <div className="mb-8 flex items-start justify-between gap-4">
-          <div>
-            <div className="text-sm font-medium text-slate-500 mb-2">
-              Backend-Ready MVP
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              DAS Expense Tool for QuickBooks
-            </h1>
-            <p className="text-slate-600 mt-2 max-w-3xl">
-              This version is connected to Supabase for real expense storage and
-              receipt uploads.
-            </p>
-            
-          {appMessage && (
-            <div
-              className={`mt-4 rounded-2xl border p-4 text-sm ${
-                appMessage.type === "success"
-                  ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-                  : "bg-rose-50 border-rose-200 text-rose-800"
-              }`}
-            >
-              {appMessage.text}
-            </div>
-          )}
-            
-          </div>
+<div className="mb-8 flex items-start justify-between gap-4">
+  
+  {/* LEFT SIDE (your existing content) */}
+  <div>
+    <div className="text-sm font-medium text-slate-500 mb-2">
+      Production Environment
+    </div>
+    <h1 className="text-3xl font-bold tracking-tight">
+      DAS Expense Tool for QuickBooks
+    </h1>
+    <p className="text-slate-600 mt-2 max-w-3xl">
+      This version is connected to Supabase for real expense storage and
+      receipt uploads.
+    </p>
 
-        </div>
+    {appMessage && (
+      <div
+        className={`mt-4 rounded-2xl border p-4 text-sm ${
+          appMessage.type === "success"
+            ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+            : "bg-rose-50 border-rose-200 text-rose-800"
+        }`}
+      >
+        {appMessage.text}
+      </div>
+    )}
+  </div>
+
+  {/* RIGHT SIDE (ADD THIS) */}
+  <div className="flex flex-col items-end gap-2">
+    
+    {user && (
+      <span className="text-sm text-slate-500">
+        {user.email}
+      </span>
+    )}
+
+    <button
+      className={buttonSecondary}
+      onClick={handleLogout}
+    >
+      Logout
+    </button>
+
+  </div>
+
+</div>
 
      <div className={`grid gap-4 mb-8 ${view === "manager" ? "md:grid-cols-5" : "md:grid-cols-4"}`}>
   {[
