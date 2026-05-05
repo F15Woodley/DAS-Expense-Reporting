@@ -1915,7 +1915,9 @@ for (const item of stampedExportItems) {
     No receipt selected yet.
   </div>
 )}
-<div className="space-y-3 mb-20">
+</div>
+
+<div className="space-y-3 mb-20">>
   <div>
     <div className={label}>Trip / Project</div>
 
