@@ -2025,7 +2025,7 @@ for (const item of stampedExportItems) {
 <div>
   <div className={label}>Project Code</div>
 
-  <select
+  <input
     className={input}
     value={form.projectCode}
     onChange={(e) =>
@@ -2034,26 +2034,7 @@ for (const item of stampedExportItems) {
         projectCode: e.target.value,
       }))
     }
-  >
-    <option value="">Select saved project code</option>
-
-    {(projectOptions || []).map((project) => (
-      <option key={project} value={project}>
-        {project}
-      </option>
-    ))}
-  </select>
-
-  <input
-    className={`${input} mt-2`}
-    value={form.projectCode}
-    onChange={(e) =>
-      setForm((prev) => ({
-        ...prev,
-        projectCode: e.target.value,
-      }))
-    }
-    placeholder="Or type new project code"
+    placeholder="Enter project code"
   />
 </div>
 
@@ -2500,19 +2481,20 @@ for (const item of stampedExportItems) {
                   }
                 />
               </div>
-              <div>
-                <div className={label}>QuickBooks Class</div>
-                <input
-                  className={input}
-                  value={form.qbClass}
-                  onChange={(e) => handleInputChange("qbClass", e.target.value)}
-                />
-              </div>
+          <div>
+  <div className={label}>QuickBooks Class</div>
+  <input
+    className={input}
+    value={form.qbClass}
+    onChange={(e) => handleInputChange("qbClass", e.target.value)}
+  />
+</div>
+
 {!isAddingTrip && (
   <div>
     <div className={label}>Customer / Project Code</div>
 
-    <select
+    <input
       className={input}
       value={form.projectCode}
       onChange={(e) =>
@@ -2521,28 +2503,11 @@ for (const item of stampedExportItems) {
           projectCode: e.target.value,
         }))
       }
-    >
-      <option value="">Select saved project code</option>
-      {(projectOptions || []).map((project) => (
-        <option key={project} value={project}>
-          {project}
-        </option>
-      ))}
-    </select>
-
-    <input
-      className={`${input} mt-2`}
-      value={form.projectCode}
-      onChange={(e) =>
-        setForm((prev) => ({
-          ...prev,
-          projectCode: e.target.value,
-        }))
-      }
-      placeholder="Or type project code"
+      placeholder="Enter project code"
     />
   </div>
 )}
+
             </div>
         
             <div className="space-y-4">
