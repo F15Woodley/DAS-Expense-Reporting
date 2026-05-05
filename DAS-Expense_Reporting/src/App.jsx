@@ -171,7 +171,7 @@ const [paymentFilter, setPaymentFilter] = useState("All Payment Methods");
 const [isMobileView, setIsMobileView] = useState(false);
 const [exportMessage, setExportMessage] = useState(null);
 const [appMessage, setAppMessage] = useState(null); 
-const [tripOptions, setTripOptions] = useState(trips);
+const [tripOptions, setTripOptions] = useState([]);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
 const [projectOptions, setProjectOptions] = useState([]);
 
@@ -315,7 +315,25 @@ useEffect(() => {
 
   setProjectOptions(data?.map((p) => p.project_code) || []);
 };
-      
+
+const loadTrips = async () => {
+  const twoYearsAgo = new Date();
+  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+
+  const { data, error } = await supabase
+    .from("trips")
+    .select("name")
+    .gte("last_used_at", twoYearsAgo.toISOString())
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Trip load error:", error);
+    return;
+  }
+
+  setTripOptions(data?.map((t) => t.name) || []);
+};
+  
   const emptyForm = {
     traveler: "",
     trip: "USGS Site Visit – Denver",
