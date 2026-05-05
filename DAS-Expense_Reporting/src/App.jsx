@@ -970,11 +970,30 @@ const saveTripOption = async (tripName, projectCode) => {
       }
 
       console.log("saved to supabase OK", saved);
-      await saveProjectOption(form.projectCode);
-     await saveTripOption(form.trip, form.projectCode);
-      
-      await loadProjects();
-      await loadTrips();
+await saveProjectOption(form.projectCode);
+await saveTripOption(form.trip, form.projectCode);
+
+setTripOptions((prev) => {
+  const cleanTrip = form.trip?.trim();
+  const cleanCode = form.projectCode?.trim();
+
+  if (!cleanTrip) return prev;
+
+  const withoutDuplicate = prev.filter(
+    (trip) => trip.name.toLowerCase() !== cleanTrip.toLowerCase()
+  );
+
+  return [
+    ...withoutDuplicate,
+    {
+      name: cleanTrip,
+      code: cleanCode || "",
+    },
+  ].sort((a, b) => a.name.localeCompare(b.name));
+});
+
+await loadProjects();
+await loadTrips();
 
       setSavedExpenses((prev) => {
         const withoutSaved = prev.filter((item) => item.id !== saved.id);
