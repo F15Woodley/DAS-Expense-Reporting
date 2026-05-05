@@ -1580,15 +1580,22 @@ const handleExportApproved = async () => {
       return;
     }
 
-    downloadQuickBooksCsv(exportableItems);
+const stampedExportItems = exportableItems.map((item) => ({
+  ...item,
+  status: "Exported",
+  exported_at: exportedAt,
+  export_batch_id: exportBatchId,
+}));
 
-    for (const item of exportableItems) {
-      await expenseService.updateExpense(item.id, {
-        status: "Exported",
-        exported_at: exportedAt,
-        export_batch_id: exportBatchId,
-      });
-    }
+downloadQuickBooksCsv(stampedExportItems);
+
+for (const item of stampedExportItems) {
+  await expenseService.updateExpense(item.id, {
+    status: "Exported",
+    exported_at: exportedAt,
+    export_batch_id: exportBatchId,
+  });
+}
 
     const { data } = await supabase
       .from("expenses")
