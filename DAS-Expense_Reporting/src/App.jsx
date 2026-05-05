@@ -278,27 +278,11 @@ useEffect(() => {
 
   handleResize(); // run once on load
 
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
+window.addEventListener("resize", handleResize);
+return () => window.removeEventListener("resize", handleResize);
 }, []);
 
-    const loadTrips = async () => {
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, name, code, status, traveler")
-        .order("name", { ascending: true });
-    
-      if (error) {
-        console.error("Failed to load trips:", error);
-        return;
-      }
-    
-      if (data && data.length > 0) {
-        setTripOptions(data);
-      }
-    };
-
-  const loadProjects = async () => {
+const loadProjects = async () => {
   const twoYearsAgo = new Date();
   twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
 
@@ -333,7 +317,12 @@ const loadTrips = async () => {
 
   setTripOptions(data?.map((t) => t.name) || []);
 };
-  
+
+  useEffect(() => {
+  loadProjects();
+  loadTrips();
+}, []);
+
   const emptyForm = {
     traveler: "",
     trip: "USGS Site Visit – Denver",
