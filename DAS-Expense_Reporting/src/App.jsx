@@ -1936,8 +1936,7 @@ for (const item of stampedExportItems) {
 <div>
   <div className={label}>Trip / Project</div>
 
-  <input
-    list="trip-options"
+  <select
     className={input}
     value={form.trip}
     onChange={(e) => {
@@ -1950,33 +1949,63 @@ for (const item of stampedExportItems) {
         projectCode: matchedTrip?.code || prev.projectCode,
       }));
     }}
-    placeholder="Start typing or enter trip/project"
-  />
+  >
+    <option value="">Select saved trip/project</option>
 
-  <datalist id="trip-options">
     {tripOptions.map((trip) => (
-      <option key={trip.name} value={trip.name} />
+      <option key={trip.name} value={trip.name}>
+        {trip.name}
+      </option>
     ))}
-  </datalist>
+  </select>
+
+  <input
+    className={`${input} mt-2`}
+    value={form.trip}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        trip: e.target.value,
+      }))
+    }
+    placeholder="Or type new trip/project"
+  />
 </div>
 
-  <div>
-    <div className={label}>Project Code</div>
+<div>
+  <div className={label}>Project Code</div>
 
-    <input
-      list="project-code-options"
-      className={input}
-      value={form.projectCode}
-      onChange={(e) => handleInputChange("projectCode", e.target.value)}
-      placeholder="Start typing or enter project code"
-    />
+  <select
+    className={input}
+    value={form.projectCode}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        projectCode: e.target.value,
+      }))
+    }
+  >
+    <option value="">Select saved project code</option>
 
-    <datalist id="project-code-options">
-      {projectOptions.map((project) => (
-        <option key={project} value={project} />
-      ))}
-    </datalist>
-  </div>
+    {projectOptions.map((project) => (
+      <option key={project} value={project}>
+        {project}
+      </option>
+    ))}
+  </select>
+
+  <input
+    className={`${input} mt-2`}
+    value={form.projectCode}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        projectCode: e.target.value,
+      }))
+    }
+    placeholder="Or type new project code"
+  />
+</div>
 
   <div>
     <div className={label}>Payment Method</div>
@@ -2281,8 +2310,7 @@ for (const item of stampedExportItems) {
 <div>
   <div className={label}>Trip / Project</div>
 
-  <input
-    list="trip-options"
+  <select
     className={input}
     value={form.trip}
     onChange={(e) => {
@@ -2295,14 +2323,26 @@ for (const item of stampedExportItems) {
         projectCode: matchedTrip?.code || prev.projectCode,
       }));
     }}
-    placeholder="Start typing or enter trip/project"
-  />
-
-  <datalist id="trip-options">
+  >
+    <option value="">Select saved trip/project</option>
     {tripOptions.map((trip) => (
-      <option key={trip.name} value={trip.name} />
+      <option key={trip.name} value={trip.name}>
+        {trip.name}
+      </option>
     ))}
-  </datalist>
+  </select>
+
+  <input
+    className={`${input} mt-2`}
+    value={form.trip}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        trip: e.target.value,
+      }))
+    }
+    placeholder="Or type new trip/project"
+  />
 </div>
               
               <div>
@@ -2391,24 +2431,39 @@ for (const item of stampedExportItems) {
                   onChange={(e) => handleInputChange("qbClass", e.target.value)}
                 />
               </div>
-              <div>
-            <div className={label}>Customer / Project Code</div>
-          <input
-  list="project-code-options"
-  className={input}
-  value={form.projectCode}
-  onChange={(e) =>
-    handleInputChange("projectCode", e.target.value)
-  }
-  placeholder="Start typing or enter new project code"
-/>
+             <div>
+  <div className={label}>Customer / Project Code</div>
 
-<datalist id="project-code-options">
-  {projectOptions.map((project) => (
-    <option key={project} value={project} />
-  ))}
-</datalist>
-          </div>
+  <select
+    className={input}
+    value={form.projectCode}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        projectCode: e.target.value,
+      }))
+    }
+  >
+    <option value="">Select saved project code</option>
+    {projectOptions.map((project) => (
+      <option key={project} value={project}>
+        {project}
+      </option>
+    ))}
+  </select>
+
+  <input
+    className={`${input} mt-2`}
+    value={form.projectCode}
+    onChange={(e) =>
+      setForm((prev) => ({
+        ...prev,
+        projectCode: e.target.value,
+      }))
+    }
+    placeholder="Or type new project code"
+  />
+</div>
             </div>
         
             <div className="space-y-4">
