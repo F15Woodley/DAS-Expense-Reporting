@@ -1954,23 +1954,7 @@ for (const item of stampedExportItems) {
     </datalist>
   </div>
 
-  <datalist id="trip-options">
-    {tripOptions.map((trip) => (
-      <option key={trip} value={trip} />
-    ))}
-  </datalist>
-</div>
-
-               <div>
-            <div className={label}>Project Code</div>
-            <input
-              className={input}
-              value={form.projectCode}
-              onChange={(e) => handleInputChange("projectCode", e.target.value)}
-              placeholder="Example: GPSCv5-241"
-            />
-          </div>   
-                            
+                           
                   <div>
                     <div className={label}>Payment Method</div>
                     <select
@@ -2271,33 +2255,23 @@ for (const item of stampedExportItems) {
                   }
                 />
               </div>
-              <div>
-            <div className={label}>Trip / Project</div>
-            <select
-              className={input}
-              value={isAddingTrip ? "__new__" : form.trip}
-              onChange={(e) => handleTripChange(e.target.value)}
-            >
-              {tripOptions.map((trip) => (
-                <option key={trip.code} value={trip.name}>
-                  {trip.name}
-                </option>
-              ))}
-              <option value="__new__">+ Add new trip/project</option>
-            </select>
-            </div>
+<div>
+  <div className={label}>Trip / Project</div>
 
-            {isAddingTrip && (
-              <div>
-                <div className={label}>New Trip / Project Name</div>
-                <input
-                  className={input}
-                  value={form.trip}
-                  onChange={(e) => handleInputChange("trip", e.target.value)}
-                  placeholder="Example: Escambia County Site Visit"
-                />
-              </div>
-            )}
+  <input
+    list="trip-options"
+    className={input}
+    value={form.trip}
+    onChange={(e) => handleInputChange("trip", e.target.value)}
+    placeholder="Start typing or enter trip/project"
+  />
+
+  <datalist id="trip-options">
+    {tripOptions.map((trip) => (
+      <option key={trip} value={trip} />
+    ))}
+  </datalist>
+</div>
               
               <div>
                 <div className={label}>Expense Type</div>
