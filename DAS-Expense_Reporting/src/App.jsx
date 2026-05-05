@@ -306,7 +306,7 @@ const loadTrips = async () => {
 
   const { data, error } = await supabase
     .from("trips")
-    .select("name")
+    .select("name, code")
     .gte("last_used_at", twoYearsAgo.toISOString())
     .order("name", { ascending: true });
 
@@ -315,9 +315,8 @@ const loadTrips = async () => {
     return;
   }
 
-  setTripOptions(data?.map((t) => t.name) || []);
+  setTripOptions(data || []);
 };
-
   useEffect(() => {
   loadProjects();
   loadTrips();
@@ -903,7 +902,7 @@ setExpandedGroup(null);
   if (error) console.error("Project save error:", error);
 };
 
-const saveTripOption = async (tripName) => {
+const saveTripOption = async (tripName, projectCode) => {
   const cleanName = tripName?.trim();
   if (!cleanName) return;
 
@@ -912,6 +911,7 @@ const saveTripOption = async (tripName) => {
     .upsert(
       {
         name: cleanName,
+        code: projectCode?.trim() || null,
         last_used_at: new Date().toISOString(),
       },
       { onConflict: "name" }
@@ -919,7 +919,6 @@ const saveTripOption = async (tripName) => {
 
   if (error) console.error("Trip save error:", error);
 };
-
   const persistExpense = async (status) => {
     try {
       console.log("persistExpense started", { status, form, selectedFile });
@@ -966,7 +965,7 @@ const saveTripOption = async (tripName) => {
 
       console.log("saved to supabase OK", saved);
       await saveProjectOption(form.projectCode);
-      await saveTripOption(form.trip);
+     await saveTripOption(form.trip, form.projectCode);
       
       await loadProjects();
       await loadTrips();
@@ -1934,26 +1933,32 @@ for (const item of stampedExportItems) {
     No receipt selected yet.
   </div>
 )}
+<div>
+  <div className={label}>Trip / Project</div>
+
+  <input
+    list="trip-options"
+    className={input}
+    value={form.trip}
+    onChange={(e) => {
+      const value = e.target.value;
+      const matchedTrip = tripOptions.find((trip) => trip.name === value);
+
+      setForm((prev) => ({
+        ...prev,
+        trip: value,
+        projectCode: matchedTrip?.code || prev.projectCode,
+      }));
+    }}
+    placeholder="Start typing or enter trip/project"
+  />
+
+  <datalist id="trip-options">
+    {tripOptions.map((trip) => (
+      <option key={trip.name} value={trip.name} />
+    ))}
+  </datalist>
 </div>
-
-<div className="space-y-3 mb-20">
-  <div>
-    <div className={label}>Trip / Project</div>
-
-    <input
-      list="trip-options"
-      className={input}
-      value={form.trip}
-      onChange={(e) => handleInputChange("trip", e.target.value)}
-      placeholder="Start typing or enter trip/project"
-    />
-
-    <datalist id="trip-options">
-      {tripOptions.map((trip) => (
-        <option key={trip} value={trip} />
-      ))}
-    </datalist>
-  </div>
 
   <div>
     <div className={label}>Project Code</div>
@@ -2280,13 +2285,22 @@ for (const item of stampedExportItems) {
     list="trip-options"
     className={input}
     value={form.trip}
-    onChange={(e) => handleInputChange("trip", e.target.value)}
+    onChange={(e) => {
+      const value = e.target.value;
+      const matchedTrip = tripOptions.find((trip) => trip.name === value);
+
+      setForm((prev) => ({
+        ...prev,
+        trip: value,
+        projectCode: matchedTrip?.code || prev.projectCode,
+      }));
+    }}
     placeholder="Start typing or enter trip/project"
   />
 
   <datalist id="trip-options">
     {tripOptions.map((trip) => (
-      <option key={trip} value={trip} />
+      <option key={trip.name} value={trip.name} />
     ))}
   </datalist>
 </div>
