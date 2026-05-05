@@ -1945,7 +1945,6 @@ for (const item of stampedExportItems) {
               value={form.projectCode}
               onChange={(e) => handleInputChange("projectCode", e.target.value)}
               placeholder="Example: GPSCv5-241"
-              readOnly={!isAddingTrip}
             />
           </div>   
                             
@@ -2365,15 +2364,21 @@ for (const item of stampedExportItems) {
               </div>
               <div>
             <div className={label}>Customer / Project Code</div>
-            <input
-              className={input}
-              value={form.projectCode}
-              onChange={(e) =>
-                handleInputChange("projectCode", e.target.value)
-              }
-              placeholder="Example: GPSCv5-241"
-              readOnly={!isAddingTrip}
-            />
+          <input
+  list="project-code-options"
+  className={input}
+  value={form.projectCode}
+  onChange={(e) =>
+    handleInputChange("projectCode", e.target.value)
+  }
+  placeholder="Start typing or enter new project code"
+/>
+
+<datalist id="project-code-options">
+  {projectOptions.map((project) => (
+    <option key={project} value={project} />
+  ))}
+</datalist>
           </div>
             </div>
         
