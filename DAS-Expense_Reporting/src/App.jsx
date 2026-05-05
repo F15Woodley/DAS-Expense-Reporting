@@ -2382,7 +2382,7 @@ for (const item of stampedExportItems) {
       setForm((prev) => ({
         ...prev,
         trip: value,
-        projectCode: matchedTrip?.code || "",
+        projectCode: matchedTrip?.code || prev.projectCode || "",
       }));
     }}
   >
@@ -2529,6 +2529,18 @@ for (const item of stampedExportItems) {
         </option>
       ))}
     </select>
+
+    <input
+      className={`${input} mt-2`}
+      value={form.projectCode}
+      onChange={(e) =>
+        setForm((prev) => ({
+          ...prev,
+          projectCode: e.target.value,
+        }))
+      }
+      placeholder="Or type project code"
+    />
   </div>
 )}
             </div>
