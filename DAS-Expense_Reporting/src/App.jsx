@@ -550,6 +550,31 @@ if (!item.project_code) {
 }, [savedExpenses]);
 
 const userTripGroups = useMemo(() => {
+
+  useEffect(() => {
+  if (!savedExpenses.length) return;
+
+  setTripOptions((prev) => {
+    const fromExpenses = savedExpenses
+      .filter((item) => item.trip)
+      .map((item) => ({
+        name: item.trip,
+        code: item.project_code || "",
+      }));
+
+    const combined = [...prev, ...fromExpenses];
+
+    return combined.filter(
+      (trip, index, array) =>
+        trip.name &&
+        index ===
+          array.findIndex(
+            (t) => t.name.toLowerCase() === trip.name.toLowerCase()
+          )
+    );
+  });
+}, [savedExpenses]);
+  
   const groups = {};
 
   for (const item of savedExpenses) {
@@ -2483,38 +2508,31 @@ for (const item of stampedExportItems) {
                   onChange={(e) => handleInputChange("qbClass", e.target.value)}
                 />
               </div>
-             <div>
-  <div className={label}>Customer / Project Code</div>
+{!isAddingTrip && (
+  <div>
+    <div className={label}>Customer / Project Code</div>
 
-  <select
-    className={input}
-    value={form.projectCode}
-    onChange={(e) =>
-      setForm((prev) => ({
-        ...prev,
-        projectCode: e.target.value,
-      }))
-    }
-  >
-    <option value="">Select saved project code</option>
-    {projectOptions.map((project) => (
-      <option key={project} value={project}>
-        {project}
-      </option>
-    ))}
-  </select>
+    <select
+      className={input}
+      value={form.projectCode}
+      onChange={(e) =>
+        setForm((prev) => ({
+          ...prev,
+          projectCode: e.target.value,
+        }))
+      }
+    >
+      <option value="">Select saved project code</option>
+      {projectOptions.map((project) => (
+        <option key={project} value={project}>
+          {project}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
+              
 
-  <input
-    className={`${input} mt-2`}
-    value={form.projectCode}
-    onChange={(e) =>
-      setForm((prev) => ({
-        ...prev,
-        projectCode: e.target.value,
-      }))
-    }
-    placeholder="Or type new project code"
-  />
 </div>
             </div>
         
