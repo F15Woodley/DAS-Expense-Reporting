@@ -2531,9 +2531,6 @@ for (const item of stampedExportItems) {
     </select>
   </div>
 )}
-              
-
-</div>
             </div>
         
             <div className="space-y-4">
