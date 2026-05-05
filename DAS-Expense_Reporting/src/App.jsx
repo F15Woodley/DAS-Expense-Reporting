@@ -1915,35 +1915,51 @@ for (const item of stampedExportItems) {
     No receipt selected yet.
   </div>
 )}
-      </div>           
-                <div className="space-y-3 mb-20">
-                <div>
-                <div className={label}>Trip / Project</div>
-                <select
-                  className={input}
-                  value={isAddingTrip ? "__new__" : form.trip}
-                  onChange={(e) => handleTripChange(e.target.value)}
-                >
-                  {tripOptions.map((trip) => (
-                    <option key={trip.code} value={trip.name}>
-                      {trip.name}
-                    </option>
-                  ))}
-                  <option value="__new__">+ Add new trip/project</option>
-                </select>
-              </div>
+<div className="space-y-3 mb-20">
 
-               {isAddingTrip && (
-              <div>
-                <div className={label}>New Trip / Project Name</div>
-                <input
-                  className={input}
-                  value={form.trip}
-                  onChange={(e) => handleInputChange("trip", e.target.value)}
-                  placeholder="Example: Escambia County Site Visit"
-                />
-              </div>
-            )} 
+  <div>
+    <div className={label}>Trip / Project</div>
+
+    <input
+      list="trip-options"
+      className={input}
+      value={form.trip}
+      onChange={(e) => handleInputChange("trip", e.target.value)}
+      placeholder="Start typing or enter trip/project"
+    />
+
+    <datalist id="trip-options">
+      {tripOptions.map((trip) => (
+        <option key={trip} value={trip} />
+      ))}
+    </datalist>
+  </div>
+
+  <div>
+    <div className={label}>Project Code</div>
+    <input
+      list="project-code-options"
+      className={input}
+      value={form.projectCode}
+      onChange={(e) =>
+        handleInputChange("projectCode", e.target.value)
+      }
+      placeholder="Start typing or enter project code"
+    />
+
+    <datalist id="project-code-options">
+      {projectOptions.map((project) => (
+        <option key={project} value={project} />
+      ))}
+    </datalist>
+  </div>
+
+  <datalist id="trip-options">
+    {tripOptions.map((trip) => (
+      <option key={trip} value={trip} />
+    ))}
+  </datalist>
+</div>
 
                <div>
             <div className={label}>Project Code</div>
