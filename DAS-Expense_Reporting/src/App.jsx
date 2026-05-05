@@ -550,31 +550,6 @@ if (!item.project_code) {
 }, [savedExpenses]);
 
 const userTripGroups = useMemo(() => {
-
-  useEffect(() => {
-  if (!savedExpenses?.length) return;
-
-  setTripOptions((prev) => {
-    const fromExpenses = savedExpenses
-      .filter((item) => item.trip)
-      .map((item) => ({
-        name: item.trip,
-        code: item.project_code || "",
-      }));
-
-    const combined = [...prev, ...fromExpenses];
-
-    return combined.filter(
-      (trip, index, array) =>
-        trip.name &&
-        index ===
-          array.findIndex(
-            (t) => t.name.toLowerCase() === trip.name.toLowerCase()
-          )
-    );
-  });
-}, [savedExpenses]);
-  
   const groups = {};
 
   for (const item of savedExpenses) {
@@ -618,6 +593,31 @@ const userTripGroups = useMemo(() => {
       ...group,
       status,
     };
+  });
+}, [savedExpenses]);
+
+  useEffect(() => {
+  if (!savedExpenses?.length) return;
+
+  setTripOptions((prev = []) => {
+    const fromExpenses = savedExpenses
+      .filter((item) => item.trip)
+      .map((item) => ({
+        name: item.trip,
+        code: item.project_code || "",
+      }));
+
+    const combined = [...prev, ...fromExpenses];
+
+    return combined.filter(
+      (trip, index, array) =>
+        trip?.name &&
+        index ===
+          array.findIndex(
+            (t) =>
+              t?.name?.toLowerCase() === trip.name.toLowerCase()
+          )
+    );
   });
 }, [savedExpenses]);
 
@@ -2002,7 +2002,7 @@ for (const item of stampedExportItems) {
   >
     <option value="">Select saved trip/project</option>
 
-    {tripOptions.map((trip) => (
+    {(tripOptions || []).map((trip) => (
       <option key={trip.name} value={trip.name}>
         {trip.name}
       </option>
@@ -2388,7 +2388,7 @@ for (const item of stampedExportItems) {
   >
     <option value="">Select saved trip/project</option>
 
-    {tripOptions.map((trip) => (
+    {(tripOptions || []).map((trip) => (
       <option key={trip.name} value={trip.name}>
         {trip.name}
       </option>
@@ -2523,7 +2523,7 @@ for (const item of stampedExportItems) {
       }
     >
       <option value="">Select saved project code</option>
-      {projectOptions.map((project) => (
+      {(projectOptions || []).map((project) => (
         <option key={project} value={project}>
           {project}
         </option>
