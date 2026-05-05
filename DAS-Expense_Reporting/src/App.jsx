@@ -1916,7 +1916,6 @@ for (const item of stampedExportItems) {
   </div>
 )}
 <div className="space-y-3 mb-20">
-
   <div>
     <div className={label}>Trip / Project</div>
 
@@ -1937,13 +1936,12 @@ for (const item of stampedExportItems) {
 
   <div>
     <div className={label}>Project Code</div>
+
     <input
       list="project-code-options"
       className={input}
       value={form.projectCode}
-      onChange={(e) =>
-        handleInputChange("projectCode", e.target.value)
-      }
+      onChange={(e) => handleInputChange("projectCode", e.target.value)}
       placeholder="Start typing or enter project code"
     />
 
@@ -1954,9 +1952,8 @@ for (const item of stampedExportItems) {
     </datalist>
   </div>
 
-                           
-                  <div>
-                    <div className={label}>Payment Method</div>
+  <div>
+    <div className={label}>Payment Method</div>
                     <select
                       className={input}
                       value={form.paymentMethod}
