@@ -920,8 +920,6 @@ const saveTripOption = async (tripName) => {
   if (error) console.error("Trip save error:", error);
 };
 
-const persistExpense = async (status) => {
-
   const persistExpense = async (status) => {
     try {
       console.log("persistExpense started", { status, form, selectedFile });
@@ -1929,7 +1927,7 @@ for (const item of stampedExportItems) {
 )}
 </div>
 
-<div className="space-y-3 mb-20">>
+<div className="space-y-3 mb-20">
   <div>
     <div className={label}>Trip / Project</div>
 
@@ -3045,5 +3043,3 @@ for (const item of stampedExportItems) {
   </div>
   );
 }
-
-export default TravelExpenseApp;
