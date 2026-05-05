@@ -1023,7 +1023,10 @@ const handleSubmit = async () => {
   await persistExpense("Submitted");
   setSubmitState("submitted");
   setCurrentExpenseId(null);
-  setForm(emptyForm);
+  setForm({
+  ...emptyForm,
+  traveler: currentTravelerName,
+});
   setSelectedFile(null);
 
   setAppMessage({
@@ -1038,7 +1041,10 @@ const handleSaveDraft = async () => {
   await persistExpense("Draft");
   setSubmitState("draft");
   setCurrentExpenseId(null);
-  setForm(emptyForm);
+  setForm({
+  ...emptyForm,
+  traveler: currentTravelerName,
+});
   setSelectedFile(null);
   setEditingReceiptPath(null);
 
@@ -1138,7 +1144,10 @@ const handleDeleteExpense = async (id) => {
 
     if (currentExpenseId === id) {
       setCurrentExpenseId(null);
-      setForm(emptyForm);
+      setForm({
+  ...emptyForm,
+  traveler: currentTravelerName,
+});
       setSelectedFile(null);
       setEditingReceiptPath(null);
       setSubmitState("idle");
