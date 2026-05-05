@@ -1554,9 +1554,12 @@ const downloadExportHistoryCsv = (items) => {
   downloadExportHistoryCsv(batchItems);
 };
   
-  
 const handleExportApproved = async () => {
-  if (!readyExportItems.length || isExporting) return;
+  const exportableItems = readyExportItems.filter(
+    (item) => item.status === "Approved" && !item.exported_at
+  );
+
+  if (!exportableItems.length || isExporting) return;
 
   setExportMessage(null);
   setIsExporting(true);
@@ -1565,21 +1568,21 @@ const handleExportApproved = async () => {
     const exportBatchId = `EXP-${new Date().toISOString().slice(0, 10)}-${Date.now()}`;
     const exportedAt = new Date().toISOString();
 
-    const invalidItems = readyExportItems.filter(
-    (item) => !canTransitionStatus(item.status, "Exported")
-  );
+    const invalidItems = exportableItems.filter(
+      (item) => !canTransitionStatus(item.status, "Exported")
+    );
 
-  if (invalidItems.length > 0) {
-    setExportMessage({
-      type: "error",
-      text: "One or more items are not in a valid status for export.",
-    });
-    return;
-  }
+    if (invalidItems.length > 0) {
+      setExportMessage({
+        type: "error",
+        text: "One or more items are not in a valid status for export.",
+      });
+      return;
+    }
 
-    downloadQuickBooksCsv(readyExportItems);
+    downloadQuickBooksCsv(exportableItems);
 
-    for (const item of readyExportItems) {
+    for (const item of exportableItems) {
       await expenseService.updateExpense(item.id, {
         status: "Exported",
         exported_at: exportedAt,
@@ -1596,17 +1599,17 @@ const handleExportApproved = async () => {
 
     setExportMessage({
       type: "success",
-      text: `Downloaded QuickBooks Desktop CSV and exported ${readyExportItems.length} item${
-        readyExportItems.length === 1 ? "" : "s"
+      text: `Downloaded QuickBooks Desktop CSV and exported ${exportableItems.length} item${
+        exportableItems.length === 1 ? "" : "s"
       } in batch ${exportBatchId}.`,
     });
-    
+
   } catch (error) {
     console.error("Export failed:", error);
-setExportMessage({
-  type: "error",
-  text: `Could not export approved items. ${error?.message || ""}`,
-});
+    setExportMessage({
+      type: "error",
+      text: `Could not export approved items. ${error?.message || ""}`,
+    });
   } finally {
     setIsExporting(false);
   }
@@ -2903,7 +2906,12 @@ setExportMessage({
 
         <button
           className={`${buttonPrimary} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
-          disabled={!readyExportItems.length || isExporting}
+          disabled={
+  isExporting ||
+  !savedExpenses.some(
+    (item) => item.status === "Approved" && !item.exported_at
+  )
+}
           onClick={handleExportApproved}
         >
           {isExporting ? "Exporting..." : "Download QuickBooks Desktop CSV"}
