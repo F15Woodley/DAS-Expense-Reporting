@@ -323,19 +323,19 @@ const loadTrips = async () => {
   loadTrips();
 }, []);
 
-  const emptyForm = {
-    traveler: "",
-    trip: "USGS Site Visit – Denver",
-    expenseType: "",
-    paymentMethod: "Company Card",
-    vendor: "",
-    date: "",
-    amount: "",
-    billable: "No",
-    businessPurpose: "",
-    qbClass: "Travel",
-    projectCode: "GPSCv5-241",
-  };
+const emptyForm = {
+  traveler: "",
+  trip: "",
+  expenseType: "",
+  paymentMethod: "Company Card",
+  vendor: "",
+  date: "",
+  amount: "",
+  billable: "No",
+  businessPurpose: "",
+  qbClass: "Travel",
+  projectCode: "",
+};
 
 const [form, setForm] = useState(emptyForm);
  
@@ -884,40 +884,47 @@ setForm((prev) => ({
 setExpandedGroup(null);
     return;
   }
-
-  const selectedTrip = tripOptions.find((t) => t.name === value);
-
-  setIsAddingTrip(false);
-  setForm((prev) => ({
-    ...prev,
-    trip: value,
-    projectCode: selectedTrip?.code || "",
-  }));
 }; 
+
+  const saveProjectOption = async (projectCode) => {
+  const cleanCode = projectCode?.trim();
+  if (!cleanCode) return;
+
+  const { error } = await supabase
+    .from("projects")
+    .upsert(
+      {
+        project_code: cleanCode,
+        last_used_at: new Date().toISOString(),
+      },
+      { onConflict: "project_code" }
+    );
+
+  if (error) console.error("Project save error:", error);
+};
+
+const saveTripOption = async (tripName) => {
+  const cleanName = tripName?.trim();
+  if (!cleanName) return;
+
+  const { error } = await supabase
+    .from("trips")
+    .upsert(
+      {
+        name: cleanName,
+        last_used_at: new Date().toISOString(),
+      },
+      { onConflict: "name" }
+    );
+
+  if (error) console.error("Trip save error:", error);
+};
+
+const persistExpense = async (status) => {
 
   const persistExpense = async (status) => {
     try {
       console.log("persistExpense started", { status, form, selectedFile });
-
-      if (isAddingTrip && form.trip?.trim() && form.projectCode?.trim()) {
-  const alreadyExists = tripOptions.some(
-    (t) =>
-      t.name.toLowerCase() === form.trip.trim().toLowerCase() ||
-      t.code.toLowerCase() === form.projectCode.trim().toLowerCase()
-  );
-
-  if (!alreadyExists) {
-    setTripOptions((prev) => [
-      ...prev,
-      {
-        name: form.trip.trim(),
-        code: form.projectCode.trim(),
-        status: "Active",
-        traveler: form.traveler,
-      },
-    ]);
-  }
-}
 
       const numericAmount =
         Number(String(form.amount).replace(/[^\d.]/g, "")) || 0;
@@ -960,6 +967,11 @@ setExpandedGroup(null);
       }
 
       console.log("saved to supabase OK", saved);
+      await saveProjectOption(form.projectCode);
+      await saveTripOption(form.trip);
+      
+      await loadProjects();
+      await loadTrips();
 
       setSavedExpenses((prev) => {
         const withoutSaved = prev.filter((item) => item.id !== saved.id);
