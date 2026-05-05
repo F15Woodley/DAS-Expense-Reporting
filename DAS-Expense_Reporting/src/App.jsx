@@ -552,7 +552,7 @@ if (!item.project_code) {
 const userTripGroups = useMemo(() => {
 
   useEffect(() => {
-  if (!savedExpenses.length) return;
+  if (!savedExpenses?.length) return;
 
   setTripOptions((prev) => {
     const fromExpenses = savedExpenses
@@ -2037,7 +2037,7 @@ for (const item of stampedExportItems) {
   >
     <option value="">Select saved project code</option>
 
-    {projectOptions.map((project) => (
+    {(projectOptions || []).map((project) => (
       <option key={project} value={project}>
         {project}
       </option>
