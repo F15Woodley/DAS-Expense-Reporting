@@ -2538,9 +2538,17 @@ const handleExportApproved = async () => {
             "—"}
         </td>
 
-        <td className="py-3 pr-4">
-          <span className={badge}>{row.status || "—"}</span>
-        </td>
+<td className="py-3 pr-4">
+  <div className="flex flex-wrap gap-2">
+    <span className={badge}>{row.status || "—"}</span>
+
+    {row.exported_at && (
+      <span className={`${badge} bg-emerald-100 text-emerald-800`}>
+        Exported
+      </span>
+    )}
+  </div>
+</td>
 
         {/* 🔴 NEW COLUMN */}
         <td className="py-3 pr-4">
