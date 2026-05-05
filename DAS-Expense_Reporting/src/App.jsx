@@ -2377,8 +2377,7 @@ for (const item of stampedExportItems) {
     </div>
   </>
 )}
-</div>
-              
+            
               <div>
                 <div className={label}>Expense Type</div>
                 <select
