@@ -171,7 +171,7 @@ const [paymentFilter, setPaymentFilter] = useState("All Payment Methods");
 const [isMobileView, setIsMobileView] = useState(false);
 const [exportMessage, setExportMessage] = useState(null);
 const [appMessage, setAppMessage] = useState(null); 
-const [tripOptions, setTripOptions] = useState([]);
+const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
 const [projectOptions, setProjectOptions] = useState([]);
 
@@ -312,15 +312,21 @@ const loadTrips = async () => {
 
   if (error) {
     console.error("Trip load error:", error);
+    setTripOptions(trips); // fallback to defaults
     return;
   }
 
-  setTripOptions(data || []);
+  const savedTrips = data || [];
+
+  // 🔑 merge defaults + saved trips
+  const combinedTrips = [...trips, ...savedTrips].filter(
+    (trip, index, array) =>
+      trip.name &&
+      index === array.findIndex((t) => t.name === trip.name)
+  );
+
+  setTripOptions(combinedTrips);
 };
-  useEffect(() => {
-  loadProjects();
-  loadTrips();
-}, []);
 
 const emptyForm = {
   traveler: "",
@@ -2312,37 +2318,65 @@ for (const item of stampedExportItems) {
 
   <select
     className={input}
-    value={form.trip}
+    value={isAddingTrip ? "__new__" : form.trip}
     onChange={(e) => {
       const value = e.target.value;
+
+      if (value === "__new__") {
+        setIsAddingTrip(true);
+        setForm((prev) => ({
+          ...prev,
+          trip: "",
+          projectCode: "",
+        }));
+        return;
+      }
+
       const matchedTrip = tripOptions.find((trip) => trip.name === value);
 
+      setIsAddingTrip(false);
       setForm((prev) => ({
         ...prev,
         trip: value,
-        projectCode: matchedTrip?.code || prev.projectCode,
+        projectCode: matchedTrip?.code || "",
       }));
     }}
   >
     <option value="">Select saved trip/project</option>
+
     {tripOptions.map((trip) => (
       <option key={trip.name} value={trip.name}>
         {trip.name}
       </option>
     ))}
-  </select>
 
-  <input
-    className={`${input} mt-2`}
-    value={form.trip}
-    onChange={(e) =>
-      setForm((prev) => ({
-        ...prev,
-        trip: e.target.value,
-      }))
-    }
-    placeholder="Or type new trip/project"
-  />
+    <option value="__new__">+ Add new trip/project</option>
+  </select>
+</div>
+
+{isAddingTrip && (
+  <>
+    <div>
+      <div className={label}>New Trip / Project Name</div>
+      <input
+        className={input}
+        value={form.trip}
+        onChange={(e) => handleInputChange("trip", e.target.value)}
+        placeholder="Example: Escambia County Site Visit"
+      />
+    </div>
+
+    <div>
+      <div className={label}>Customer / Project Code</div>
+      <input
+        className={input}
+        value={form.projectCode}
+        onChange={(e) => handleInputChange("projectCode", e.target.value)}
+        placeholder="Example: GPSCv5-241"
+      />
+    </div>
+  </>
+)}
 </div>
               
               <div>
