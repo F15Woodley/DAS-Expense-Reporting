@@ -173,6 +173,7 @@ const [exportMessage, setExportMessage] = useState(null);
 const [appMessage, setAppMessage] = useState(null); 
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
+const [projectOptions, setProjectOptions] = useState([]);
 
   const handleLogout = async () => {
   const { error } = await supabase.auth.signOut();
@@ -296,6 +297,24 @@ useEffect(() => {
         setTripOptions(data);
       }
     };
+
+  const loadProjects = async () => {
+  const twoYearsAgo = new Date();
+  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select("project_code")
+    .gte("last_used_at", twoYearsAgo.toISOString())
+    .order("project_code", { ascending: true });
+
+  if (error) {
+    console.error("Project load error:", error);
+    return;
+  }
+
+  setProjectOptions(data?.map((p) => p.project_code) || []);
+};
       
   const emptyForm = {
     traveler: "",
@@ -426,6 +445,7 @@ useEffect(() => {
 
   useEffect(() => {
   loadTrips();
+  loadProjects();
 }, []);
 
 useEffect(() => {
