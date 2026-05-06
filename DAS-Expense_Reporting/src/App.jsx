@@ -1742,6 +1742,18 @@ for (const item of stampedExportItems) {
     </button>
   )}
 </div>
+
+     {profile?.role === "admin" && (
+    <button
+      className={`px-3 py-1 rounded-lg text-sm ${
+        view === "admin" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
+      }`}
+      onClick={() => setView("admin")}
+    >
+      Admin
+    </button>
+  )}
+</div>     
         
 <div className="mb-8 flex items-start justify-between gap-4">
   
@@ -3096,6 +3108,12 @@ for (const item of stampedExportItems) {
   </div>
 )}
 
+   </div>
+)}
+
+{view === "admin" && profile?.role === "admin" && (
+  <AdminUsersScreen />
+)}     
         
 {view === "manager" && (
   <div className={section}>
