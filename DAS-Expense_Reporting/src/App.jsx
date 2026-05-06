@@ -566,7 +566,12 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  if (profile && profile.role !== "manager" && view === "manager") {
+  if (
+    profile &&
+    profile.role !== "manager" &&
+    profile.role !== "admin" &&
+    view === "manager"
+  ) {
     setView("user");
   }
 }, [profile, view]);
