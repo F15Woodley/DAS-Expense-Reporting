@@ -3111,9 +3111,6 @@ for (const item of stampedExportItems) {
    </div>
 )}
 
-{view === "admin" && profile?.role === "admin" && (
-  <AdminUsersScreen />
-)}     
         
 {view === "manager" && (
   <div className={section}>
@@ -3186,6 +3183,9 @@ for (const item of stampedExportItems) {
   </div>
 )}
 
+{view === "admin" && profile?.role === "admin" && (
+  <AdminUsersScreen />
+)}    
     </div>
   </div>
   );
