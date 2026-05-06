@@ -55,9 +55,9 @@ const ReceiptViewer = ({ path }) => {
 };
 
 function AdminUsersScreen() {
-  const [users, setUsers] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
-  const [message, setMessage] = React.useState("");
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const loadUsers = async () => {
     setLoading(true);
@@ -78,9 +78,9 @@ function AdminUsersScreen() {
     setLoading(false);
   };
 
-  React.useEffect(() => {
-    loadUsers();
-  }, []);
+useEffect(() => {
+  loadUsers();
+}, []);
 
   const updateRole = async (userId, newRole) => {
     const { error } = await supabase
