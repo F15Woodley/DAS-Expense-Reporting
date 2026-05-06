@@ -56,13 +56,15 @@ const ReceiptViewer = ({ path }) => {
 
 function AdminUsersScreen() {
   return (
-    <div className={section}>
+    <div className="grid gap-6 mb-8">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Admin Control</h2>
-        <span className={badge}>Admin Only</span>
+        <span className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-700">
+          Admin Only
+        </span>
       </div>
 
-      <div className={`${card} p-6`}>
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <h3 className="text-lg font-semibold">Application Users</h3>
 
         <p className="text-sm text-slate-500 mt-2">
