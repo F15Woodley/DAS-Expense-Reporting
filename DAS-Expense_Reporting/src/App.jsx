@@ -54,6 +54,25 @@ const ReceiptViewer = ({ path }) => {
   );
 };
 
+function AdminUsersScreen() {
+  return (
+    <div className={section}>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">Admin Control</h2>
+        <span className={badge}>Admin Only</span>
+      </div>
+
+      <div className={`${card} p-6`}>
+        <h3 className="text-lg font-semibold">Application Users</h3>
+
+        <p className="text-sm text-slate-500 mt-2">
+          Admin user management screen is connected.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function TravelExpenseApp() {
   const shell = "min-h-screen bg-slate-50 text-slate-900 p-4 md:p-6";
   const card = "bg-white rounded-2xl shadow-sm border border-slate-200";
