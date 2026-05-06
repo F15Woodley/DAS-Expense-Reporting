@@ -1832,6 +1832,10 @@ for (const item of stampedExportItems) {
   return (
     <div className={shell}>
       <div className="max-w-7xl mx-auto">
+
+      <div className="text-xs text-slate-500 mb-2">
+  DEBUG view: {view} | role: {role} | isManager: {String(isManager)}
+</div>  
         
 <div className="flex gap-2 mb-4">
   <button
@@ -2898,7 +2902,7 @@ for (const item of stampedExportItems) {
         </div>
 )}
 
-{view === "manager" && (
+{view === "manager" && isManager && (
   <div className={section}>
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">3. Approval Queue Screen</h2>
@@ -3085,7 +3089,7 @@ for (const item of stampedExportItems) {
       </div>
 )}
 
-{view === "manager" && (
+{view === "manager" && isManager && (
   <div className={section}>
     <div className="flex items-center justify-between">
       <h2 className="text-2xl font-semibold">4. QuickBooks Export Screen</h2>
@@ -3225,7 +3229,7 @@ for (const item of stampedExportItems) {
   </div>
 )}
         
-{view === "manager" && (
+{view === "manager" && isManager && (
   <div className={section}>
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
