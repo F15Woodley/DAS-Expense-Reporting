@@ -678,7 +678,8 @@ if (paymentFilter !== "All Payment Methods") {
   }, [previewUrl]);
 
   const role = profile?.role ?? "employee";
-  const isManager = role === "manager";
+  const isManager =
+  profile?.role === "manager" || profile?.role === "admin";
   const isEmployee = role === "employee";
 
   if (!session) {
@@ -1724,36 +1725,41 @@ for (const item of stampedExportItems) {
 <div className="flex gap-2 mb-4">
   <button
     className={`px-3 py-1 rounded-lg text-sm ${
-      view === "user" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
+      view === "user"
+        ? "bg-slate-900 text-white"
+        : "bg-slate-200 text-slate-800"
     }`}
     onClick={() => setView("user")}
   >
     My Expenses
   </button>
 
-      {isManager && (
+  {(isManager || profile?.role === "admin") && (
     <button
       className={`px-3 py-1 rounded-lg text-sm ${
-        view === "manager" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
+        view === "manager"
+          ? "bg-slate-900 text-white"
+          : "bg-slate-200 text-slate-800"
       }`}
       onClick={() => setView("manager")}
     >
       Approval Queue
     </button>
   )}
-</div>
 
-     {profile?.role === "admin" && (
+  {profile?.role === "admin" && (
     <button
       className={`px-3 py-1 rounded-lg text-sm ${
-        view === "admin" ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-800"
+        view === "admin"
+          ? "bg-slate-900 text-white"
+          : "bg-slate-200 text-slate-800"
       }`}
       onClick={() => setView("admin")}
     >
       Admin
     </button>
   )}
-</div>     
+</div>    
         
 <div className="mb-8 flex items-start justify-between gap-4">
   
