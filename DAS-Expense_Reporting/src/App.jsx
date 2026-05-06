@@ -139,16 +139,23 @@ useEffect(() => {
                   <td className="py-3 pr-4">{user.email}</td>
                   <td className="py-3 pr-4">{user.role || "employee"}</td>
                   <td className="py-3 pr-4">
-                    <select
-                      className="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
-                      value={user.role || "employee"}
-                      onChange={(e) => updateRole(user.id, e.target.value)}
-                    >
-                      <option value="employee">employee</option>
-                      <option value="manager">manager</option>
-                      <option value="admin">admin</option>
-                    </select>
-                  </td>
+            <select
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
+              value={user.role || "employee"}
+              disabled={user.email === "rwoodley@digitalaerial.com"}
+              onChange={(e) => updateRole(user.id, e.target.value)}
+            >
+    <option value="employee">employee</option>
+    <option value="manager">manager</option>
+    <option value="admin">admin</option>
+  </select>
+
+  {user.email === "rwoodley@digitalaerial.com" && (
+    <div className="text-xs text-slate-500 mt-1">
+      Primary admin protected
+    </div>
+  )}
+</td>
                 </tr>
               ))}
             </tbody>
