@@ -58,6 +58,45 @@ function AdminUsersScreen() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("employee");
+  const [inviting, setInviting] = useState(false);
+
+  const inviteUser = async () => {
+  if (!inviteEmail.trim()) {
+    setMessage("Enter an email address.");
+    return;
+  }
+
+  setInviting(true);
+  setMessage("");
+
+  const response = await fetch("/api/invite-user", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: inviteEmail.trim(),
+      role: inviteRole,
+    }),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    setMessage(result.error || "Could not invite user.");
+    setInviting(false);
+    return;
+  }
+
+  setMessage("User invited successfully.");
+  setInviteEmail("");
+  setInviteRole("employee");
+  await loadUsers();
+
+  setInviting(false);
+};
 
   const loadUsers = async () => {
     setLoading(true);
@@ -114,6 +153,39 @@ useEffect(() => {
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <h3 className="text-lg font-semibold">Application Users</h3>
+
+  <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <div className="text-sm font-semibold mb-3">Invite New User</div>
+
+    <div className="grid md:grid-cols-3 gap-3">
+      <input
+        className="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
+        value={inviteEmail}
+        onChange={(e) => setInviteEmail(e.target.value)}
+        placeholder="employee@email.com"
+      />
+
+      <select
+        className="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
+        value={inviteRole}
+        onChange={(e) => setInviteRole(e.target.value)}
+      >
+        <option value="employee">employee</option>
+        <option value="manager">manager</option>
+        <option value="admin">admin</option>
+      </select>
+
+      <button
+        className="rounded-xl px-4 py-2.5 text-sm font-medium bg-slate-900 text-white disabled:opacity-50"
+        disabled={inviting}
+        onClick={inviteUser}
+      >
+        {inviting ? "Inviting..." : "Invite User"}
+      </button>
+    </div>
+  </div>
+
+        
 
         {message && (
           <div className="my-3 rounded-xl bg-slate-100 p-3 text-sm">
