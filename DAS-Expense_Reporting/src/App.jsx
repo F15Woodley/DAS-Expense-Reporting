@@ -3190,5 +3190,6 @@ for (const item of stampedExportItems) {
 ) : null}
 
     </div>
-  );
+  </div>
+);
 }
