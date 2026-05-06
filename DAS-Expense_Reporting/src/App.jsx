@@ -1837,10 +1837,6 @@ for (const item of stampedExportItems) {
   return (
     <div className={shell}>
       <div className="max-w-7xl mx-auto">
-
-      <div className="text-xs text-slate-500 mb-2">
-  DEBUG view: {view} | role: {role} | isManager: {String(isManager)}
-</div>  
         
 <div className="flex gap-2 mb-4">
   <button
