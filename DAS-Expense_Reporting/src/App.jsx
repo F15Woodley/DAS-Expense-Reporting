@@ -782,10 +782,16 @@ if (paymentFilter !== "All Payment Methods") {
     };
   }, [previewUrl]);
 
-  const role = profile?.role ?? "employee";
-  const isManager =
-  profile?.role === "manager" || profile?.role === "admin";
-  const isEmployee = role === "employee";
+const role = profile?.role ?? "employee";
+
+const isManager =
+  role === "manager" || role === "admin";
+
+const isEmployee =
+  role === "employee";
+
+const isAdmin =
+  role === "admin";
 
   if (!session) {
   return (
