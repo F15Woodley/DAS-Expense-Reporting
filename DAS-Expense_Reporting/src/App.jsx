@@ -142,6 +142,59 @@ useEffect(() => {
     setMessage("User role updated.");
   };
 
+  const resetPassword = async (email) => {
+  setMessage("");
+
+  const response = await fetch("/api/reset-user-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    setMessage(result.error || "Could not send reset email.");
+    return;
+  }
+
+  setMessage(`Password reset email sent to ${email}`);
+};
+
+const deleteUser = async (userId, email) => {
+  const confirmed = window.confirm(
+    `Delete user ${email}? This cannot be undone.`
+  );
+
+  if (!confirmed) return;
+
+  setMessage("");
+
+  const response = await fetch("/api/delete-user", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userId,
+      email,
+    }),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    setMessage(result.error || "Could not delete user.");
+    return;
+  }
+
+  setMessage("User deleted.");
+
+  await loadUsers();
+};
+  
   return (
     <div className="grid gap-6 mb-8">
       <div className="flex items-center justify-between">
@@ -210,17 +263,37 @@ useEffect(() => {
                 <tr key={user.id} className="border-b">
                   <td className="py-3 pr-4">{user.email}</td>
                   <td className="py-3 pr-4">{user.role || "employee"}</td>
-                  <td className="py-3 pr-4">
-            <select
-              className="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
-              value={user.role || "employee"}
-              disabled={user.email === "rwoodley@digitalaerial.com"}
-              onChange={(e) => updateRole(user.id, e.target.value)}
-            >
-    <option value="employee">employee</option>
-    <option value="manager">manager</option>
-    <option value="admin">admin</option>
-  </select>
+<td className="py-3 pr-4">
+  <div className="flex flex-wrap items-center gap-2">
+
+    <select
+      className="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
+      value={user.role || "employee"}
+      disabled={user.email === "rwoodley@digitalaerial.com"}
+      onChange={(e) => updateRole(user.id, e.target.value)}
+    >
+      <option value="employee">employee</option>
+      <option value="manager">manager</option>
+      <option value="admin">admin</option>
+    </select>
+
+    <button
+      className="rounded-xl px-3 py-2 text-xs border border-slate-300 bg-white"
+      onClick={() => resetPassword(user.email)}
+    >
+      Reset Password
+    </button>
+
+    {user.email !== "rwoodley@digitalaerial.com" && (
+      <button
+        className="rounded-xl px-3 py-2 text-xs border border-rose-300 bg-white text-rose-700"
+        onClick={() => deleteUser(user.id, user.email)}
+      >
+        Delete
+      </button>
+    )}
+
+  </div>
 
   {user.email === "rwoodley@digitalaerial.com" && (
     <div className="text-xs text-slate-500 mt-1">
