@@ -3107,10 +3107,6 @@ for (const item of stampedExportItems) {
     </div>
   </div>
 )}
-
-   </div>
-)}
-
         
 {view === "manager" && (
   <div className={section}>
