@@ -55,6 +55,54 @@ const ReceiptViewer = ({ path }) => {
 };
 
 function AdminUsersScreen() {
+  const [users, setUsers] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+
+  const loadUsers = async () => {
+    setLoading(true);
+    setMessage("");
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, email, role")
+      .order("email", { ascending: true });
+
+    if (error) {
+      console.error("Load users error:", error);
+      setMessage("Could not load users.");
+    } else {
+      setUsers(data || []);
+    }
+
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const updateRole = async (userId, newRole) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ role: newRole })
+      .eq("id", userId);
+
+    if (error) {
+      console.error("Update role error:", error);
+      setMessage("Could not update role.");
+      return;
+    }
+
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === userId ? { ...user, role: newRole } : user
+      )
+    );
+
+    setMessage("User role updated.");
+  };
+
   return (
     <div className="grid gap-6 mb-8">
       <div className="flex items-center justify-between">
@@ -67,9 +115,45 @@ function AdminUsersScreen() {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <h3 className="text-lg font-semibold">Application Users</h3>
 
-        <p className="text-sm text-slate-500 mt-2">
-          Admin user management screen is connected.
-        </p>
+        {message && (
+          <div className="my-3 rounded-xl bg-slate-100 p-3 text-sm">
+            {message}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="text-sm text-slate-500 mt-4">Loading users...</div>
+        ) : (
+          <table className="w-full text-sm mt-4">
+            <thead>
+              <tr className="text-left border-b text-slate-500">
+                <th className="py-3 pr-4">Email</th>
+                <th className="py-3 pr-4">Role</th>
+                <th className="py-3 pr-4">Change Role</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id} className="border-b">
+                  <td className="py-3 pr-4">{user.email}</td>
+                  <td className="py-3 pr-4">{user.role || "employee"}</td>
+                  <td className="py-3 pr-4">
+                    <select
+                      className="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"
+                      value={user.role || "employee"}
+                      onChange={(e) => updateRole(user.id, e.target.value)}
+                    >
+                      <option value="employee">employee</option>
+                      <option value="manager">manager</option>
+                      <option value="admin">admin</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
