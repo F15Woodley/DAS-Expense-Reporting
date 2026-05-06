@@ -3179,10 +3179,11 @@ for (const item of stampedExportItems) {
   </div>
 )}
 
-{view === "admin" && profile?.role === "admin" && (
+{view === "admin" && profile?.role === "admin" ? (
   <AdminUsersScreen />
-)}    
+) : null}
+
     </div>
   </div>
-  );
+);
 }
