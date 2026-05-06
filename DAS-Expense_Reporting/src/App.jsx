@@ -2495,6 +2495,7 @@ for (const item of stampedExportItems) {
     <div className={label}>Customer / Project Code</div>
 
     <input
+      list="project-code-options"
       className={input}
       value={form.projectCode}
       onChange={(e) =>
@@ -2503,8 +2504,14 @@ for (const item of stampedExportItems) {
           projectCode: e.target.value,
         }))
       }
-      placeholder="Enter project code"
+      placeholder="Start typing project code"
     />
+
+    <datalist id="project-code-options">
+      {(projectOptions || []).map((project) => (
+        <option key={project} value={project} />
+      ))}
+    </datalist>
   </div>
 )}
 
