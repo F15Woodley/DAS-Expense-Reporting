@@ -1009,8 +1009,6 @@ const getQBAccount = (expenseType) => {
     case "taxi":
     case "uber":
         return "Travel: Ground";
-    default:
-      return "Travel: Other";
     case "Miscellaneous":
       return "Travel:Miscellaneous";
     default:
