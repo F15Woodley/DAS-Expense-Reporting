@@ -1011,6 +1011,10 @@ const getQBAccount = (expenseType) => {
         return "Travel: Ground";
     default:
       return "Travel: Other";
+    case "Miscellaneous":
+      return "Travel:Miscellaneous";
+    default:
+      return "Travel:Miscellaneous";
   }
 };
 
@@ -2355,6 +2359,7 @@ for (const item of stampedExportItems) {
                       <option>Parking / Tolls</option>
                       <option>Mileage</option>
                       <option>Ground Transport</option>
+                      <option>Miscellaneous</option>
                     </select>
                   </div>
 
