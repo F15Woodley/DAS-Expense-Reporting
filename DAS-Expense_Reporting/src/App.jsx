@@ -2709,6 +2709,7 @@ for (const item of stampedExportItems) {
                   <option>Parking / Tolls</option>
                   <option>Mileage</option>
                   <option>Ground Transport</option>
+                  <option>Miscellaneous</option>
                 </select>
               </div>
               <div>
