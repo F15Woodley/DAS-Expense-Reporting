@@ -643,13 +643,21 @@ const extractReceiptData = async (file) => {
       throw new Error(data.error || "Receipt extraction failed");
     }
 
-    setForm((prev) => ({
-      ...prev,
-      vendor: data.vendor || prev.vendor,
-      date: data.date || prev.date,
-      amount: data.amount || prev.amount,
-      expenseType: data.expenseType || prev.expenseType,
-    }));
+setForm((prev) => ({
+  ...prev,
+  vendor: data.vendor || prev.vendor,
+  date: data.date || prev.date,
+  amount: data.amount || prev.amount,
+  expenseType: data.expenseType || prev.expenseType,
+
+  // Aviation fuel fields from AI
+  aircraftTailNumber:
+    data.aircraftTailNumber || prev.aircraftTailNumber,
+  fuelGallons:
+    data.fuelGallons || prev.fuelGallons,
+  fuelPricePerGallon:
+    data.fuelPricePerGallon || prev.fuelPricePerGallon,
+}));
   } catch (error) {
     console.error("extractReceiptData failed", error);
     setExtractionError(error.message || "Could not extract receipt data");
