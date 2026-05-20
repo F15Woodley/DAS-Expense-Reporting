@@ -597,6 +597,9 @@ const emptyForm = {
   businessPurpose: "",
   qbClass: "Travel",
   projectCode: "",
+  aircraftTailNumber: "",
+  fuelGallons: "",
+  fuelPricePerGallon: "",
 };
 
 const [form, setForm] = useState(emptyForm);
@@ -1234,23 +1237,33 @@ const saveTripOption = async (tripName, projectCode) => {
       
       console.log("receipt uploaded", { receiptPath });
 
-      const record = {
-        user_id: user.id, 
-        traveler: currentTravelerName,
-        trip: form.trip,
-        expense_type: form.expenseType,
-        payment_method: form.paymentMethod,
-        vendor: form.vendor,
-        expense_date: form.date || null,
-        amount: numericAmount,
-        billable: form.billable === "Yes",
-        business_purpose: form.businessPurpose,
-        qb_class: form.qbClass,
-        project_code: form.projectCode,
-        status,
-        file_name: selectedFile?.name || null,
-        receipt_path: receiptPath,
-      };
+const record = {
+  user_id: user.id,
+  traveler: currentTravelerName,
+  trip: form.trip,
+  expense_type: form.expenseType,
+  payment_method: form.paymentMethod,
+  vendor: form.vendor,
+  expense_date: form.date || null,
+  amount: numericAmount,
+  billable: form.billable === "Yes",
+  business_purpose: form.businessPurpose,
+  qb_class: form.qbClass,
+  project_code: form.projectCode,
+
+  // Aviation fuel fields
+  aircraft_tail_number: form.aircraftTailNumber || null,
+  fuel_gallons: form.fuelGallons
+    ? Number(form.fuelGallons)
+    : null,
+  fuel_price_per_gallon: form.fuelPricePerGallon
+    ? Number(form.fuelPricePerGallon)
+    : null,
+
+  status,
+  file_name: selectedFile?.name || null,
+  receipt_path: receiptPath,
+};
 
       console.log("SIGNED IN USER", user);
       console.log("RECORD BEING INSERTED", record);
@@ -1397,6 +1410,18 @@ const handleEditExpense = (item) => {
     businessPurpose: item.business_purpose || item.businessPurpose || "",
     qbClass: item.qb_class || item.qbClass || "Travel",
     projectCode: item.project_code || item.projectCode || "",
+
+    aircraftTailNumber: item.aircraft_tail_number || "",
+fuelGallons:
+  item.fuel_gallons !== null && item.fuel_gallons !== undefined
+    ? String(item.fuel_gallons)
+    : "",
+fuelPricePerGallon:
+  item.fuel_price_per_gallon !== null &&
+  item.fuel_price_per_gallon !== undefined
+    ? String(item.fuel_price_per_gallon)
+    : "",
+    
   });
 
   setSelectedFile(null);
@@ -2361,6 +2386,55 @@ for (const item of stampedExportItems) {
                     </select>
                   </div>
 
+  {form.expenseType === "Fuel" && (
+  <>
+    <div>
+      <div className={label}>Aircraft Tail Number</div>
+      <input
+        className={input}
+        value={form.aircraftTailNumber}
+        onChange={(e) =>
+          handleInputChange(
+            "aircraftTailNumber",
+            e.target.value.toUpperCase()
+          )
+        }
+        placeholder="N207SS"
+      />
+    </div>
+
+    <div>
+      <div className={label}>Gallons</div>
+      <input
+        className={input}
+        type="number"
+        step="0.01"
+        value={form.fuelGallons}
+        onChange={(e) =>
+          handleInputChange("fuelGallons", e.target.value)
+        }
+        placeholder="123.45"
+      />
+    </div>
+
+    <div>
+      <div className={label}>Price Per Gallon</div>
+      <input
+        className={input}
+        type="number"
+        step="0.001"
+        value={form.fuelPricePerGallon}
+        onChange={(e) =>
+          handleInputChange(
+            "fuelPricePerGallon",
+            e.target.value
+          )
+        }
+        placeholder="6.89"
+      />
+    </div>
+  </>
+)}
                     <div>
               <div className={label}>Vendor</div>
               <input
@@ -2712,6 +2786,57 @@ for (const item of stampedExportItems) {
                   <option>Miscellaneous</option>
                 </select>
               </div>
+
+{form.expenseType === "Fuel" && (
+  <>
+    <div>
+      <div className={label}>Aircraft Tail Number</div>
+      <input
+        className={input}
+        value={form.aircraftTailNumber}
+        onChange={(e) =>
+          handleInputChange(
+            "aircraftTailNumber",
+            e.target.value.toUpperCase()
+          )
+        }
+        placeholder="N207SS"
+      />
+    </div>
+
+    <div>
+      <div className={label}>Gallons</div>
+      <input
+        className={input}
+        type="number"
+        step="0.01"
+        value={form.fuelGallons}
+        onChange={(e) =>
+          handleInputChange("fuelGallons", e.target.value)
+        }
+        placeholder="123.45"
+      />
+    </div>
+
+    <div>
+      <div className={label}>Price Per Gallon</div>
+      <input
+        className={input}
+        type="number"
+        step="0.001"
+        value={form.fuelPricePerGallon}
+        onChange={(e) =>
+          handleInputChange(
+            "fuelPricePerGallon",
+            e.target.value
+          )
+        }
+        placeholder="6.89"
+      />
+    </div>
+  </>
+)}
+              
               <div>
                 <div className={label}>Payment Method</div>
                 <select
