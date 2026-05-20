@@ -1578,16 +1578,15 @@ const handlePrintExpense = async (item) => {
     if (!error && data?.signedUrl) {
       const isPdf = String(item.receipt_path).toLowerCase().endsWith(".pdf");
 
-      receiptHtml = isPdf
-        ? `
-          <div style="margin-top:12px;">
-            <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
-            <iframe
-              src="${data.signedUrl}"
-              style="width:100%; height:700px; border:1px solid #cbd5e1; border-radius:8px;"
-            ></iframe>
-          </div>
-        `
+receiptHtml = isPdf
+  ? `
+    <div style="margin-top:12px;">
+      <div style="font-weight:600; margin-bottom:8px;">Receipt PDF attached</div>
+      <div style="font-size:13px; color:#475569;">
+        The PDF receipt will open separately for clean printing.
+      </div>
+    </div>
+  `
         : `
           <div style="margin-top:12px;">
             <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
