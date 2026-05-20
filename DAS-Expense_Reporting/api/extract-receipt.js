@@ -14,32 +14,40 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
     }
 
-    const prompt = `
-    You are an expert receipt parser.
-    
-    Extract structured data from this receipt and return ONLY valid JSON.
-    
-    Rules:
-    - vendor: business name only, no address, no phone number, no extra text
-    - date: transaction date in YYYY-MM-DD format
-    - amount: final total paid, number only, no dollar sign
-    - expenseType: must be exactly one of:
-      Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport
-    
-    Important:
-    - If multiple totals exist, use the final total actually paid
-    - Do not return subtotal unless it is the only total shown
-    - If a value is unclear, return an empty string
-    - Return no explanation, no commentary, no markdown
-    
-    Return exactly this JSON shape:
-    {
-      "vendor": "",
-      "date": "",
-      "amount": "",
-      "expenseType": ""
-    }
-    `;
+const prompt = `
+You are an expert receipt parser.
+
+Extract structured data from this receipt and return ONLY valid JSON.
+
+Rules:
+- vendor: business name only, no address, no phone number, no extra text
+- date: transaction date in YYYY-MM-DD format
+- amount: final total paid, number only, no dollar sign
+- expenseType: must be exactly one of:
+  Airfare, Hotel, Rental Car, Fuel, Meals, Parking / Tolls, Mileage, Ground Transport, Miscellaneous
+- aircraftTailNumber: aircraft tail number if visible, usually begins with N, such as N207SS
+- fuelGallons: number of gallons purchased if visible, number only
+- fuelPricePerGallon: price per gallon if visible, number only
+
+Important:
+- If multiple totals exist, use the final total actually paid
+- Do not return subtotal unless it is the only total shown
+- If the receipt appears to be aviation fuel, use expenseType "Fuel"
+- If any aviation fuel field is not visible, return an empty string
+- If a value is unclear, return an empty string
+- Return no explanation, no commentary, no markdown
+
+Return exactly this JSON shape:
+{
+  "vendor": "",
+  "date": "",
+  "amount": "",
+  "expenseType": "",
+  "aircraftTailNumber": "",
+  "fuelGallons": "",
+  "fuelPricePerGallon": ""
+}
+`;
     let content;
 
     if (mimeType === "application/pdf") {
@@ -97,13 +105,16 @@ export default async function handler(req, res) {
     try {
       parsed = JSON.parse(text);
     } catch {
-      return res.status(200).json({
-        vendor: "",
-        date: "",
-        amount: "",
-        expenseType: "",
-        raw: text,
-      });
+return res.status(200).json({
+  vendor: "",
+  date: "",
+  amount: "",
+  expenseType: "",
+  aircraftTailNumber: "",
+  fuelGallons: "",
+  fuelPricePerGallon: "",
+  raw: text,
+});
     }
 
     return res.status(200).json(parsed);
