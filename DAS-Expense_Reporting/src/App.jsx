@@ -1751,11 +1751,13 @@ const handlePrintExpense = async (item) => {
           ${receiptHtml}
         </div>
 
-        <script>
-          window.onload = () => {
-            window.print();
-          };
-        </script>
+    <script>
+  window.onload = () => {
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  };
+</script>
       </body>
     </html>
   `;
