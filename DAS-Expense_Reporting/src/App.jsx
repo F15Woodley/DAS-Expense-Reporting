@@ -2502,16 +2502,16 @@ for (const item of stampedExportItems) {
                         handleInputChange("expenseType", e.target.value)
                       }
                     >
-                  <option>Airfare</option>
-                  <option>Hotel</option>
-                  <option>Rental Car</option>
-                  <option>Aviation Fuel</option>
-                  <option>Vehicle Fuel</option>
-                  <option>Meals</option>
-                  <option>Parking / Tolls</option>
-                  <option>Mileage</option>
-                  <option>Ground Transport</option>
-                  <option>Miscellaneous</option>
+              <option>Airfare</option>
+              <option>Aviation Fuel</option>
+              <option>Ground Transport</option>
+              <option>Hotel</option>
+              <option>Meals</option>
+              <option>Mileage</option>
+              <option>Miscellaneous</option>
+              <option>Parking / Tolls</option>
+              <option>Rental Car</option>
+              <option>Vehicle Fuel</option>
                     </select>
                   </div>
 
@@ -2904,16 +2904,16 @@ for (const item of stampedExportItems) {
                     handleInputChange("expenseType", e.target.value)
                   }
                 >
-                <option>Airfare</option>
-                <option>Hotel</option>
-                <option>Rental Car</option>
-                <option>Aviation Fuel</option>
-                <option>Vehicle Fuel</option>
-                <option>Meals</option>
-                <option>Parking / Tolls</option>
-                <option>Mileage</option>
-                <option>Ground Transport</option>
-                <option>Miscellaneous</option>
+              <option>Airfare</option>
+              <option>Aviation Fuel</option>
+              <option>Ground Transport</option>
+              <option>Hotel</option>
+              <option>Meals</option>
+              <option>Mileage</option>
+              <option>Miscellaneous</option>
+              <option>Parking / Tolls</option>
+              <option>Rental Car</option>
+              <option>Vehicle Fuel</option>
                 </select>
               </div>
 
