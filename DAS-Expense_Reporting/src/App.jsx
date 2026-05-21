@@ -3441,17 +3441,15 @@ for (const item of stampedExportItems) {
 
           <div className="text-right">
             <div className="text-sm">${item.amount}</div>
-            <button
-              className="mt-2 px-2 py-1 text-xs bg-blue-600 text-white rounded"
-              onClick={(e) => {
-                e.stopPropagation();
-                setExpandedDetailId(
-                  expandedDetailId === item.id ? null : item.id
-                );
-              }}
-            >
-              Details
-            </button>
+        <button
+          className="mt-2 px-2 py-1 text-xs bg-blue-600 text-white rounded"
+          onClick={(e) => {
+            e.stopPropagation();
+            openExpenseDetails(item);
+          }}
+        >
+          Details
+        </button>
           </div>
         </div>
 
