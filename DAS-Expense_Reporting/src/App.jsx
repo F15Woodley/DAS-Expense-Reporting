@@ -461,6 +461,7 @@ const [appMessage, setAppMessage] = useState(null);
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
 const [projectOptions, setProjectOptions] = useState([]);
+const [isSavingExpense, setIsSavingExpense] = useState(false);
 const [selectedExpense, setSelectedExpense] = useState(null);
 const [showExpenseDetails, setShowExpenseDetails] = useState(false);
 
@@ -1318,9 +1319,13 @@ const saveTripOption = async (tripName, projectCode) => {
 
   if (error) console.error("Trip save error:", error);
 };
-  const persistExpense = async (status) => {
-    try {
-      console.log("persistExpense started", { status, form, selectedFile });
+const persistExpense = async (status) => {
+  if (isSavingExpense) return;
+
+  setIsSavingExpense(true);
+
+  try {
+    console.log("persistExpense started", { status, form, selectedFile });
 
       const numericAmount =
         Number(String(form.amount).replace(/[^\d.]/g, "")) || 0;
@@ -1404,14 +1409,16 @@ await loadTrips();
       });
       setLastSavedAt(new Date());
       setCurrentExpenseId(saved.id || null);
-    } catch (error) {
-      console.error("Failed to save expense:", error);
-     setAppMessage({
+  } catch (error) {
+    console.error("Failed to save expense:", error);
+    setAppMessage({
       type: "error",
       text: `Could not save expense. ${error?.message || ""}`,
     });
-    }
-  };
+  } finally {
+    setIsSavingExpense(false);
+  }
+};
 
   const canTransitionStatus = (from, to) => {
   const current = String(from || "").trim();
