@@ -1165,8 +1165,17 @@ if (session && !profile) {
       return "Airfare";
     if (n.includes("uber") || n.includes("lyft") || n.includes("taxi"))
       return "Ground Transport";
-    if (n.includes("shell") || n.includes("fuel") || n.includes("chevron"))
-      return "Fuel";
+if (
+  n.includes("avgas") ||
+  n.includes("jet") ||
+  n.includes("airport") ||
+  n.includes("fbo") ||
+  n.includes("okeechobee")
+)
+  return "Aviation Fuel";
+
+if (n.includes("shell") || n.includes("chevron") || n.includes("wawa"))
+  return "Vehicle Fuel";
     if (n.includes("meal") || n.includes("restaurant")) return "Meals";
     if (n.includes("avis") || n.includes("hertz") || n.includes("enterprise"))
       return "Rental Car";
@@ -1660,10 +1669,11 @@ const handlePrintExpense = async (item) => {
       ? `$${Number(item.amount).toFixed(2)}`
       : "—";
 
-  const isFuelExpense =
-  String(item.expense_type || item.expenseType || "").toLowerCase() === "fuel";
+const isAviationFuelExpense =
+  String(item.expense_type || item.expenseType || "").toLowerCase() ===
+  "aviation fuel";
 
-const fuelDetailsHtml = isFuelExpense
+const fuelDetailsHtml = isAviationFuelExpense
   ? `
     <div class="field">
       <div class="label">Aircraft Tail Number</div>
@@ -1671,13 +1681,13 @@ const fuelDetailsHtml = isFuelExpense
     </div>
     <div class="field">
       <div class="label">Gallons</div>
-      <div class="value">${item.gallons || "—"}</div>
+      <div class="value">${item.fuel_gallons || "—"}</div>
     </div>
     <div class="field">
       <div class="label">Price Per Gallon</div>
       <div class="value">${
-        item.price_per_gallon || item.pricePerGallon
-          ? `$${Number(item.price_per_gallon || item.pricePerGallon).toFixed(2)}`
+      item.fuel_price_per_gallon
+        ? `$${Number(item.fuel_price_per_gallon).toFixed(2)}`
           : "—"
       }</div>
     </div>
