@@ -3,6 +3,31 @@ import { expenseService } from "./expenseService";
 import { supabase } from "./supabaseClient";
 import * as pdfjsLib from "pdfjs-dist";
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+async function renderPdfToImages(pdfUrl) {
+  const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+  const images = [];
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+    const page = await pdf.getPage(pageNumber);
+    const viewport = page.getViewport({ scale: 2 });
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({
+      canvasContext: context,
+      viewport,
+    }).promise;
+
+    images.push(canvas.toDataURL("image/png"));
+  }
+
+  return images;
+}
+
 
 const ReceiptViewer = ({ path }) => {
   const [url, setUrl] = useState(null);
@@ -1580,26 +1605,50 @@ const handlePrintExpense = async (item) => {
     if (!error && data?.signedUrl) {
       const isPdf = String(item.receipt_path).toLowerCase().endsWith(".pdf");
 
-receiptHtml = isPdf
-  ? `
-    <div style="margin-top:12px;">
-      <div style="font-weight:600; margin-bottom:8px;">Receipt PDF attached</div>
-      <div style="font-size:13px; color:#475569;">
-        The PDF receipt will open separately for clean printing.
+if (isPdf) {
+  try {
+    const pdfImages = await renderPdfToImages(data.signedUrl);
+
+    receiptHtml = `
+      <div style="margin-top:12px;">
+        <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
+        ${pdfImages
+          .map(
+            (imageUrl) => `
+              <img
+                src="${imageUrl}"
+                alt="Receipt PDF page"
+                style="width:100%; max-width:100%; margin-bottom:16px; border:1px solid #cbd5e1; border-radius:8px;"
+              />
+            `
+          )
+          .join("")}
       </div>
+    `;
+  } catch (pdfError) {
+    console.error("PDF render error:", pdfError);
+
+    receiptHtml = `
+      <div style="margin-top:12px;">
+        <div style="font-weight:600; margin-bottom:8px;">Receipt PDF could not be rendered</div>
+        <div style="font-size:13px; color:#475569;">
+          The PDF receipt is attached but could not be displayed in the printout.
+        </div>
+      </div>
+    `;
+  }
+} else {
+  receiptHtml = `
+    <div style="margin-top:12px;">
+      <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
+      <img
+        src="${data.signedUrl}"
+        alt="Receipt"
+        style="max-width:100%; max-height:900px; border:1px solid #cbd5e1; border-radius:8px;"
+      />
     </div>
-  `
-        : `
-          <div style="margin-top:12px;">
-            <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
-            <img
-              src="${data.signedUrl}"
-              alt="Receipt"
-              style="max-width:100%; max-height:900px; border:1px solid #cbd5e1; border-radius:8px;"
-            />
-          </div>
-        `;
-    }
+  `;
+}
   }
 
   const printedAt = new Date().toLocaleString();
