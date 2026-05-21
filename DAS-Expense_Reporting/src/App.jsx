@@ -461,6 +461,18 @@ const [appMessage, setAppMessage] = useState(null);
 const [tripOptions, setTripOptions] = useState(trips);
 const [isAddingTrip, setIsAddingTrip] = useState(false);
 const [projectOptions, setProjectOptions] = useState([]);
+const [selectedExpense, setSelectedExpense] = useState(null);
+const [showExpenseDetails, setShowExpenseDetails] = useState(false);
+
+const openExpenseDetails = (expense) => {
+  setSelectedExpense(expense);
+  setShowExpenseDetails(true);
+};
+
+const closeExpenseDetails = () => {
+  setShowExpenseDetails(false);
+  setSelectedExpense(null);
+};
 
   const handleLogout = async () => {
   const { error } = await supabase.auth.signOut();
