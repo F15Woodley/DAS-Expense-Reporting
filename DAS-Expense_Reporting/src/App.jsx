@@ -2472,19 +2472,20 @@ for (const item of stampedExportItems) {
                         handleInputChange("expenseType", e.target.value)
                       }
                     >
-                      <option>Airfare</option>
-                      <option>Hotel</option>
-                      <option>Rental Car</option>
-                      <option>Fuel</option>
-                      <option>Meals</option>
-                      <option>Parking / Tolls</option>
-                      <option>Mileage</option>
-                      <option>Ground Transport</option>
-                      <option>Miscellaneous</option>
+                  <option>Airfare</option>
+                  <option>Hotel</option>
+                  <option>Rental Car</option>
+                  <option>Aviation Fuel</option>
+                  <option>Vehicle Fuel</option>
+                  <option>Meals</option>
+                  <option>Parking / Tolls</option>
+                  <option>Mileage</option>
+                  <option>Ground Transport</option>
+                  <option>Miscellaneous</option>
                     </select>
                   </div>
 
-  {form.expenseType === "Fuel" && (
+  {form.expenseType === "Aviation Fuel" && (
   <>
     <div>
       <div className={label}>Aircraft Tail Number</div>
@@ -2873,19 +2874,20 @@ for (const item of stampedExportItems) {
                     handleInputChange("expenseType", e.target.value)
                   }
                 >
-                  <option>Airfare</option>
-                  <option>Hotel</option>
-                  <option>Rental Car</option>
-                  <option>Fuel</option>
-                  <option>Meals</option>
-                  <option>Parking / Tolls</option>
-                  <option>Mileage</option>
-                  <option>Ground Transport</option>
-                  <option>Miscellaneous</option>
+                <option>Airfare</option>
+                <option>Hotel</option>
+                <option>Rental Car</option>
+                <option>Aviation Fuel</option>
+                <option>Vehicle Fuel</option>
+                <option>Meals</option>
+                <option>Parking / Tolls</option>
+                <option>Mileage</option>
+                <option>Ground Transport</option>
+                <option>Miscellaneous</option>
                 </select>
               </div>
 
-{form.expenseType === "Fuel" && (
+{form.expenseType === "Aviation Fuel" && (
   <>
     <div>
       <div className={label}>Aircraft Tail Number</div>
