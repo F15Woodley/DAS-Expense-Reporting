@@ -3780,8 +3780,9 @@ for (const item of stampedExportItems) {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-<div className="rounded-2xl border border-slate-200 p-4 space-y-4">
+<div className="grid md:grid-cols-2 gap-4">
+
+  <div className="rounded-2xl border border-slate-200 p-4 space-y-4">
   <div className="grid grid-cols-2 gap-3">
 
     <div>
@@ -3857,9 +3858,10 @@ for (const item of stampedExportItems) {
       {selectedExpense.business_purpose || "—"}
     </div>
   </div>
+
 </div>
 
-          <div className="rounded-2xl border border-slate-200 p-4">
+<div className="rounded-2xl border border-slate-200 p-4">
             <div className="text-sm font-semibold mb-3">Receipt Preview</div>
 
             {selectedExpense.receipt_path ? (
