@@ -1660,6 +1660,30 @@ const handlePrintExpense = async (item) => {
       ? `$${Number(item.amount).toFixed(2)}`
       : "—";
 
+  const isFuelExpense =
+  String(item.expense_type || item.expenseType || "").toLowerCase() === "fuel";
+
+const fuelDetailsHtml = isFuelExpense
+  ? `
+    <div class="field">
+      <div class="label">Aircraft Tail Number</div>
+      <div class="value">${item.aircraft_tail_number || item.aircraftTailNumber || "—"}</div>
+    </div>
+    <div class="field">
+      <div class="label">Gallons</div>
+      <div class="value">${item.gallons || "—"}</div>
+    </div>
+    <div class="field">
+      <div class="label">Price Per Gallon</div>
+      <div class="value">${
+        item.price_per_gallon || item.pricePerGallon
+          ? `$${Number(item.price_per_gallon || item.pricePerGallon).toFixed(2)}`
+          : "—"
+      }</div>
+    </div>
+  `
+  : "";
+
   const html = `
     <html>
       <head>
@@ -1780,6 +1804,7 @@ const handlePrintExpense = async (item) => {
               <div class="label">Expense Type</div>
               <div class="value">${item.expense_type || item.expenseType || "—"}</div>
             </div>
+            ${fuelDetailsHtml}
             <div class="field">
               <div class="label">Payment Method</div>
               <div class="value">${item.payment_method || item.paymentMethod || "—"}</div>
