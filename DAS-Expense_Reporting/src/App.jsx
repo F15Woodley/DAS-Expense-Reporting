@@ -1650,7 +1650,7 @@ const handlePrintExpense = async (item) => {
   `;
       }
     }
-
+ }
   const printedAt = new Date().toLocaleString();
   const amount =
     item.amount !== null && item.amount !== undefined
