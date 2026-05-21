@@ -1605,7 +1605,7 @@ const handlePrintExpense = async (item) => {
     if (!error && data?.signedUrl) {
       const isPdf = String(item.receipt_path).toLowerCase().endsWith(".pdf");
 
-if (isPdf) {
+      if (isPdf) {
   try {
     const pdfImages = await renderPdfToImages(data.signedUrl);
 
@@ -1648,8 +1648,8 @@ if (isPdf) {
       />
     </div>
   `;
-}
-  }
+      }
+    }
 
   const printedAt = new Date().toLocaleString();
   const amount =
