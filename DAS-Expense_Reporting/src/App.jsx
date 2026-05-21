@@ -678,7 +678,10 @@ setForm((prev) => ({
   vendor: data.vendor || prev.vendor,
   date: data.date || prev.date,
   amount: data.amount || prev.amount,
-  expenseType: data.expenseType || prev.expenseType,
+  expenseType: normalizeExpenseType(
+  data.expenseType || prev.expenseType,
+  data.vendor || prev.vendor
+),
 
   // Aviation fuel fields from AI
   aircraftTailNumber:
@@ -1188,6 +1191,28 @@ if (n.includes("shell") || n.includes("chevron") || n.includes("wawa"))
       return "Rental Car";
     return "Hotel";
   };
+
+  const normalizeExpenseType = (type, vendor = "") => {
+  const t = String(type || "").toLowerCase();
+  const v = String(vendor || "").toLowerCase();
+
+  if (
+    t === "fuel" &&
+    (v.includes("airport") ||
+      v.includes("fbo") ||
+      v.includes("okeechobee") ||
+      v.includes("avgas") ||
+      v.includes("jet a"))
+  ) {
+    return "Aviation Fuel";
+  }
+
+  if (t === "fuel") {
+    return "Vehicle Fuel";
+  }
+
+  return type;
+};
 
   const inferVendor = (name) =>
     name
