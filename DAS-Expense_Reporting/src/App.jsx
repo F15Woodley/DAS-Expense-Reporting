@@ -1161,8 +1161,15 @@ if (session && !profile) {
     const n = name.toLowerCase();
     if (n.includes("hotel") || n.includes("hilton") || n.includes("marriott"))
       return "Hotel";
-    if (n.includes("delta") || n.includes("air") || n.includes("flight"))
-      return "Airfare";
+if (
+  n.includes("delta") ||
+  n.includes("southwest") ||
+  n.includes("american airlines") ||
+  n.includes("united airlines") ||
+  n.includes("jetblue") ||
+  n.includes("flight")
+)
+  return "Airfare";
     if (n.includes("uber") || n.includes("lyft") || n.includes("taxi"))
       return "Ground Transport";
 if (
