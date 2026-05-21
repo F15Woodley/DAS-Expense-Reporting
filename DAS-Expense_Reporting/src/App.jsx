@@ -3761,39 +3761,83 @@ for (const item of stampedExportItems) {
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-slate-200 p-4 space-y-4">
-            <div>
-              <div className={label}>Traveler</div>
-              <div className="text-sm mt-1">{selectedExpense.traveler || "—"}</div>
-            </div>
+<div className="rounded-2xl border border-slate-200 p-4 space-y-4">
+  <div className="grid grid-cols-2 gap-3">
 
-            <div>
-              <div className={label}>Trip</div>
-              <div className="text-sm mt-1">{selectedExpense.trip || "—"}</div>
-            </div>
+    <div>
+      <div className={label}>Traveler</div>
+      <div className="text-sm mt-1">{selectedExpense.traveler || "—"}</div>
+    </div>
 
-            <div>
-              <div className={label}>Project Code</div>
-              <div className="text-sm mt-1">{selectedExpense.project_code || "—"}</div>
-            </div>
+    <div>
+      <div className={label}>Trip / Project</div>
+      <div className="text-sm mt-1">{selectedExpense.trip || "—"}</div>
+    </div>
 
-            <div>
-              <div className={label}>Payment Method</div>
-              <div className="text-sm mt-1">{selectedExpense.payment_method || "—"}</div>
-            </div>
+    <div>
+      <div className={label}>Project Code</div>
+      <div className="text-sm mt-1">{selectedExpense.project_code || "—"}</div>
+    </div>
 
-            <div>
-              <div className={label}>Expense Date</div>
-              <div className="text-sm mt-1">{selectedExpense.expense_date || "—"}</div>
-            </div>
+    <div>
+      <div className={label}>Expense Date</div>
+      <div className="text-sm mt-1">
+        {selectedExpense.expense_date || selectedExpense.date || "—"}
+      </div>
+    </div>
 
-            <div>
-              <div className={label}>Business Purpose</div>
-              <div className="text-sm mt-1 whitespace-pre-wrap">
-                {selectedExpense.business_purpose || "—"}
-              </div>
-            </div>
-          </div>
+    <div>
+      <div className={label}>Vendor</div>
+      <div className="text-sm mt-1">{selectedExpense.vendor || "—"}</div>
+    </div>
+
+    <div>
+      <div className={label}>Amount</div>
+      <div className="text-sm mt-1">
+        ${Number(selectedExpense.amount || 0).toFixed(2)}
+      </div>
+    </div>
+
+    <div>
+      <div className={label}>Expense Type</div>
+      <div className="text-sm mt-1">{selectedExpense.expense_type || "—"}</div>
+    </div>
+
+    <div>
+      <div className={label}>Payment Method</div>
+      <div className="text-sm mt-1">{selectedExpense.payment_method || "—"}</div>
+    </div>
+
+    <div>
+      <div className={label}>Billable</div>
+      <div className="text-sm mt-1">
+        {selectedExpense.billable ? "Yes" : "No"}
+      </div>
+    </div>
+
+    <div>
+      <div className={label}>QuickBooks Class</div>
+      <div className="text-sm mt-1">{selectedExpense.qb_class || "—"}</div>
+    </div>
+
+    <div>
+      <div className={label}>Status</div>
+      <div className="text-sm mt-1">{selectedExpense.status || "—"}</div>
+    </div>
+
+    <div>
+      <div className={label}>Expense ID</div>
+      <div className="text-xs mt-1 break-all">{selectedExpense.id || "—"}</div>
+    </div>
+  </div>
+
+  <div>
+    <div className={label}>Business Purpose</div>
+    <div className="text-sm mt-1 whitespace-pre-wrap">
+      {selectedExpense.business_purpose || "—"}
+    </div>
+  </div>
+</div>
 
           <div className="rounded-2xl border border-slate-200 p-4">
             <div className="text-sm font-semibold mb-3">Receipt Preview</div>
@@ -3807,9 +3851,12 @@ for (const item of stampedExportItems) {
         </div>
 
         <div className="sticky bottom-0 bg-white border-t border-slate-200 pt-4 flex gap-3">
-          <button className={buttonSecondary} onClick={() => window.print()}>
-            Print
-          </button>
+      <button
+        className={buttonSecondary}
+        onClick={() => handlePrintExpense(selectedExpense)}
+      >
+        Print
+      </button>
 
           <button
             className="px-4 py-2.5 text-sm font-medium bg-emerald-700 text-white rounded-xl"
