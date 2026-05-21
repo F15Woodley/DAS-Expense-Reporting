@@ -3461,7 +3461,7 @@ for (const item of stampedExportItems) {
           {(item.expense_date || item.date || "—")}
         </div>
 
-        {expandedDetailId === item.id && (
+        {false && (
           <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
             <div className="text-xs text-slate-500 mb-2">
               Receipt: {item.file_name || "No file name"}
@@ -3725,6 +3725,110 @@ for (const item of stampedExportItems) {
 {view === "admin" && profile?.role === "admin" ? (
   <AdminUsersScreen />
 ) : null}
+
+{showExpenseDetails && selectedExpense && (
+  <div className="fixed inset-0 z-50 bg-black/40">
+    <div className="absolute right-0 top-0 h-full w-full max-w-3xl bg-white shadow-2xl overflow-y-auto">
+      <div className="sticky top-0 bg-white border-b border-slate-200 p-4 flex items-center justify-between z-10">
+        <div>
+          <div className="text-lg font-semibold">Expense Details</div>
+          <div className="text-sm text-slate-500">
+            Review and print expense submission
+          </div>
+        </div>
+
+        <button className={buttonSecondary} onClick={closeExpenseDetails}>
+          Close
+        </button>
+      </div>
+
+      <div className="p-5 space-y-5">
+        <div className="rounded-2xl border border-slate-200 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-xl font-semibold">
+                {selectedExpense.vendor || "Expense"}
+              </div>
+              <div className="text-sm text-slate-500 mt-1">
+                {selectedExpense.expense_type || "Uncategorized"}
+              </div>
+            </div>
+
+            <div className="text-2xl font-bold">
+              ${Number(selectedExpense.amount || 0).toFixed(2)}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-slate-200 p-4 space-y-4">
+            <div>
+              <div className={label}>Traveler</div>
+              <div className="text-sm mt-1">{selectedExpense.traveler || "—"}</div>
+            </div>
+
+            <div>
+              <div className={label}>Trip</div>
+              <div className="text-sm mt-1">{selectedExpense.trip || "—"}</div>
+            </div>
+
+            <div>
+              <div className={label}>Project Code</div>
+              <div className="text-sm mt-1">{selectedExpense.project_code || "—"}</div>
+            </div>
+
+            <div>
+              <div className={label}>Payment Method</div>
+              <div className="text-sm mt-1">{selectedExpense.payment_method || "—"}</div>
+            </div>
+
+            <div>
+              <div className={label}>Expense Date</div>
+              <div className="text-sm mt-1">{selectedExpense.expense_date || "—"}</div>
+            </div>
+
+            <div>
+              <div className={label}>Business Purpose</div>
+              <div className="text-sm mt-1 whitespace-pre-wrap">
+                {selectedExpense.business_purpose || "—"}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <div className="text-sm font-semibold mb-3">Receipt Preview</div>
+
+            {selectedExpense.receipt_path ? (
+              <ReceiptViewer path={selectedExpense.receipt_path} />
+            ) : (
+              <div className="text-sm text-rose-600">No receipt uploaded.</div>
+            )}
+          </div>
+        </div>
+
+        <div className="sticky bottom-0 bg-white border-t border-slate-200 pt-4 flex gap-3">
+          <button className={buttonSecondary} onClick={() => window.print()}>
+            Print
+          </button>
+
+          <button
+            className="px-4 py-2.5 text-sm font-medium bg-emerald-700 text-white rounded-xl"
+            onClick={() => handleApprove(selectedExpense.id)}
+          >
+            Approve
+          </button>
+
+          <button
+            className="px-4 py-2.5 text-sm font-medium bg-rose-700 text-white rounded-xl"
+            onClick={() => handleReject(selectedExpense.id)}
+          >
+            Return
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
     </div>
   </div>
