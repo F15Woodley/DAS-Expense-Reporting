@@ -752,9 +752,6 @@ const handleSignOut = async () => {
   setProfile(null);
 };
  
-useEffect(() => {
-  if (!profile || !user) return;
-
 const loadExpenses = async () => {
   if (!profile || !user) return;
 
