@@ -1653,22 +1653,21 @@ const handlePrintExpense = async (item) => {
   try {
     const pdfImages = await renderPdfToImages(data.signedUrl);
 
-    receiptHtml = `
-      <div style="margin-top:12px;">
-        <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
-        ${pdfImages
-          .map(
-            (imageUrl) => `
-              <img
-                src="${imageUrl}"
-                alt="Receipt PDF page"
-                style="width:100%; max-width:100%; margin-bottom:16px; border:1px solid #cbd5e1; border-radius:8px;"
-              />
-            `
-          )
-          .join("")}
-      </div>
-    `;
+receiptHtml = `
+  <div style="margin-top:12px;">
+    ${pdfImages
+      .map(
+        (imageUrl) => `
+          <img
+            src="${imageUrl}"
+            alt="Receipt PDF page"
+            style="width:100%; max-width:100%; margin-bottom:16px; border:1px solid #cbd5e1; border-radius:8px;"
+          />
+        `
+      )
+      .join("")}
+  </div>
+`;
   } catch (pdfError) {
     console.error("PDF render error:", pdfError);
 
@@ -1682,16 +1681,15 @@ const handlePrintExpense = async (item) => {
     `;
   }
 } else {
-  receiptHtml = `
-    <div style="margin-top:12px;">
-      <div style="font-weight:600; margin-bottom:8px;">Receipt</div>
-      <img
-        src="${data.signedUrl}"
-        alt="Receipt"
-        style="max-width:100%; max-height:900px; border:1px solid #cbd5e1; border-radius:8px;"
-      />
-    </div>
-  `;
+receiptHtml = `
+  <div style="margin-top:12px;">
+    <img
+      src="${data.signedUrl}"
+      alt="Receipt"
+      style="max-width:100%; max-height:900px; border:1px solid #cbd5e1; border-radius:8px;"
+    />
+  </div>
+`;
       }
     }
  }
