@@ -754,17 +754,20 @@ const handleSignOut = async () => {
 useEffect(() => {
   if (!profile || !user) return;
 
-  const loadExpenses = async () => {
-    try {
-      const scope = view === "manager" ? "manager" : "employee";
-      const records = await expenseService.list(scope);
-      setSavedExpenses(records);
-    } catch (error) {
-      console.error("Failed to load expenses:", error);
-      setSavedExpenses([]);
-    }
-  };
+const loadExpenses = async () => {
+  if (!profile || !user) return;
 
+  try {
+    const scope = view === "manager" ? "manager" : "employee";
+    const records = await expenseService.list(scope);
+    setSavedExpenses(records || []);
+  } catch (error) {
+    console.error("Failed to load expenses:", error);
+    setSavedExpenses([]);
+  }
+};
+
+useEffect(() => {
   loadExpenses();
 }, [profile, user, view]);
 
@@ -1903,25 +1906,30 @@ const handleApprove = async (id) => {
 
     if (!expense || !canTransitionStatus(expense.status, "Approved")) {
       setAppMessage({
-      type: "error",
-      text: "This expense cannot be moved to Approved from its current status.",
-    });
+        type: "error",
+        text: "This expense cannot be moved to Approved from its current status.",
+      });
       return;
     }
 
     await expenseService.updateExpenseStatus(id, "Approved");
 
-    setSavedExpenses((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: "Approved" } : item
-      )
-    );
+    await loadExpenses();
+
+    if (selectedExpense?.id === id) {
+      closeExpenseDetails();
+    }
+
+    setAppMessage({
+      type: "success",
+      text: "Expense approved.",
+    });
   } catch (error) {
     console.error("Approve failed:", error, "Expense ID:", id);
     setAppMessage({
-  type: "error",
-  text: `Could not approve expense. ${error?.message || "Check browser console."}`,
-});
+      type: "error",
+      text: `Could not approve expense. ${error?.message || "Check browser console."}`,
+    });
   }
 };
   
@@ -1931,25 +1939,30 @@ const handleReject = async (id) => {
 
     if (!expense || !canTransitionStatus(expense.status, "Returned")) {
       setAppMessage({
-      type: "error",
-      text: "This expense cannot be moved to Returned from its current status.",
-    });
+        type: "error",
+        text: "This expense cannot be moved to Returned from its current status.",
+      });
       return;
     }
 
     await expenseService.updateExpenseStatus(id, "Returned");
 
-    setSavedExpenses((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: "Returned" } : item
-      )
-    );
+    await loadExpenses();
+
+    if (selectedExpense?.id === id) {
+      closeExpenseDetails();
+    }
+
+    setAppMessage({
+      type: "success",
+      text: "Expense returned.",
+    });
   } catch (error) {
     console.error("Return failed:", error, "Expense ID:", id);
     setAppMessage({
-    type: "error",
-    text: `Could not return expense. ${error?.message || "Check browser console."}`,
-  });
+      type: "error",
+      text: `Could not return expense. ${error?.message || "Check browser console."}`,
+    });
   }
 };
 
