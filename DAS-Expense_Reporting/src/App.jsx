@@ -1970,6 +1970,59 @@ const handleReject = async (id) => {
   }
 };
 
+  const handleApproveGroup = async (items) => {
+  try {
+    const submittedItems = items.filter(
+      (item) => String(item.status || "").toLowerCase() === "submitted"
+    );
+
+    for (const item of submittedItems) {
+      await expenseService.updateExpenseStatus(item.id, "Approved");
+    }
+
+    await loadExpenses();
+
+    setAppMessage({
+      type: "success",
+      text: `Approved ${submittedItems.length} expense${
+        submittedItems.length === 1 ? "" : "s"
+      }.`,
+    });
+  } catch (error) {
+    console.error("Bulk approve failed:", error);
+    setAppMessage({
+      type: "error",
+      text: `Could not approve all expenses. ${error?.message || ""}`,
+    });
+  }
+};
+
+const handleRejectGroup = async (items) => {
+  try {
+    const submittedItems = items.filter(
+      (item) => String(item.status || "").toLowerCase() === "submitted"
+    );
+
+    for (const item of submittedItems) {
+      await expenseService.updateExpenseStatus(item.id, "Returned");
+    }
+
+    await loadExpenses();
+
+    setAppMessage({
+      type: "success",
+      text: `Returned ${submittedItems.length} expense${
+        submittedItems.length === 1 ? "" : "s"
+      }.`,
+    });
+  } catch (error) {
+    console.error("Bulk return failed:", error);
+    setAppMessage({
+      type: "error",
+      text: `Could not return all expenses. ${error?.message || ""}`,
+    });
+  }
+};
 
   const downloadQuickBooksCsv = (items) => {
   const headers = [
@@ -3392,50 +3445,38 @@ for (const item of stampedExportItems) {
                       </span>
                     </div>
 
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      className="px-3 py-1 text-xs bg-emerald-700 text-white rounded"
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        for (const item of group.items) {
-                        try {
-                          await handleApprove(item.id);
-                        } catch (e) {
-                          console.error("Bulk approve failed for item:", item);
-                        }
-                      }
-                      }}
-                    >
-                      Approve All
-                    </button>
-                  
-                    <button
-                      className="px-3 py-1 text-xs bg-rose-700 text-white rounded"
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        for (const item of group.items) {
-                      try {
-                        await handleReject(item.id);
-                      } catch (e) {
-                        console.error("Bulk reject failed for item:", item);
-                      }
-                    }
-                      }}
-                    >
-                      Reject All
-                    </button>
-                  </div>
-            
-<div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
-  <div>Total: ${group.total.toFixed(2)}</div>
-  <div>
-    <div className="flex flex-wrap gap-2">
-
-  {group.missingReceipt && (
-    <span className="text-xs bg-rose-100 text-rose-800 px-2 py-1 rounded">
-      Missing receipt 
-    </span>
-  )}
+          <div className="flex gap-2 mt-3">
+            <button
+              className="px-3 py-1 text-xs bg-emerald-700 text-white rounded"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await handleApproveGroup(group.items);
+              }}
+            >
+              Approve All
+            </button>
+          
+            <button
+              className="px-3 py-1 text-xs bg-rose-700 text-white rounded"
+              onClick={async (e) => {
+                e.stopPropagation();
+                await handleRejectGroup(group.items);
+              }}
+            >
+              Reject All
+            </button>
+          </div>
+                      
+          <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mt-3">
+            <div>Total: ${group.total.toFixed(2)}</div>
+            <div>
+              <div className="flex flex-wrap gap-2">
+          
+            {group.missingReceipt && (
+              <span className="text-xs bg-rose-100 text-rose-800 px-2 py-1 rounded">
+                Missing receipt 
+              </span>
+            )}
 
   {group.missingProject && (
     <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
