@@ -1906,87 +1906,70 @@ const fuelDetailsHtml = isAviationFuelExpense
   
 const handleApprove = async (id) => {
   try {
-    const expense = savedExpenses.find((item) => item.id === id);
+    const { error } = await supabase
+      .from("expenses")
+      .update({ status: "Approved" })
+      .eq("id", id);
 
-    if (!expense || !canTransitionStatus(expense.status, "Approved")) {
-      setAppMessage({
-        type: "error",
-        text: "This expense cannot be moved to Approved from its current status.",
-      });
-      return;
-    }
-
-    await expenseService.updateExpenseStatus(id, "Approved");
+    if (error) throw error;
 
     await loadExpenses();
-
-    if (selectedExpense?.id === id) {
-      closeExpenseDetails();
-    }
+    closeExpenseDetails();
 
     setAppMessage({
       type: "success",
       text: "Expense approved.",
     });
   } catch (error) {
-    console.error("Approve failed:", error, "Expense ID:", id);
+    console.error("Approve failed:", error);
     setAppMessage({
       type: "error",
-      text: `Could not approve expense. ${error?.message || "Check browser console."}`,
+      text: `Could not approve expense. ${error?.message || ""}`,
     });
   }
 };
-  
+
 const handleReject = async (id) => {
   try {
-    const expense = savedExpenses.find((item) => item.id === id);
+    const { error } = await supabase
+      .from("expenses")
+      .update({ status: "Returned" })
+      .eq("id", id);
 
-    if (!expense || !canTransitionStatus(expense.status, "Returned")) {
-      setAppMessage({
-        type: "error",
-        text: "This expense cannot be moved to Returned from its current status.",
-      });
-      return;
-    }
-
-    await expenseService.updateExpenseStatus(id, "Returned");
+    if (error) throw error;
 
     await loadExpenses();
-
-    if (selectedExpense?.id === id) {
-      closeExpenseDetails();
-    }
+    closeExpenseDetails();
 
     setAppMessage({
       type: "success",
       text: "Expense returned.",
     });
   } catch (error) {
-    console.error("Return failed:", error, "Expense ID:", id);
+    console.error("Return failed:", error);
     setAppMessage({
       type: "error",
-      text: `Could not return expense. ${error?.message || "Check browser console."}`,
+      text: `Could not return expense. ${error?.message || ""}`,
     });
   }
 };
 
-  const handleApproveGroup = async (items) => {
+const handleApproveGroup = async (items) => {
   try {
-    const submittedItems = items.filter(
-      (item) => String(item.status || "").toLowerCase() === "submitted"
-    );
+    const ids = items.map((item) => item.id);
 
-    for (const item of submittedItems) {
-      await expenseService.updateExpenseStatus(item.id, "Approved");
-    }
+    const { error } = await supabase
+      .from("expenses")
+      .update({ status: "Approved" })
+      .in("id", ids);
+
+    if (error) throw error;
 
     await loadExpenses();
 
     setAppMessage({
       type: "success",
-      text: `Approved ${submittedItems.length} expense${
-        submittedItems.length === 1 ? "" : "s"
-      }.`,
+      text: `Approved ${ids.length} expense${ids.length === 1 ? "" : "s"}.`,
     });
   } catch (error) {
     console.error("Bulk approve failed:", error);
@@ -1999,21 +1982,20 @@ const handleReject = async (id) => {
 
 const handleRejectGroup = async (items) => {
   try {
-    const submittedItems = items.filter(
-      (item) => String(item.status || "").toLowerCase() === "submitted"
-    );
+    const ids = items.map((item) => item.id);
 
-    for (const item of submittedItems) {
-      await expenseService.updateExpenseStatus(item.id, "Returned");
-    }
+    const { error } = await supabase
+      .from("expenses")
+      .update({ status: "Returned" })
+      .in("id", ids);
+
+    if (error) throw error;
 
     await loadExpenses();
 
     setAppMessage({
       type: "success",
-      text: `Returned ${submittedItems.length} expense${
-        submittedItems.length === 1 ? "" : "s"
-      }.`,
+      text: `Returned ${ids.length} expense${ids.length === 1 ? "" : "s"}.`,
     });
   } catch (error) {
     console.error("Bulk return failed:", error);
