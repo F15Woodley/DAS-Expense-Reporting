@@ -1714,6 +1714,18 @@ receiptHtml = `
  }
   const printedAt = new Date().toLocaleString();
   const amount =
+  const printItem = {
+    ...item,
+    traveler: item.traveler || item.user_email || item.email || "—",
+    trip: item.trip || item.project || "—",
+    project_code: item.project_code || item.projectCode || "—",
+    expense_date: item.expense_date || item.date || "—",
+    expense_type: item.expense_type || item.expenseType || "—",
+    payment_method: item.payment_method || item.paymentMethod || "—",
+    business_purpose: item.business_purpose || item.businessPurpose || "—",
+    qb_class: item.qb_class || item.qbClass || "—",
+  };
+    
     item.amount !== null && item.amount !== undefined
       ? `$${Number(item.amount).toFixed(2)}`
       : "—";
@@ -1832,56 +1844,68 @@ const fuelDetailsHtml = isAviationFuelExpense
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-title">Expense Details</div>
-          <div class="grid">
-            <div class="field">
-              <div class="label">Traveler</div>
-              <div class="value">${item.traveler || "—"}</div>
-            </div>
-            <div class="field">
-              <div class="label">Trip / Project</div>
-              <div class="value">${item.trip || "—"}</div>
-            </div>
-            <div class="field">
-              <div class="label">Project Code</div>
-              <div class="value">${item.project_code || "—"}</div>
-            </div>
-            <div class="field">
-              <div class="label">Expense Date</div>
-              <div class="value">${item.expense_date || item.date || "—"}</div>
-            </div>
-            <div class="field">
-              <div class="label">Vendor</div>
-              <div class="value">${item.vendor || "—"}</div>
-            </div>
-            <div class="field">
-              <div class="label">Amount</div>
-              <div class="value">${amount}</div>
-            </div>
-            <div class="field">
-              <div class="label">Expense Type</div>
-              <div class="value">${item.expense_type || item.expenseType || "—"}</div>
-            </div>
-            ${fuelDetailsHtml}
-            <div class="field">
-              <div class="label">Payment Method</div>
-              <div class="value">${item.payment_method || item.paymentMethod || "—"}</div>
-            </div>
-            <div class="field">
-              <div class="label">Billable</div>
-              <div class="value">${item.billable ? "Yes" : "No"}</div>
-            </div>
-            <div class="field">
-              <div class="label">QuickBooks Class</div>
-              <div class="value">${item.qb_class || item.qbClass || "—"}</div>
-            </div>
-            <div class="field full">
-              <div class="label">Business Purpose</div>
-              <div class="value">${item.business_purpose || item.businessPurpose || "—"}</div>
-            </div>
-          </div>
-        </div>
+<div class="section">
+  <div class="section-title">Expense Details</div>
+
+  <div class="grid">
+    <div class="field">
+      <div class="label">Traveler</div>
+      <div class="value">${printItem.traveler}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Trip / Project</div>
+      <div class="value">${printItem.trip}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Project Code</div>
+      <div class="value">${printItem.project_code}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Expense Date</div>
+      <div class="value">${printItem.expense_date}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Vendor</div>
+      <div class="value">${printItem.vendor || "—"}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Amount</div>
+      <div class="value">${amount}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Expense Type</div>
+      <div class="value">${printItem.expense_type}</div>
+    </div>
+
+    ${fuelDetailsHtml}
+
+    <div class="field">
+      <div class="label">Payment Method</div>
+      <div class="value">${printItem.payment_method}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Billable</div>
+      <div class="value">${printItem.billable ? "Yes" : "No"}</div>
+    </div>
+
+    <div class="field">
+      <div class="label">QuickBooks Class</div>
+      <div class="value">${printItem.qb_class}</div>
+    </div>
+
+    <div class="field full">
+      <div class="label">Business Purpose</div>
+      <div class="value">${printItem.business_purpose}</div>
+    </div>
+  </div>
+</div>
 
         <div class="section">
           <div class="section-title">Receipt</div>
