@@ -1712,24 +1712,25 @@ receiptHtml = `
       }
     }
  }
-  const printedAt = new Date().toLocaleString();
-  const amount =
-  const printItem = {
-    ...item,
-    traveler: item.traveler || item.user_email || item.email || "—",
-    trip: item.trip || item.project || "—",
-    project_code: item.project_code || item.projectCode || "—",
-    expense_date: item.expense_date || item.date || "—",
-    expense_type: item.expense_type || item.expenseType || "—",
-    payment_method: item.payment_method || item.paymentMethod || "—",
-    business_purpose: item.business_purpose || item.businessPurpose || "—",
-    qb_class: item.qb_class || item.qbClass || "—",
-  };
-    
-    item.amount !== null && item.amount !== undefined
-      ? `$${Number(item.amount).toFixed(2)}`
-      : "—";
+const printedAt = new Date().toLocaleString();
 
+const amount =
+  item.amount !== null && item.amount !== undefined
+    ? `$${Number(item.amount).toFixed(2)}`
+    : "—";
+
+const printItem = {
+  ...item,
+  traveler: item.traveler || item.user_email || item.email || "—",
+  trip: item.trip || item.project || "—",
+  project_code: item.project_code || item.projectCode || "—",
+  expense_date: item.expense_date || item.date || "—",
+  expense_type: item.expense_type || item.expenseType || "—",
+  payment_method: item.payment_method || item.paymentMethod || "—",
+  business_purpose: item.business_purpose || item.businessPurpose || "—",
+  qb_class: item.qb_class || item.qbClass || "—",
+};
+  
 const isAviationFuelExpense =
   String(item.expense_type || item.expenseType || "").toLowerCase() ===
   "aviation fuel";
