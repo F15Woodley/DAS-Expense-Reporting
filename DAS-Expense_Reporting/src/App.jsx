@@ -1906,10 +1906,13 @@ const fuelDetailsHtml = isAviationFuelExpense
   
 const handleApprove = async (id) => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("expenses")
       .update({ status: "Approved" })
-      .eq("id", id);
+      .eq("id", id)
+      .select("id, status");
+
+    console.log("Approve result:", { data, error });
 
     if (error) throw error;
 
@@ -1922,6 +1925,7 @@ const handleApprove = async (id) => {
     });
   } catch (error) {
     console.error("Approve failed:", error);
+
     setAppMessage({
       type: "error",
       text: `Could not approve expense. ${error?.message || ""}`,
